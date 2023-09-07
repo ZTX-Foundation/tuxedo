@@ -73,7 +73,7 @@
         "commander": "^11.0.0",
         "eslint": "^8.48.0",
         "eslint-config-prettier": "^9.0.0",
-        "ethers": "5.7.0",
+        "ethers": "6.7.1",
         "husky": "^8.0.3",
         "jose": "^4.14.6",
         "keccak256": "^1.0.6",
