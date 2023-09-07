@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+  - package-ecosystem: 'npm'
+    directory: '/services/ItemsFaucet'
+    schedule:
+      interval: 'weekly'
+  - package-ecosystem: 'npm'
+    directory: '/services/TuxeodoCdk'
+    schedule:
+      interval: 'weekly'
+  - package-ecosystem: gomod
+    directory: '/'
+    schedule:
+      interval: 'weekly'

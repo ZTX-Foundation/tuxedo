@@ -1,0 +1,8 @@
+@forge-std/=lib/forge-std/src/
+@openzeppelin/=lib/openzeppelin-contracts/
+@seadrop/=lib/seadrop/src/
+@protocol=src/
+@test=test/
+openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/
+operator-filter-registry/=lib/seadrop/lib/operator-filter-registry/src/
+utility-contracts/=lib/seadrop/lib/utility-contracts/src/

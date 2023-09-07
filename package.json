@@ -1,0 +1,88 @@
+{
+    "name": "tuxeodo",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "Solidity smart contracts for ZTX.",
+    "main": "''",
+    "directories": {
+        "lib": "lib",
+        "test": "test"
+    },
+    "scripts": {
+        "coverage": "forge coverage",
+        "coverage:lcov:unit": "forge coverage --report lcov --match-contract UnitTest",
+        "coverage:lcov:integration": "forge coverage --report lcov --match-contract IntegrationTest",
+        "coverage:report:unit": "forge coverage --match-contract UnitTest",
+        "coverage:report:integration": "forge coverage --match-contract IntegrationTest",
+        "update:foundry": "foundryup",
+        "install:foundry": "foundryup || curl -L https://foundry.paradigm.xyz | bash",
+        "install:slither": "pip3 install slither-analyzer",
+        "install:slither:utx0": "pip3 install git+https://github.com/utx0/slither.git",
+        "build": "forge build --extra-output-files abi",
+        "test": "forge test -vvv",
+        "test:unit": "forge test -vvv --match-contract UnitTest",
+        "test:integration": "forge test -vvv --match-contract IntegrationTest",
+        "test:watch": "git ls-files | entr -c -s 'forge test -vv'",
+        "test:watch:debug": "git ls-files | entr -c -s 'forge test -vvv'",
+        "prettier": "prettier --write **.sol",
+        "prettier:list": "prettier --list-different **.sol",
+        "prettier:check": "prettier --check **.sol",
+        "solhint": "solhint --config ./.solhint.json 'src/**/*.sol' 'script/**/*.sol' --fix",
+        "solhint:check": "solhint --config ./.solhint.json 'src/**/*.sol'",
+        "slither": "slither .",
+        "slither:triage": "slither . --triage",
+        "lint:check": "eslint . && npm run solhint:check",
+        "start:localnet": "anvil -m 'test test test test test test test test test test test junk'",
+        "prepare": "husky install",
+        "deploy:testnet": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $TESTNET_RPC_URL --slow",
+        "deploy:testnet:resume": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $TESTNET_RPC_URL --slow --resume",
+        "deploy:mainnet": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $MAINNET_RPC_URL --slow",
+        "deploy:mainnet:resume": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $MAINNET_RPC_URL --slow --resume"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ZTX-Foundation/tuxeodo.git"
+    },
+    "keywords": [
+        "smart",
+        "contracts",
+        "evm",
+        "ztx"
+    ],
+    "author": "",
+    "license": "",
+    "bugs": {
+        "url": "https://github.com/ZTX-Foundation/tuxeodo/issues"
+    },
+    "homepage": "https://github.com/ZTX-Foundation/tuxeodo#README.md",
+    "devDependencies": {
+        "@types/node": "^20.5.9",
+        "dotenv": "^16.3.1",
+        "prettier": "^3.0.3",
+        "prettier-plugin-solidity": "^1.1.3",
+        "solhint": "^3.6.2",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.2.2"
+    },
+    "dependencies": {
+        "@ethersproject/keccak256": "^5.7.0",
+        "@moralisweb3/common-evm-utils": "^2.22.5",
+        "@openzeppelin/merkle-tree": "^1.0.4",
+        "@typescript-eslint/eslint-plugin": "^6.6.0",
+        "axios": "^1.5.0",
+        "commander": "^11.0.0",
+        "eslint": "^8.48.0",
+        "eslint-config-prettier": "^9.0.0",
+        "ethers": "5.7.0",
+        "husky": "^8.0.3",
+        "jose": "^4.14.6",
+        "keccak256": "^1.0.6",
+        "lint-staged": "^14.0.1",
+        "merkletreejs": "^0.3.10",
+        "moralis": "^2.22.5",
+        "soltypes": "^2.0.0"
+    },
+    "lint-staged": {
+        "**/*": "prettier --write --ignore-unknown"
+    }
+}

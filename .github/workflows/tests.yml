@@ -1,0 +1,45 @@
+name: Tests
+on:
+    push:
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        environment: devnet
+        env:
+            ENVIRONMENT: devnet
+            DOMAIN: example.com
+            TOKEN_NAME: "TKN Token"
+            TOKEN_SYMBOL: TKN
+            SEA_DROP_NAME: 'TKN Sea Drop'
+            SEA_DROP_SYMBOL: 'TKN'
+            ARBITRUM_RPC_URL: ${{ vars.ARBITRUM_RPC_URL }}
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  submodules: recursive
+
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 18
+
+            - run: |
+                  npm install
+
+            - uses: foundry-rs/foundry-toolchain@v1
+              with:
+                  version: nightly
+
+            - name: Run Forge build
+              run: |
+                  forge --version
+                  forge build --sizes
+              id: build
+
+            - name: Unit tests
+              run: |
+                  npm run test:unit
+
+            - name: Integration tests
+              run: |
+                  npm run test:integration
