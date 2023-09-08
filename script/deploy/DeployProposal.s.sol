@@ -85,8 +85,6 @@ contract DeployProposal is Script {
                     }
                     proposals[i].deploy(addresses, address(this));
                 }
-
-                // proposals[i].deploy(addresses, address(this));
                 if (debug) {
                     (string[] memory recordedNames, address[] memory recordedAddresses) = addresses
                         .getRecordedAddresses();
