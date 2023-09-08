@@ -6,6 +6,15 @@ interface IProposal {
     // Proposal name, e.g. "ZIP16"
     function name() external view returns (string memory);
 
+    // Proposal description, e.g. "Add a new capsule"
+    function description() external view returns (string memory);
+
+    // Whether the proposal has been deployed on mainnet
+    function mainnet_deployed() external view returns (bool);
+
+    // Whether the proposal has been deployed on testnet
+    function testnet_deployed() external view returns (bool);
+
     // Used to explicitly enable or disable debug logs from
     // another solidity file that calls this proposal.
     function setDebug(bool) external;
