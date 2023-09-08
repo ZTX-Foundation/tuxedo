@@ -82,8 +82,8 @@ contract DeployProposal is Script {
                 } else {
                     if (debug) {
                         console.log("Deploying: ", name, "to chainId", chainId);
-                        proposals[i].deploy(addresses, address(this));
                     }
+                    proposals[i].deploy(addresses, address(this));
                 }
 
                 // proposals[i].deploy(addresses, address(this));
