@@ -15,14 +15,6 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
     using SafeERC20 for *;
     using ECDSA for bytes32;
 
-    /// @custom:deprecated
-    /// @notice event emitted when fast crafting happens
-    event FastCraft(uint256 indexed tokenId, uint256 indexed jobId, uint256 amountPaid, uint256 amountToMint);
-
-    /// @custom:deprecated
-    /// @notice event emitted when in game boost happens
-    event InGameBoost(uint256 indexed jobId, uint256 amount);
-
     /// @notice event emitted when in payment is taken
     event TakePayment(uint256 indexed jobId, uint256 amount);
 
@@ -88,135 +80,6 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
         usedHashes[hash] = true;
     }
 
-    /// @custom:deprecated
-    /// @notice speed up crafting
-    /// @param tokenId token ID of the NFT for instant craft
-    /// @param tokenAmount Amount of the ERC1155 token
-    /// @param paymentToken Address of the token to pay in
-    /// @param jobId ID of the offchain job
-    /// @param jobFee Amount of the job fee
-    /// @param quoteExpiry Expiry time of the quote
-    /// @param hash Hash of the message
-    /// @param salt A random number to prevent brute force ie a timestamp
-    /// @param signature Signature of the message
-    function fastCraft(
-        uint256 tokenId,
-        uint256 tokenAmount,
-        address paymentToken,
-        uint256 jobId,
-        uint256 jobFee,
-        uint256 quoteExpiry,
-        bytes32 hash,
-        uint256 salt,
-        bytes memory signature
-    ) external {
-        /// checks and effects
-        _verifySignerAndHash(
-            quoteExpiry,
-            getHashFastCraft(tokenId, paymentToken, tokenAmount, jobId, jobFee, quoteExpiry, salt),
-            hash,
-            signature
-        );
-
-        /// interactions
-        IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), jobFee);
-
-        emit FastCraft(tokenId, jobId, jobFee, tokenAmount);
-    }
-
-    /// @custom:deprecated
-    /// @notice speed up crafting
-    /// @param tokenId token ID of the NFT for instant craft
-    /// @param tokenAmount Amount of the ERC1155 token
-    /// @param jobId ID of the offchain job
-    /// @param jobFee Amount of the job fee
-    /// @param quoteExpiry Expiry time of the quote
-    /// @param hash Hash of the message
-    /// @param salt A random number to prevent brute force ie a timestamp
-    /// @param signature Signature of the message
-    function fastCraftWithEth(
-        uint256 tokenId,
-        uint256 tokenAmount,
-        uint256 jobId,
-        uint256 jobFee,
-        uint256 quoteExpiry,
-        bytes32 hash,
-        uint256 salt,
-        bytes memory signature
-    ) external payable {
-        require(msg.value == jobFee, "GameConsumer: incorrect job fee");
-
-        /// checks and effects
-        _verifySignerAndHash(
-            quoteExpiry,
-            getHashFastCraft(tokenId, address(weth), tokenAmount, jobId, jobFee, quoteExpiry, salt),
-            hash,
-            signature
-        );
-
-        emit FastCraft(tokenId, jobId, jobFee, tokenAmount);
-    }
-
-    /// @custom:deprecated
-    /// @notice boost in game with Eth
-    /// @param jobId ID of the offchain job
-    /// @param jobFee Amount of the job fee
-    /// @param quoteExpiry A random number to prevent brute force ie a timestamp
-    /// @param hash Hash of the message
-    /// @param salt A random number to prevent collisions
-    /// @param signature Signature of the message
-    function inGameBoostWithEth(
-        uint256 jobId,
-        uint256 jobFee,
-        uint256 quoteExpiry,
-        bytes32 hash,
-        uint256 salt,
-        bytes memory signature
-    ) external payable {
-        require(msg.value == jobFee, "GameConsumer: incorrect job fee");
-
-        /// checks and effects
-        _verifySignerAndHash(
-            quoteExpiry,
-            getHashInGameBoost(jobId, address(weth), jobFee, quoteExpiry, salt),
-            hash,
-            signature
-        );
-
-        emit InGameBoost(jobId, jobFee);
-    }
-
-    /// @custom:deprecated
-    /// @notice boost in game
-    /// @param jobId ID of the offchain job
-    /// @param jobFee Amount of the job fee
-    /// @param paymentToken Address of the token to pay in
-    /// @param quoteExpiry A random number to prevent brute force ie a timestamp
-    /// @param hash Hash of the message
-    /// @param salt A random number to prevent collisions
-    /// @param signature Signature of the message
-    function inGameBoost(
-        uint256 jobId,
-        uint256 jobFee,
-        address paymentToken,
-        uint256 quoteExpiry,
-        bytes32 hash,
-        uint256 salt,
-        bytes memory signature
-    ) external {
-        /// checks and effects
-        _verifySignerAndHash(
-            quoteExpiry,
-            getHashInGameBoost(jobId, paymentToken, jobFee, quoteExpiry, salt),
-            hash,
-            signature
-        );
-
-        IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), jobFee);
-
-        emit InGameBoost(jobId, jobFee);
-    }
-
     /// @notice generic take payment function
     /// @param jobId ID of the offchain job
     /// @param jobFee Amount of the job fee
@@ -273,46 +136,6 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
         );
 
         emit TakePayment(jobId, jobFee);
-    }
-
-    /// @dev Returns the hash of the message
-    /// @param tokenId ID of the NFT for fast craft
-    /// @param paymentToken Address of the token to pay in
-    /// @param tokenAmount Amount of ERC1155 tokens to purchase
-    /// @param jobId ID of the offchain job
-    /// @param jobFee Amount of the job fee
-    /// @param expireTimestamp A time stamp of when the sig expires, prevents expired quotes usage
-    /// @param salt A random number to prevent collisions
-    function getHashFastCraft(
-        uint256 tokenId,
-        address paymentToken,
-        uint256 tokenAmount,
-        uint256 jobId,
-        uint256 jobFee,
-        uint256 expireTimestamp,
-        uint256 salt
-    ) public pure returns (bytes32) {
-        bytes32 hash = keccak256(abi.encode(tokenId, paymentToken, tokenAmount, jobId, jobFee, expireTimestamp, salt));
-
-        return hash.toEthSignedMessageHash();
-    }
-
-    /// @dev Returns the hash of the message
-    /// @param jobId ID of the offchain job
-    /// @param paymentToken Address of the token to pay in
-    /// @param jobFee Amount of the job fee
-    /// @param hashTimestamp A time stamp to prevent expired quotes
-    /// @param salt A random number to prevent collisions
-    function getHashInGameBoost(
-        uint256 jobId,
-        address paymentToken,
-        uint256 jobFee,
-        uint256 hashTimestamp,
-        uint256 salt
-    ) public pure returns (bytes32) {
-        bytes32 hash = keccak256(abi.encode(jobId, paymentToken, jobFee, hashTimestamp, salt));
-
-        return hash.toEthSignedMessageHash();
     }
 
     /// @dev Generic hashing method
