@@ -6,7 +6,7 @@ import {Test} from "@forge-std/Test.sol";
 import {Addresses} from "@test/proposals/Addresses.sol";
 import {Proposal} from "@test/proposals/proposalTypes/Proposal.sol";
 
-import {zip00} from "@test/proposals/zips/zip00.sol";
+import {zip000} from "@test/proposals/zips/zip000.sol";
 
 /*
 How to use:
@@ -42,7 +42,7 @@ contract TestProposals is Test {
         DO_VALIDATE = vm.envOr("DO_VALIDATE", true);
         addresses = new Addresses();
 
-        proposals.push(Proposal(address(new zip00())));
+        proposals.push(Proposal(address(new zip000())));
         nProposals = proposals.length;
     }
 

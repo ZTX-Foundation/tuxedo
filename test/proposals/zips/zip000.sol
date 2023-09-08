@@ -23,8 +23,12 @@ import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol"
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 
-contract zip00 is Proposal, TimelockProposal {
-    string public name = "ZIP00";
+contract zip000 is Proposal, TimelockProposal {
+    string public name = "ZIP000";
+    string public description = "The ZTX Genesis Proposal";
+    bool public mainnetDeployed = false;
+    bool public testnetDeployed = false;
+
     address[] public whitelistAddresses;
 
     function deploy(Addresses addresses, address deployer) public {
