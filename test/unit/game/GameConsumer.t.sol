@@ -18,6 +18,9 @@ contract GameConsumerUnitTest is BaseTest {
     /// @notice event emitted when in game boost happens
     event InGameBoost(uint256 indexed jobId, uint256 amount);
 
+    /// @notice event emitted when in payment is taken
+    event TakePayment(uint256 indexed jobId, uint256 amount);
+
     function setUp() public override {
         super.setUp();
 
@@ -95,6 +98,27 @@ contract GameConsumerUnitTest is BaseTest {
         jobId = uint256(keccak256(abi.encode(keccak256(abi.encode(salt)))));
 
         hash = gameConsumer.getHashInGameBoost(jobId, builder.paymentToken, builder.jobFee, quoteExpiry, salt);
+
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, hash);
+        sig = abi.encodePacked(r, s, v);
+    }
+
+    function setupTakePaymentTx(
+        address paymentToken
+    ) public view returns (uint256, uint256, uint256, bytes32, bytes memory) {
+        CraftTxBuilder memory builder = CraftTxBuilder({jobFee: 1e18, tokenAmount: 100, paymentToken: paymentToken});
+
+        return setupTakePaymentTx(builder);
+    }
+
+    function setupTakePaymentTx(
+        CraftTxBuilder memory builder
+    ) public view returns (uint256 jobId, uint256 quoteExpiry, uint256 salt, bytes32 hash, bytes memory sig) {
+        quoteExpiry = block.timestamp + 5 minutes;
+        salt = uint256(keccak256(abi.encode(block.timestamp)));
+        jobId = uint256(keccak256(abi.encode(keccak256(abi.encode(salt)))));
+
+        hash = gameConsumer.getHash(jobId, builder.paymentToken, builder.jobFee, quoteExpiry, salt);
 
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, hash);
         sig = abi.encodePacked(r, s, v);
@@ -425,6 +449,67 @@ contract GameConsumerUnitTest is BaseTest {
         gameConsumer.inGameBoost(jobId, 1e18, address(token), quoteExpiry, hash, salt, sig);
     }
 
+    function testTakePaymentWithEth() public {
+        (uint256 jobId, uint256 quoteExpiry, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+            address(weth)
+        );
+        vm.deal(address(this), 1e18);
+
+        vm.expectEmit(true, true, false, true, address(gameConsumer));
+        emit TakePayment(jobId, 1e18);
+
+        gameConsumer.takePaymentWithEth{value: 1e18}(jobId, 1e18, quoteExpiry, hash, salt, sig);
+
+        assertEq(address(this).balance, 0);
+        assertEq(address(gameConsumer).balance, 1e18);
+        assertTrue(gameConsumer.usedHashes(hash));
+    }
+
+    function testTakePaymentWithEthFailsAmountMismatch() public {
+        (uint256 jobId, uint256 quoteExpiry, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+            address(weth)
+        );
+        vm.deal(address(this), 1e18 + 1);
+
+        vm.expectRevert("GameConsumer: incorrect job fee");
+
+        gameConsumer.takePaymentWithEth{value: 1e18 + 1}(jobId, 1e18, quoteExpiry, hash, salt, sig);
+    }
+
+    function testTakePaymentWithTokens() public {
+        (uint256 jobId, uint256 quoteExpiry, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+            address(token)
+        );
+
+        token.mint(address(this), 1e18);
+        token.approve(address(gameConsumer), 1e18);
+
+        vm.expectEmit(true, true, false, true, address(gameConsumer));
+        emit TakePayment(jobId, 1e18);
+
+        gameConsumer.takePayment(jobId, 1e18, address(token), quoteExpiry, hash, salt, sig);
+
+        assertEq(token.balanceOf(address(this)), 0);
+        assertEq(token.balanceOf(address(gameConsumer)), 1e18);
+        assertTrue(gameConsumer.usedHashes(hash));
+    }
+
+    function testAllPaymentActionsFailPaused() public {
+        (uint256 jobId, uint256 quoteExpiry, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+            address(weth)
+        );
+        vm.deal(address(this), 1e18);
+
+        vm.prank(addresses.adminAddress);
+        gameConsumer.pause();
+
+        vm.expectRevert("Pausable: paused");
+        gameConsumer.takePaymentWithEth{value: 1e18}(jobId, 1e18, quoteExpiry, hash, salt, sig);
+
+        vm.expectRevert("Pausable: paused");
+        gameConsumer.takePayment(jobId, 1e18, address(token), quoteExpiry, hash, salt, sig);
+    }
+
     function testAllFastCraftsFailPaused() public {
         (uint256 expiryTimestamp, uint256 salt, uint256 jobId, bytes32 hash, bytes memory sig) = setupTx(
             address(token)
@@ -444,7 +529,6 @@ contract GameConsumerUnitTest is BaseTest {
     function testWrapEth() public {
         vm.deal(address(gameConsumer), 1e18);
 
-        vm.prank(addresses.adminAddress);
         gameConsumer.wrapEth();
 
         assertEq(address(weth).balance, 1e18);
@@ -455,7 +539,6 @@ contract GameConsumerUnitTest is BaseTest {
         testWrapEth();
         uint256 wethBalance = weth.balanceOf(address(gameConsumer));
 
-        vm.prank(addresses.adminAddress);
         gameConsumer.sweepUnclaimedWeth();
 
         assertEq(weth.balanceOf(address(gameConsumer)), 0);
@@ -466,7 +549,6 @@ contract GameConsumerUnitTest is BaseTest {
         testInGameBoostWithTokens();
         uint256 wethBalance = token.balanceOf(address(gameConsumer));
 
-        vm.prank(addresses.adminAddress);
         gameConsumer.sweepUnclaimed();
 
         assertEq(token.balanceOf(address(gameConsumer)), 0);
