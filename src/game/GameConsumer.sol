@@ -58,6 +58,7 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
         address _proceedsRecipient,
         address _weth
     ) ERC20HoldingDeposit(_core, _token) {
+        require(_proceedsRecipient != address(0), "GameConsumer: proceeds recipient cannot be address(0)");
         weth = IWETH(_weth);
         proceedsRecipient = _proceedsRecipient;
     }
