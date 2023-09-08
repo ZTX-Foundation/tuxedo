@@ -15,11 +15,8 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
     using SafeERC20 for *;
     using ECDSA for bytes32;
 
-    /// @notice event emitted when fast crafting happens
-    event FastCraft(uint256 indexed tokenId, uint256 indexed jobId, uint256 amountPaid, uint256 amountToMint);
-
-    /// @notice event emitted when in game boost happens
-    event InGameBoost(uint256 indexed jobId, uint256 amount);
+    /// @notice event emitted when in payment is taken
+    event TakePayment(uint256 indexed jobId, uint256 amount);
 
     /// @notice event emitted when proceeds are withdrawn
     event WithdrawToCollector(address proceedsCollector, uint256 amount);
@@ -54,8 +51,6 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
         address _weth
     ) ERC20HoldingDeposit(_core, _token) {
         require(_proceedsRecipient != address(0), "GameConsumer: proceeds recipient cannot be address(0)");
-        require(_weth != address(0), "GameConsumer: weth cannot be address(0)");
-
         weth = IWETH(_weth);
         proceedsRecipient = _proceedsRecipient;
     }
@@ -85,22 +80,18 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
         usedHashes[hash] = true;
     }
 
-    /// @notice speed up crafting
-    /// @param tokenId token ID of the NFT for instant craft
-    /// @param tokenAmount Amount of the ERC1155 token
-    /// @param paymentToken Address of the token to pay in
+    /// @notice generic take payment function
     /// @param jobId ID of the offchain job
     /// @param jobFee Amount of the job fee
-    /// @param quoteExpiry Expiry time of the quote
+    /// @param paymentToken Address of the token to pay in
+    /// @param quoteExpiry A random number to prevent brute force ie a timestamp
     /// @param hash Hash of the message
-    /// @param salt A random number to prevent brute force ie a timestamp
+    /// @param salt A random number to prevent collisions
     /// @param signature Signature of the message
-    function fastCraft(
-        uint256 tokenId,
-        uint256 tokenAmount,
-        address paymentToken,
+    function takePayment(
         uint256 jobId,
         uint256 jobFee,
+        address paymentToken,
         uint256 quoteExpiry,
         bytes32 hash,
         uint256 salt,
@@ -109,29 +100,24 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
         /// checks and effects
         _verifySignerAndHash(
             quoteExpiry,
-            getHashFastCraft(tokenId, paymentToken, tokenAmount, jobId, jobFee, quoteExpiry, salt),
+            getHash(jobId, paymentToken, jobFee, quoteExpiry, salt),
             hash,
             signature
         );
 
-        /// interactions
         IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), jobFee);
 
-        emit FastCraft(tokenId, jobId, jobFee, tokenAmount);
+        emit TakePayment(jobId, jobFee);
     }
 
-    /// @notice speed up crafting
-    /// @param tokenId token ID of the NFT for instant craft
-    /// @param tokenAmount Amount of the ERC1155 token
+    /// @notice generic take payment in ETH function
     /// @param jobId ID of the offchain job
     /// @param jobFee Amount of the job fee
-    /// @param quoteExpiry Expiry time of the quote
+    /// @param quoteExpiry A random number to prevent brute force ie a timestamp
     /// @param hash Hash of the message
-    /// @param salt A random number to prevent brute force ie a timestamp
+    /// @param salt A random number to prevent collisions
     /// @param signature Signature of the message
-    function fastCraftWithEth(
-        uint256 tokenId,
-        uint256 tokenAmount,
+    function takePaymentWithEth(
         uint256 jobId,
         uint256 jobFee,
         uint256 quoteExpiry,
@@ -144,101 +130,21 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
         /// checks and effects
         _verifySignerAndHash(
             quoteExpiry,
-            getHashFastCraft(tokenId, address(weth), tokenAmount, jobId, jobFee, quoteExpiry, salt),
+            getHash(jobId, address(weth), jobFee, quoteExpiry, salt),
             hash,
             signature
         );
 
-        emit FastCraft(tokenId, jobId, jobFee, tokenAmount);
+        emit TakePayment(jobId, jobFee);
     }
 
-    /// @notice boost in game with Eth
-    /// @param jobId ID of the offchain job
-    /// @param jobFee Amount of the job fee
-    /// @param quoteExpiry A random number to prevent brute force ie a timestamp
-    /// @param hash Hash of the message
-    /// @param salt A random number to prevent collisions
-    /// @param signature Signature of the message
-    function inGameBoostWithEth(
-        uint256 jobId,
-        uint256 jobFee,
-        uint256 quoteExpiry,
-        bytes32 hash,
-        uint256 salt,
-        bytes memory signature
-    ) external payable {
-        require(msg.value == jobFee, "GameConsumer: incorrect job fee");
-
-        /// checks and effects
-        _verifySignerAndHash(
-            quoteExpiry,
-            getHashInGameBoost(jobId, address(weth), jobFee, quoteExpiry, salt),
-            hash,
-            signature
-        );
-
-        emit InGameBoost(jobId, jobFee);
-    }
-
-    /// @notice boost in game with Eth
-    /// @param jobId ID of the offchain job
-    /// @param jobFee Amount of the job fee
-    /// @param paymentToken Address of the token to pay in
-    /// @param quoteExpiry A random number to prevent brute force ie a timestamp
-    /// @param hash Hash of the message
-    /// @param salt A random number to prevent collisions
-    /// @param signature Signature of the message
-    function inGameBoost(
-        uint256 jobId,
-        uint256 jobFee,
-        address paymentToken,
-        uint256 quoteExpiry,
-        bytes32 hash,
-        uint256 salt,
-        bytes memory signature
-    ) external {
-        /// checks and effects
-        _verifySignerAndHash(
-            quoteExpiry,
-            getHashInGameBoost(jobId, paymentToken, jobFee, quoteExpiry, salt),
-            hash,
-            signature
-        );
-
-        IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), jobFee);
-
-        emit InGameBoost(jobId, jobFee);
-    }
-
-    /// @dev Returns the hash of the message
-    /// @param tokenId ID of the NFT for fast craft
-    /// @param paymentToken Address of the token to pay in
-    /// @param tokenAmount Amount of ERC1155 tokens to purchase
-    /// @param jobId ID of the offchain job
-    /// @param jobFee Amount of the job fee
-    /// @param expireTimestamp A time stamp of when the sig expires, prevents expired quotes usage
-    /// @param salt A random number to prevent collisions
-    function getHashFastCraft(
-        uint256 tokenId,
-        address paymentToken,
-        uint256 tokenAmount,
-        uint256 jobId,
-        uint256 jobFee,
-        uint256 expireTimestamp,
-        uint256 salt
-    ) public pure returns (bytes32) {
-        bytes32 hash = keccak256(abi.encode(tokenId, paymentToken, tokenAmount, jobId, jobFee, expireTimestamp, salt));
-
-        return hash.toEthSignedMessageHash();
-    }
-
-    /// @dev Returns the hash of the message
+    /// @dev Generic hashing method
     /// @param jobId ID of the offchain job
     /// @param paymentToken Address of the token to pay in
     /// @param jobFee Amount of the job fee
     /// @param hashTimestamp A time stamp to prevent expired quotes
     /// @param salt A random number to prevent collisions
-    function getHashInGameBoost(
+    function getHash(
         uint256 jobId,
         address paymentToken,
         uint256 jobFee,
@@ -260,20 +166,18 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
     /// @dev callable only by admin
     /// @param _proceedsRecipient the proceeds recipient
     function setProceedsCollector(address _proceedsRecipient) external onlyRole(Roles.ADMIN) {
-        require(_proceedsRecipient != address(0), "GameConsumer: proceeds recipient cannot be address(0)");
         proceedsRecipient = _proceedsRecipient;
 
         emit ProceedsRecipientUpdated(_proceedsRecipient);
     }
 
     /// @notice turn raw eth into wrapped eth
-    function wrapEth() external onlyRole(Roles.ADMIN) {
-        //slither-disable-next-line arbitrary-send-eth
+    function wrapEth() external {
         weth.deposit{value: address(this).balance}();
     }
 
     /// @notice withdraw token proceeds to proceeds recipient
-    function sweepUnclaimed() external onlyRole(Roles.ADMIN) {
+    function sweepUnclaimed() external {
         uint256 tokenBalance = token.balanceOf(address(this));
         token.safeTransfer(proceedsRecipient, tokenBalance);
 
@@ -281,7 +185,7 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
     }
 
     /// @notice withdraw WETH proceeds to proceeds recipient
-    function sweepUnclaimedWeth() external onlyRole(Roles.ADMIN) {
+    function sweepUnclaimedWeth() external {
         uint256 tokenBalance = weth.balanceOf(address(this));
         IERC20(address(weth)).safeTransfer(proceedsRecipient, tokenBalance);
 
