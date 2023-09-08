@@ -69,13 +69,13 @@ contract DeployProposal is Script {
                 // test we are deploying to mainNet
                 if (chainId == MAINNET) {
                     // test if we have already deployed contract.
-                    if (!proposals[i].mainnet_deployed()) {
+                    if (!proposals[i].mainnetDeployed()) {
                         proposals[i].deploy(addresses, address(this));
                     }
                     // test we are deploying to testNet
                 } else if (chainId == TESTNET) {
                     // test if we have already deployed contract.
-                    if (!proposals[i].mainnet_deployed()) {
+                    if (!proposals[i].testnetDeployed()) {
                         proposals[i].deploy(addresses, address(this));
                     }
                     // Deploy to all unknown chains ie localnet without deployment checks per proposal
@@ -97,19 +97,76 @@ contract DeployProposal is Script {
             // After-deploy step
             if (doAfterDeploy) {
                 if (debug) console.log("Proposal", name, "afterDeploy()");
-                proposals[i].afterDeploy(addresses, address(proposals[i]));
+
+                // test we are on mainNet
+                if (chainId == MAINNET) {
+                    // test if we have already deployed contract.
+                    if (!proposals[i].mainnetDeployed()) {
+                        proposals[i].afterDeploy(addresses, address(proposals[i]));
+                    }
+                    // test we are on testNet
+                } else if (chainId == TESTNET) {
+                    // test if we have already deployed contract.
+                    if (!proposals[i].testnetDeployed()) {
+                        proposals[i].afterDeploy(addresses, address(proposals[i]));
+                    }
+                    // Run for all unknown chains ie localnet without deployment checks per proposal
+                } else {
+                    if (debug) {
+                        console.log("Deploying: ", name, "to chainId", chainId);
+                    }
+                    proposals[i].afterDeploy(addresses, address(proposals[i]));
+                }
             }
 
             // Validate step
             if (doValidate) {
                 if (debug) console.log("Proposal", name, "validate()");
-                proposals[i].validate(addresses, address(proposals[i]));
+
+                // test we are on mainNet
+                if (chainId == MAINNET) {
+                    // test if we have already deployed contract.
+                    if (!proposals[i].mainnetDeployed()) {
+                        proposals[i].validate(addresses, address(proposals[i]));
+                    }
+                    // test we are on testNet
+                } else if (chainId == TESTNET) {
+                    // test if we have already deployed contract.
+                    if (!proposals[i].testnetDeployed()) {
+                        proposals[i].validate(addresses, address(proposals[i]));
+                    }
+                    // Run for all unknown chains ie localnet without deployment checks per proposal
+                } else {
+                    if (debug) {
+                        console.log("Deploying: ", name, "to chainId", chainId);
+                    }
+                    proposals[i].validate(addresses, address(proposals[i]));
+                }
             }
 
             // Teardown step
             if (doTeardown) {
                 if (debug) console.log("Proposal", name, "teardown()");
-                proposals[i].teardown(addresses, address(proposals[i]));
+
+                // test we are on mainNet
+                if (chainId == MAINNET) {
+                    // test if we have already deployed contract.
+                    if (!proposals[i].mainnetDeployed()) {
+                        proposals[i].teardown(addresses, address(proposals[i]));
+                    }
+                    // test we are on testNet
+                } else if (chainId == TESTNET) {
+                    // test if we have already deployed contract.
+                    if (!proposals[i].testnetDeployed()) {
+                        proposals[i].teardown(addresses, address(proposals[i]));
+                    }
+                    // Run for all unknown chains ie localnet without deployment checks per proposal
+                } else {
+                    if (debug) {
+                        console.log("Deploying: ", name, "to chainId", chainId);
+                    }
+                    proposals[i].teardown(addresses, address(proposals[i]));
+                }
             }
 
             if (debug) console.log("Proposal", name, "done.");
