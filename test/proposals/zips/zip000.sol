@@ -26,8 +26,8 @@ import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 contract zip000 is Proposal, TimelockProposal {
     string public name = "ZIP000";
     string public description = "The ZTX Genesis Proposal";
-    bool public mainnet_deployed = false;
-    bool public testnet_deployed = false;
+    bool public mainnetDeployed = false;
+    bool public testnetDeployed = false;
 
     address[] public whitelistAddresses;
 

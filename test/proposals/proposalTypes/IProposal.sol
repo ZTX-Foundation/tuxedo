@@ -10,10 +10,10 @@ interface IProposal {
     function description() external view returns (string memory);
 
     // Whether the proposal has been deployed on mainnet
-    function mainnet_deployed() external view returns (bool);
+    function mainnetDeployed() external view returns (bool);
 
     // Whether the proposal has been deployed on testnet
-    function testnet_deployed() external view returns (bool);
+    function testnetDeployed() external view returns (bool);
 
     // Used to explicitly enable or disable debug logs from
     // another solidity file that calls this proposal.
