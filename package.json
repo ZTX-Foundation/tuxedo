@@ -35,9 +35,11 @@
         "start:localnet": "anvil -m 'test test test test test test test test test test test junk'",
         "prepare": "husky install",
         "deploy:localnet": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url http://127.0.0.1:8545 --slow",
-        "deploy:testnet": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $TESTNET_RPC_URL --slow",
+        "deploy:testnet": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --rpc-url $TESTNET_RPC_URL --slow",
+        "deploy:testnet:broadcast": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $TESTNET_RPC_URL --slow",
         "deploy:testnet:resume": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $TESTNET_RPC_URL --slow --resume",
-        "deploy:mainnet": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $MAINNET_RPC_URL --slow",
+        "deploy:mainnet": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --rpc-url $MAINNET_RPC_URL --slow",
+        "deploy:mainnet:broadcast": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $MAINNET_RPC_URL --slow",
         "deploy:mainnet:resume": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $MAINNET_RPC_URL --slow --resume"
     },
     "repository": {
