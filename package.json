@@ -1,5 +1,5 @@
 {
-    "name": "tuxeodo",
+    "name": "tuxedo",
     "version": "1.0.0",
     "type": "module",
     "description": "Solidity smart contracts for ZTX.",
@@ -18,6 +18,7 @@
         "install:foundry": "foundryup || curl -L https://foundry.paradigm.xyz | bash",
         "install:slither": "pip3 install slither-analyzer",
         "install:slither:utx0": "pip3 install git+https://github.com/utx0/slither.git",
+        "clean": "forge clean",
         "build": "forge build --extra-output-files abi",
         "test": "forge test -vvv",
         "test:unit": "forge test -vvv --match-contract UnitTest",
@@ -74,7 +75,7 @@
         "commander": "^11.0.0",
         "eslint": "^8.49.0",
         "eslint-config-prettier": "^9.0.0",
-        "ethers": "5.7.0",
+        "ethers": "^5.7.0",
         "husky": "^8.0.3",
         "jose": "^4.14.6",
         "keccak256": "^1.0.6",
