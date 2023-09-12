@@ -8,12 +8,12 @@ import {Proposal} from "@test/proposals/proposalTypes/Proposal.sol";
 
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
+import {ERC1155SeasonOne, TokenIdRewardAmount} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 import {ERC1155SeasonTwo} from "@protocol/nfts/seasons/ERC1155SeasonTwo.sol";
 
 contract zip001 is Proposal {
     string public name = "ZIP001";
-    string public description = "Season 1 and 2 Capsules NFTs and logic contracts ";
+    string public description = "Season 1 Capsules NFTs and logic contracts ";
     bool public mainnetDeployed = false;
     bool public testnetDeployed = false;
 
@@ -32,14 +32,23 @@ contract zip001 is Proposal {
         );
         addresses.addAddress("ERC1155_SEASON_ONE_CAPSULES", address(erc1155SeasonOneCapsules));
 
-        // TODO why the is this not work??
+        // TODO setSupplyCaps for some reason not working
         // set supply caps for the different season one tiers
-        // erc1155SeasonOneCapsules.setSupplyCap(1, 400);
-        // erc1155SeasonOneCapsules.setSupplyCap(2, 1000);
-        // erc1155SeasonOneCapsules.setSupplyCap(3, 1600);
+        // erc1155SeasonOneCapsules.setSupplyCap(1, 4000); // TODO numbers?
+
+        // Config tokenId to Reaward Amount
+        TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](3);
+        tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 1, tokenSupply: 1000, rewardAmount: 400});
+        tokenIdRewardAmounts[1] = TokenIdRewardAmount({tokenId: 2, tokenSupply: 1000, rewardAmount: 1000});
+        tokenIdRewardAmounts[2] = TokenIdRewardAmount({tokenId: 3, tokenSupply: 1000, rewardAmount: 1600});
 
         // SeasonOne Logic contract setup
-        ERC1155SeasonOne erc1155SeasonOne = new ERC1155SeasonOne(address(core), address(erc1155SeasonOneCapsules));
+        ERC1155SeasonOne erc1155SeasonOne = new ERC1155SeasonOne(
+            address(core),
+            address(erc1155SeasonOneCapsules),
+            addresses.getAddress("TOKEN"),
+            tokenIdRewardAmounts
+        );
         addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne));
 
         // SeasonTwo ERC1155 setup
@@ -49,11 +58,7 @@ contract zip001 is Proposal {
         );
         addresses.addAddress("ERC1155_SEASON_TWO_CAPSULES", address(erc1155SeasonTwoCapsules));
 
-        // TODO setup supplyCaps
-
-        // SeasonTwo Logic contract setup
-        ERC1155SeasonTwo erc1155SeasonTwo = new ERC1155SeasonTwo(address(core), address(erc1155SeasonTwoCapsules));
-        addresses.addAddress("ERC1155_SEASON_TWO", address(erc1155SeasonTwo));
+        // TODO setup supplyCaps for SeasonOne nft capsules
     }
 
     function afterDeploy(Addresses, address) external {}

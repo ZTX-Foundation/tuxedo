@@ -5,5 +5,9 @@ import {SeasonsBase} from "@protocol/nfts/seasons/SeasonsBase.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
 
 contract ERC1155SeasonTwo is SeasonsBase {
-    constructor(address _core, address _nftSeasonContract) SeasonsBase(_core, _nftSeasonContract) {}
+    constructor(
+        address _core,
+        address _nftSeasonContract,
+        address _rewardToken
+    ) SeasonsBase(_core, _nftSeasonContract, _rewardToken) {}
 }
