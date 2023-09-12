@@ -67,7 +67,7 @@
     },
     "dependencies": {
         "@ethersproject/keccak256": "^5.7.0",
-        "@moralisweb3/common-evm-utils": "^2.22.5",
+        "@moralisweb3/common-evm-utils": "^2.23.0",
         "@openzeppelin/merkle-tree": "^1.0.5",
         "@typescript-eslint/eslint-plugin": "^6.6.0",
         "axios": "^1.5.0",
