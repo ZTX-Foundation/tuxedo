@@ -57,7 +57,7 @@
     },
     "homepage": "https://github.com/ZTX-Foundation/tuxeodo#README.md",
     "devDependencies": {
-        "@types/node": "^20.5.9",
+        "@types/node": "^20.6.0",
         "dotenv": "^16.3.1",
         "prettier": "^3.0.3",
         "prettier-plugin-solidity": "^1.1.3",
