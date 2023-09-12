@@ -46,8 +46,10 @@ await contract
         { gasLimit: 100000000, gasPrice: 100000000 }
     )
     .then((tx: any) => {
+        console.log("SUCCESS");
         console.log(tx);
     })
     .catch((err: any) => {
+        console.log("FAILED");
         console.log(err);
     });
