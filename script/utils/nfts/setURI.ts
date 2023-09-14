@@ -7,8 +7,8 @@ import { ethers } from "ethers";
 import { hashMessage } from "@ethersproject/hash";
 
 program
-    .name("claim.ts")
-    .description("Generate a hash and claim a Zepeto NFT")
+    .name("setURI.ts")
+    .description("Set URI on ERC1155MaxSupplyMintable")
     .requiredOption(
         "-i, --abi-path <path>",
         "Path to the ABI file",
