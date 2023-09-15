@@ -46,8 +46,8 @@ contract zip001 is Proposal {
         ERC1155SeasonOne erc1155SeasonOne = new ERC1155SeasonOne(
             address(core),
             address(erc1155SeasonOneCapsules),
-            addresses.getAddress("TOKEN"),
-            tokenIdRewardAmounts
+            addresses.getAddress("TOKEN")
+            // tokenIdRewardAmounts //TODO config contract
         );
         addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne));
 
