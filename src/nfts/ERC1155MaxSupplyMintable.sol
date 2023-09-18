@@ -118,7 +118,6 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef {
     }
 
     // Needed for openSea with ERC1155
-    // TODO - confirm this in testnet
     function uri(uint256 _id) public view virtual override(ERC1155) returns (string memory) {
         //slither-disable-next-line encode-packed-collision
         return string(abi.encodePacked(super.uri(_id), Strings.toString(_id)));
