@@ -222,7 +222,7 @@ contract zip000 is Proposal, TimelockProposal {
             ERC20Splitter.Allocation[] memory allocations = new ERC20Splitter.Allocation[](2);
             allocations[0].deposit = addresses.getAddress("BURNER_WALLET");
             allocations[0].ratio = 5_000;
-            allocations[1].deposit = addresses.getAddress("TREASURY_WALLET"); /// TODO ensure this is properly defined
+            allocations[1].deposit = addresses.getAddress("TREASURY_WALLET");
             allocations[1].ratio = 5_000;
 
             /// ERC20Splitter
@@ -236,9 +236,9 @@ contract zip000 is Proposal, TimelockProposal {
 
             /// ERC1155Sale Splitter
             ERC20Splitter.Allocation[] memory wethAllocations = new ERC20Splitter.Allocation[](2);
-            wethAllocations[0].deposit = addresses.getAddress("WETH_TREASURY_WALLET"); /// TODO ensure this is properly defined
+            wethAllocations[0].deposit = addresses.getAddress("WETH_TREASURY_WALLET");
             wethAllocations[0].ratio = 5_000;
-            wethAllocations[1].deposit = addresses.getAddress("WETH_TREASURY_WALLET"); /// TODO ensure this is properly defined
+            wethAllocations[1].deposit = addresses.getAddress("WETH_TREASURY_WALLET");
             wethAllocations[1].ratio = 5_000;
 
             ERC20Splitter erc1155SaleSplitter = new ERC20Splitter(
@@ -251,7 +251,7 @@ contract zip000 is Proposal, TimelockProposal {
             /// Game consumer
             GameConsumer consumer = new GameConsumer(
                 address(core),
-                addresses.getAddress("TOKEN"), /// TODO fill this in with the proper value once token is deployed
+                addresses.getAddress("TOKEN"),
                 addresses.getAddress("GAME_CONSUMER_PAYMENT_RECIPIENT"),
                 addresses.getAddress("WETH")
             );

@@ -22,9 +22,6 @@ contract Addresses is Test {
         chainId = block.chainid;
         console.log("chainId: ", chainId);
 
-        /// TODO add safe address (should be a timelock) and financial guardian once we have it
-        /// TODO add treasury wallet ERC20HoldingDeposit address once we have it
-
         /** 
 
             ChainId's 
@@ -77,8 +74,6 @@ contract Addresses is Test {
         _addAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT", 421613, 0x0e6aCa776b3d12dd85363Fd6050eE05A4a242be9);
         _addAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT", 421614, 0x0e6aCa776b3d12dd85363Fd6050eE05A4a242be9);
         _addAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT", 11155111, 0x0e6aCa776b3d12dd85363Fd6050eE05A4a242be9);
-
-        /// TODO Get real addresses
 
         /// Finance Guardian Safe Address
         _addAddress("FINANCE_GUARDIAN_SAFE_ADDRESS", 31337, 0x0000000000000000000000000000000000000001);
