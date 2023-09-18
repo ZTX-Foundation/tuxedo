@@ -47,7 +47,7 @@ contract UnitTestToken is Test {
         assertEq(token.getVotes(address(1)), 1);
     }
 
-    function testTransferVotesWithoutRedelegation() public {
+    function testTransferVotesAgain() public {
         token.approve(address(1), 1);
         token.transfer(address(1), 1);
         assertEq(token.getVotes(address(this)), MAX_SUPPLY - 1);
