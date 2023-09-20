@@ -32,23 +32,22 @@ contract zip001 is Proposal {
         );
         addresses.addAddress("ERC1155_SEASON_ONE_CAPSULES", address(erc1155SeasonOneCapsules));
 
-        // TODO setSupplyCaps for some reason not working
-        // set supply caps for the different season one tiers
-        // erc1155SeasonOneCapsules.setSupplyCap(1, 4000); // TODO numbers?
-
         // Config tokenId to Reaward Amount
         TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](3);
-        tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 1, tokenSupply: 1000, rewardAmount: 400});
-        tokenIdRewardAmounts[1] = TokenIdRewardAmount({tokenId: 2, tokenSupply: 1000, rewardAmount: 1000});
-        tokenIdRewardAmounts[2] = TokenIdRewardAmount({tokenId: 3, tokenSupply: 1000, rewardAmount: 1600});
+        tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 1, rewardAmount: 400});
+        tokenIdRewardAmounts[1] = TokenIdRewardAmount({tokenId: 2, rewardAmount: 1000});
+        tokenIdRewardAmounts[2] = TokenIdRewardAmount({tokenId: 3, rewardAmount: 1600});
 
         // SeasonOne Logic contract setup
         ERC1155SeasonOne erc1155SeasonOne = new ERC1155SeasonOne(
             address(core),
             address(erc1155SeasonOneCapsules),
             addresses.getAddress("TOKEN")
-            // tokenIdRewardAmounts //TODO config contract
         );
+
+        // TODO erc1155.setSupplyCap(1, 4000); needs to be called by admin before this?
+        // erc1155SeasonOne.configSeasonDistribution(tokenIdRewardAmounts);
+
         addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne));
 
         // SeasonTwo ERC1155 setup

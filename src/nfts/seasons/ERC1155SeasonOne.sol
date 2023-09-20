@@ -11,7 +11,6 @@ import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.
 
 struct TokenIdRewardAmount {
     uint256 tokenId;
-    uint256 tokenSupply;
     uint256 rewardAmount;
 }
 
@@ -19,7 +18,6 @@ contract ERC1155SeasonOne is SeasonsBase {
     using SafeERC20 for IERC20;
 
     mapping(uint256 tokenId => uint256 rewardAmount) public tokenIdRewardAmount;
-    mapping(uint256 tokenId => uint256 tokenSupply) public tokenIdSupply; // TODO use the ERC1155 supply??
     mapping(uint256 tokenId => uint256 usedAmount) public tokenIdUsedAmount;
 
     constructor(
@@ -28,17 +26,24 @@ contract ERC1155SeasonOne is SeasonsBase {
         address _rewardToken
     ) SeasonsBase(_core, _nftContract, _rewardToken) {}
 
+    /// @notice config the season distribution
+    /// @dev _nftContract much have setSupplyCap() set or this tx will revert.
     function configSeasonDistribution(
         TokenIdRewardAmount[] memory tokenIdRewardAmounts
     ) external whenNotPaused onlyRole(Roles.ADMIN) returns (uint256) {
         uint256 _totalRewardTokens = 0;
         // set tokenIdRewardAmount mapping
         for (uint256 i = 0; i < tokenIdRewardAmounts.length; i++) {
+            require(tokenIdRewardAmounts[i].rewardAmount > 0, "ERC1155SeasonOne: rewardAmount cannot be 0");
             tokenIdRewardAmount[tokenIdRewardAmounts[i].tokenId] = tokenIdRewardAmounts[i].rewardAmount;
-            tokenIdSupply[tokenIdRewardAmounts[i].tokenId] = tokenIdRewardAmounts[i].tokenSupply;
+
+            uint _maxTokenSupply = ERC1155MaxSupplyMintable(nftContract).maxTokenSupply(
+                tokenIdRewardAmounts[i].tokenId
+            );
+            require(_maxTokenSupply != 0, "ERC1155SeasonOne: maxTokenSupply cannot be 0");
 
             // Running total of totalPaymentToken amount needed by the contract to be solvent
-            _totalRewardTokens += (tokenIdRewardAmounts[i].rewardAmount * tokenIdRewardAmounts[i].tokenSupply);
+            _totalRewardTokens += (tokenIdRewardAmounts[i].rewardAmount * _maxTokenSupply);
         }
         totalRewardTokens = _totalRewardTokens;
         return totalRewardTokens;
@@ -54,11 +59,7 @@ contract ERC1155SeasonOne is SeasonsBase {
         );
 
         /// ---- effects ---- ///
-        uint256 _rewardAmount = tokenIdRewardAmount[tokenId]; // 400
-        uint256 _tokenSupply = tokenIdSupply[tokenId] - 1;
-
-        // Reduce the total supply
-        tokenIdSupply[tokenId] = _tokenSupply; // TODO this might not be needed once I switch to ERC1155 supply method.
+        uint256 _rewardAmount = tokenIdRewardAmount[tokenId];
 
         // Increase the counter for the amount of reward tokens used
         tokenIdUsedAmount[tokenId] += _rewardAmount;
