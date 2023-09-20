@@ -15,7 +15,7 @@ import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegis
 
 contract zip001 is Proposal {
     string public name = "ZIP001";
-    string public description = "Season 1 Capsules NFTs and logic contracts ";
+    string public description = "Capsules NFTs and Seaon's One logic contracts ";
     bool public mainnetDeployed = false;
     bool public testnetDeployed = false;
 
@@ -32,11 +32,11 @@ contract zip001 is Proposal {
         );
 
         // SeasonOne ERC1155 setup
-        ERC1155MaxSupplyMintable erc1155SeasonOneCapsules = new ERC1155MaxSupplyMintable(
+        ERC1155MaxSupplyMintable erc1155CapsulesNFT = new ERC1155MaxSupplyMintable(
             address(core),
             string(abi.encodePacked(_metadataBaseUri, "/seasons/1/capsules/metadata/")) //TODO confirm path
         );
-        addresses.addAddress("ERC1155_SEASON_ONE_CAPSULES", address(erc1155SeasonOneCapsules));
+        addresses.addAddress("ERC1155_CAPSULES_NFT", address(erc1155CapsulesNFT));
 
         // Config tokenId to Reaward Amount
         TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](3);
@@ -47,24 +47,14 @@ contract zip001 is Proposal {
         // SeasonOne Logic contract setup
         ERC1155SeasonOne erc1155SeasonOne = new ERC1155SeasonOne(
             address(core),
-            address(erc1155SeasonOneCapsules),
+            address(erc1155CapsulesNFT),
             addresses.getAddress("TOKEN"),
             addresses.getAddress("SEASONS_TOKENID_REGISTRY")
         );
+        addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne));
 
         // TODO erc1155.setSupplyCap(1, 4000); needs to be called by admin before this?
         // erc1155SeasonOne.configSeasonDistribution(tokenIdRewardAmounts);
-
-        addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne));
-
-        // SeasonTwo ERC1155 setup
-        ERC1155MaxSupplyMintable erc1155SeasonTwoCapsules = new ERC1155MaxSupplyMintable(
-            address(core),
-            string(abi.encodePacked(_metadataBaseUri, "/seasons/2/capsules/metadata/")) //TODO confirm path
-        );
-        addresses.addAddress("ERC1155_SEASON_TWO_CAPSULES", address(erc1155SeasonTwoCapsules));
-
-        // TODO setup supplyCaps for SeasonOne nft capsules
     }
 
     function afterDeploy(Addresses, address) external {}
