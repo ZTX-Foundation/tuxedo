@@ -81,7 +81,7 @@
         "keccak256": "^1.0.6",
         "lint-staged": "^14.0.1",
         "merkletreejs": "^0.3.10",
-        "moralis": "^2.23.0",
+        "moralis": "^2.23.1",
         "soltypes": "^2.0.0"
     },
     "lint-staged": {
