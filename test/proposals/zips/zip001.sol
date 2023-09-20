@@ -31,7 +31,7 @@ contract zip001 is Proposal {
             abi.encodePacked("https://meta.", vm.envString("ENVIRONMENT"), vm.envString("DOMAIN"), "/")
         );
 
-        // SeasonOne ERC1155 setup
+        // CapsulesNFT ERC1155 setup
         ERC1155MaxSupplyMintable erc1155CapsulesNFT = new ERC1155MaxSupplyMintable(
             address(core),
             string(abi.encodePacked(_metadataBaseUri, "/seasons/1/capsules/metadata/")) //TODO confirm path
@@ -49,7 +49,7 @@ contract zip001 is Proposal {
             address(core),
             address(erc1155CapsulesNFT),
             addresses.getAddress("TOKEN"),
-            addresses.getAddress("SEASONS_TOKENID_REGISTRY")
+            address(seasonsTokenIdRegistry)
         );
         addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne));
 

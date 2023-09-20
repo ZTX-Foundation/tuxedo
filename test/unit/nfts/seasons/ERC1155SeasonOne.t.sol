@@ -170,7 +170,6 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         _seasonOne.redeem(_tokenId);
 
         assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 400);
-        // assertEq(_seasonOne.tokenIdSupply(_tokenId), 1000 - 1);
         assertEq(_capsuleNFT.balanceOf(address(this), _tokenId), 0); // moved
         assertEq(_capsuleNFT.balanceOf(address(_seasonOne), _tokenId), 0); // burnt
         assertEq(token.balanceOf(address(this)), 400);

@@ -15,6 +15,7 @@ contract UnitTestSeasonsTokenIdRegistry is BaseTest {
         _registry = new SeasonsTokenIdRegistry(address(core));
     }
 
+    // TODO added permission testing
     function testRegister() public {
         assertEq(_registry.tokenIdSeasonContract(0), address(0x0)); // not registered
 
