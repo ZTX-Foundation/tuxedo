@@ -8,8 +8,10 @@ import {Proposal} from "@test/proposals/proposalTypes/Proposal.sol";
 
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-import {ERC1155SeasonOne, TokenIdRewardAmount} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
+import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
+import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 import {ERC1155SeasonTwo} from "@protocol/nfts/seasons/ERC1155SeasonTwo.sol";
+import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
 
 contract zip001 is Proposal {
     string public name = "ZIP001";
@@ -19,6 +21,10 @@ contract zip001 is Proposal {
 
     function deploy(Addresses addresses, address) public {
         Core core = Core(addresses.getAddress("CORE"));
+
+        // SeasonsTokenIdRegistry setup
+        SeasonsTokenIdRegistry seasonsTokenIdRegistry = new SeasonsTokenIdRegistry(address(core));
+        addresses.addAddress("SEASONS_TOKENID_REGISTRY", address(seasonsTokenIdRegistry));
 
         /// ERC1155MaxSupplyMintable
         string memory _metadataBaseUri = string(
@@ -42,7 +48,8 @@ contract zip001 is Proposal {
         ERC1155SeasonOne erc1155SeasonOne = new ERC1155SeasonOne(
             address(core),
             address(erc1155SeasonOneCapsules),
-            addresses.getAddress("TOKEN")
+            addresses.getAddress("TOKEN"),
+            addresses.getAddress("SEASONS_TOKENID_REGISTRY")
         );
 
         // TODO erc1155.setSupplyCap(1, 4000); needs to be called by admin before this?

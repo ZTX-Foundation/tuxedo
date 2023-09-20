@@ -6,20 +6,28 @@ import "@forge-std/console.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-import {ERC1155SeasonOne, TokenIdRewardAmount} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
+import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
+import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
 import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
 import {SeasonBase} from "@test/unit/nfts/seasons/SeasonBase.t.sol";
+import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
 
 contract UnitTestERC1155SeasonOne is SeasonBase {
+    SeasonsTokenIdRegistry private _registry;
     ERC1155SeasonOne private _seasonOne;
     ERC1155MaxSupplyMintable private _capsuleNFT;
     ERC1155AutoGraphMinter private _autoGraphMinter;
 
     function setUp() public override(SeasonBase) {
         super.setUp();
+
+        // Deploy registry
+        _registry = new SeasonsTokenIdRegistry(address(core));
+
+        // Deploy capsule NFT
         _capsuleNFT = new ERC1155MaxSupplyMintable(address(core), "");
 
         // Set supply
@@ -36,7 +44,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         assertEq(_capsuleNFT.maxTokenSupply(3), 1000);
 
         // Deploy season logic contract
-        _seasonOne = new ERC1155SeasonOne(address(core), address(_capsuleNFT), address(token));
+        _seasonOne = new ERC1155SeasonOne(address(core), address(_capsuleNFT), address(token), address(_registry));
     }
 
     /// ----------------------------------- Helpers ----------------------------------------------/
@@ -77,6 +85,9 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
 
         assertEq(_seasonOne.totalRewardTokens(), calulateTotalRewardAmount(tokenIdRewardAmounts));
+        assertEq(_registry.tokenIdSeasonContract(1), address(_seasonOne));
+        assertEq(_registry.tokenIdSeasonContract(2), address(_seasonOne));
+        assertEq(_registry.tokenIdSeasonContract(3), address(_seasonOne));
         return _seasonOne.totalRewardTokens();
     }
 
