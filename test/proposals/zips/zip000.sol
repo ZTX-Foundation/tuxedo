@@ -47,21 +47,27 @@ contract zip000 is Proposal, TimelockProposal {
             );
             ERC1155MaxSupplyMintable erc1155Consumables = new ERC1155MaxSupplyMintable(
                 address(core),
-                string(abi.encodePacked(_metadataBaseUri, "consumables/metadata/"))
+                string(abi.encodePacked(_metadataBaseUri, "consumables/metadata/")),
+                "ZTX Consumables",
+                "ZTXC"
             );
 
             addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES", address(erc1155Consumables));
 
             ERC1155MaxSupplyMintable erc1155Placeables = new ERC1155MaxSupplyMintable(
                 address(core),
-                string(abi.encodePacked(_metadataBaseUri, "placeables/metadata/"))
+                string(abi.encodePacked(_metadataBaseUri, "placeables/metadata/")),
+                "ZTX Placeables",
+                "ZTXP"
             );
 
             addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES", address(erc1155Placeables));
 
             ERC1155MaxSupplyMintable erc1155Wearables = new ERC1155MaxSupplyMintable(
                 address(core),
-                string(abi.encodePacked(_metadataBaseUri, "wearables/metadata/"))
+                string(abi.encodePacked(_metadataBaseUri, "wearables/metadata/")),
+                "ZTX Wearables",
+                "ZTXW"
             );
 
             addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", address(erc1155Wearables));
