@@ -20,15 +20,15 @@ npm install
 
 The system also requires the following environment variables to be set:
 
-| Variable             | Description                                                           |
-|----------------------|-----------------------------------------------------------------------|
-| `TOKEN_NAME`         | The name of the token (e.g. `ZTX Token`).                             |
-| `TOKEN_SYMBOL`       | The symbol of the primay token (e.g. `ZTX`).                          |
-| `DOMAIN`             | The domain of where the metadata is hosted.                           |
-| `ENVIRONMENT`        | The environment of the deployment (`devnet`, `testnet` or `mainnet`). |
-| `DEPLOY_PRIVATE_KEY` | The private key of the deployer.                                      |
-| `MAINNET_RPC_URL`    | Arbitrum mainnet RPC host.                                            |
-| `TESTNET_RPC_URL`    | Arbitrum testnet RPC host.                                            |
+| Variable               | Description                                                           |
+|------------------------|-----------------------------------------------------------------------|
+| `TOKEN_NAME`           | The name of the token (e.g. `ZTX Token`).                             |
+| `TOKEN_SYMBOL`         | The symbol of the primay token (e.g. `ZTX`).                          |
+| `DOMAIN`               | The domain of where the metadata is hosted.                           |
+| `ENVIRONMENT`          | The environment of the deployment (`devnet`, `testnet` or `mainnet`). |
+| `DEPLOYER_PRIVATE_KEY` | The private key of the deployer.                                      |
+| `MAINNET_RPC_URL`      | Arbitrum mainnet RPC host.                                            |
+| `TESTNET_RPC_URL`      | Arbitrum testnet RPC host.                                            |
 
 See the included `.env.example` for an example.
 
@@ -112,28 +112,28 @@ npm run deploy:mainnet
 
 | Address                                      | Contract                                                                                                                                           |
 |----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `0xB4caf09D4C48F57BAe0F6855BDB35578cb209d9B` | [CORE](./src/core/Core.sol)                                                                                                                        |
-| `0x4C8e3dE76a28dd2fD3A9f97309e65e55250b292B` | [GLOBAL_REENTRANCY_LOCK](./src/core/GlobalReentrancyLock.sol)                                                                                      |
-| `0xF80C85400dE2A07A86A09A7C16B5F31839e853A9` | [ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES](./src/nfts/ERC1155MaxSupplyMintable.sol)                                                                 |
-| `0x1C7dc2028cE530D068368eB6786f9d70a757Ed62` | [ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES](./src/nfts/ERC1155MaxSupplyMintable.sol)                                                                  |
-| `0xEa76Ea43146ecd6DdB5f946C8C8B3951464A6872` | [ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES](./src/nfts/ERC1155MaxSupplyMintable.sol)                                                                   |
-| `0xf6477b6A2bC62E857B41ba51E7f23E5FAf23B261` | [ERC1155_AUTO_GRAPH_MINTER](./src/nfts/ERC1155AutoGraphMinter.sol)                                                                                 |
-| `0xa3794C22BAC59a0953144d1E9E9190ccC0f71122` | [WETH_ERC20_HOLDING_DEPOSIT](./src/finance/ERC20HoldingDeposit.sol)                                                                                |
+| `0x27c10c0af3Ab74B789aA31b20FFdcF5C87d3737C` | [CORE](./src/core/Core.sol)                                                                                                                        |
+| `0x6820c0dF420e8bce0408eA09822E7B12a58F45D6` | [GLOBAL_REENTRANCY_LOCK](./src/core/GlobalReentrancyLock.sol)                                                                                      |
+| `0x3F5DEdE9A945887C60b64EC82F758a6249d109bf` | [ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES](./src/nfts/ERC1155MaxSupplyMintable.sol)                                                                 |
+| `0xdC00e09fa79EC1a4489EDa68Bc911073cEad2c6c` | [ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES](./src/nfts/ERC1155MaxSupplyMintable.sol)                                                                  |
+| `0x0D1485e5C5c43610e45A7951271599Ad89477207` | [ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES](./src/nfts/ERC1155MaxSupplyMintable.sol)                                                                   |
+| `0xFCbb6D5bDc0FC357a44Eb1E89adFC1C8AB646FB9` | [ERC1155_AUTO_GRAPH_MINTER](./src/nfts/ERC1155AutoGraphMinter.sol)                                                                                 |
+| `0x04f1267c0dEf0582C049597e8beD5FB36518aC1E` | [WETH_ERC20_HOLDING_DEPOSIT](./src/finance/ERC20HoldingDeposit.sol)                                                                                |
 | `0xFc601A8654aA5857C8C2336AA5f1EC9197e51450` | [ZTX HOODIE](./src/nfts/ERC721ZepetoUA.sol)                                                                                                        |
-| `0x680F37C43dFBA1d7548967FEFbFC535B2d308288` | [ERC1155_SALE_CONSUMABLES](./src/sale/ERC1155Sale.sol)                                                                                             |
-| `0xf0918056423c3E6874389Fb39c5a6062f6f9fD37` | [ERC1155_SALE_PLACEABLES](./src/sale/ERC1155Sale.sol)                                                                                              |
-| `0x9277345CaBC05e3333072780B9FE485B540D414A` | [ERC1155_SALE_WEARABLES](./src/sale/ERC1155Sale.sol)                                                                                               |
-| `0xe0664e399Df8956b480F6427C55c24524137C772` | [FINANCE_GUARDIAN](./src/finance/FinanceGuardian.sol)                                                                                              |
-| `0xaF51C3dA399edE8053355CDd2EbDDE11Eb981811` | [TOKEN](./src/token/Token.sol)                                                                                                                     |
-| `0x3Dd78251E48fc0E93b2Dd1D0aA8970cF59eF1315` | [GOVERNOR_DAO](./src/governance/GovernorDAO.sol)                                                                                                   |
-| `0xc5a3897f039c8989CD4837521516Cdc2222E2D36` | [GOVERNOR_DAO_TIMELOCK_CONTROLLER](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/governance/TimelockController.sol) |
-| `0xb000d9c3D4893f552082f54798869Ad9cb880E79` | [ADMIN_TIMELOCK_CONTROLLER](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/governance/TimelockController.sol)        |
-| `0x13283881c765eC27C6F1eC5Bc3CbF2cDA70D11Fd` | [BURNER_WALLET](./src/finance/ERC20HoldingDeposit.sol)                                                                                             |
-| `0x275769905723E8E6166Ae3b1beC0bD6ca2625759` | [TREASURY_WALLET](./src/finance/ERC20HoldingDeposit.sol)                                                                                           |
-| `0x76418614d5F94CFD09974d35DC1D1d443aa4abC8` | [WETH_TREASURY_WALLET](./src/finance/ERC20HoldingDeposit.sol)                                                                                      |
-| `0x72188A38E84a245A40F95a7eb7C9f80e13b8D710` | [CONSUMABLE_SPLITTER](./src/finance/ERC20Splitter.sol)                                                                                             |
-| `0x4C084e0975674dfB0C1D45572DFcD32919Aa8058` | [ERC1155_SALE_SPLITTER](./src/finance/ERC20Splitter.sol)                                                                                           |
-| `0x0B9905C4EC0BD8faBD905b1fD684aCd476338FE1` | [GAME_CONSUMABLE](./src/game/GameConsumer.sol)                                                                                                     |
+| `0x5d6ce3C67Da4c13cb02Be63E06a989C1d4aF1CED` | [ERC1155_SALE_CONSUMABLES](./src/sale/ERC1155Sale.sol)                                                                                             |
+| `0x213359FF756612f19BFEd8167Fd84343e9246943` | [ERC1155_SALE_PLACEABLES](./src/sale/ERC1155Sale.sol)                                                                                              |
+| `0x44bbbB8F7Bb8536E94a134D130ac86744704087D` | [ERC1155_SALE_WEARABLES](./src/sale/ERC1155Sale.sol)                                                                                               |
+| `0x982be1aE69d29EAb6C9F185cFF0B7417f0072479` | [FINANCE_GUARDIAN](./src/finance/FinanceGuardian.sol)                                                                                              |
+| `0x80602B72cc5D87e99441F5926994c493d115D148` | [TOKEN](./src/token/Token.sol)                                                                                                                     |
+| `0x53C6524bAd5a74500DfAB3Eacd18D154cc0Eaf51` | [GOVERNOR_DAO](./src/governance/GovernorDAO.sol)                                                                                                   |
+| `0x87BB0A020C2D54f3F44b200527395A9426Cdf8aA` | [GOVERNOR_DAO_TIMELOCK_CONTROLLER](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/governance/TimelockController.sol) |
+| `0x3f83406124203728e7ef4dad9132A87fE33321dC` | [ADMIN_TIMELOCK_CONTROLLER](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/governance/TimelockController.sol)        |
+| `0xb4c86d670615A597A4FEf8bc8C6b9F0729D07dDF` | [BURNER_WALLET](./src/finance/ERC20HoldingDeposit.sol)                                                                                             |
+| `0xe6Dd8De10a2596Aa822334e6627BfeBcb3abFfF0` | [TREASURY_WALLET](./src/finance/ERC20HoldingDeposit.sol)                                                                                           |
+| `0xEC08dBc2c4C42De5A77111831e8872723e356843` | [WETH_TREASURY_WALLET](./src/finance/ERC20HoldingDeposit.sol)                                                                                      |
+| `0x5E91b94089dcaCB4C14346Ac2736B9ba4B8eEe8b` | [CONSUMABLE_SPLITTER](./src/finance/ERC20Splitter.sol)                                                                                             |
+| `0xFecC1EA89705247A5B104c55cc85F2071E7C1bD3` | [ERC1155_SALE_SPLITTER](./src/finance/ERC20Splitter.sol)                                                                                           |
+| `0xdde8cF29ee078B5a82C88d6Cf7CBF9600c4Cf81e` | [GAME_CONSUMABLE](./src/game/GameConsumer.sol)                                                                                                     |
 
 ### Arbitrum Sepolia (testnet)
 
