@@ -10,6 +10,12 @@ import {CoreRef} from "@protocol/refs/CoreRef.sol";
 /// Base ERC 1155 NFT with total supply
 /// Inherits CoreRef for roles and access
 contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef {
+    /// @notice contract name
+    string private _name;
+
+    /// @notice contract symbol
+    string private _symbol;
+
     /// @notice an event emitted when a token's supply cap is updated
     event SupplyCapUpdated(uint256 tokenId, uint256 previousMaxSupply, uint256 maxSupply);
 
@@ -29,7 +35,15 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef {
     mapping(uint256 tokenId => uint256 tokenMaxSupply) public maxTokenSupply;
 
     /// @notice construct the ERC1155 with total supply and CoreRef
-    constructor(address _core, string memory _uri) CoreRef(_core) ERC1155(_uri) {}
+    constructor(
+        address _core,
+        string memory _uri,
+        string memory name_,
+        string memory symbol_
+    ) CoreRef(_core) ERC1155(_uri) {
+        _name = name_;
+        _symbol = symbol_;
+    }
 
     /// @notice set the supply cap for a given token, cannot be less than current supply
     /// @param tokenId the id of the token to update
@@ -100,6 +114,16 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef {
     /// @param tokenId the id of the token to query
     function getMintAmountLeft(uint256 tokenId) public view returns (uint256) {
         return maxTokenSupply[tokenId] - totalSupply(tokenId);
+    }
+
+    /// @notice returns the name of the token
+    function name() public view returns (string memory) {
+        return _name;
+    }
+
+    /// @notice returns the symbol of the token
+    function symbol() public view returns (string memory) {
+        return _symbol;
     }
 
     /// ----------- INTERNAL OVERRIDES ------------

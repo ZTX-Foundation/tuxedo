@@ -10,6 +10,8 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
     function testSetup() public {
         assertEq(address(nft.core()), address(core));
         assertEq("https://exampleUri.com/0", nft.uri(0));
+        assertEq(nft.name(), "NFT");
+        assertEq(nft.symbol(), "NFT");
         assertEq(nft.getMintAmountLeft(tokenId), supplyCap);
         assertEq(nft.totalSupply(tokenId), 0);
     }
