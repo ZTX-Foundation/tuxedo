@@ -46,6 +46,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         // Deploy season logic contract
         _seasonOne = new ERC1155SeasonOne(address(core), address(_capsuleNFT), address(token), address(_registry));
 
+        // Give contract the registry operator role
         vm.prank(addresses.adminAddress);
         core.grantRole(Roles.REGISTRY_OPERATOR, address(_seasonOne));
     }
