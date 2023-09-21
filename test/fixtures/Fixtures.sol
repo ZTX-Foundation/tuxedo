@@ -33,6 +33,7 @@ function getCore(Vm vm) returns (Core) {
     core.grantRole(Roles.FINANCIAL_GUARDIAN, TestAddresses.financialGuardianAddress);
     core.grantRole(Roles.LOCKER, TestAddresses.lockerAddress);
     core.grantRole(Roles.MINTER_NOTARY, TestAddresses.minterNotaryAddress);
+    core.grantRole(Roles.REGISTRY_OPERATOR, TestAddresses.registryOperatorAddress);
 
     vm.stopPrank();
     return core;

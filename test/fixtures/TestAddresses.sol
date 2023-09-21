@@ -16,4 +16,5 @@ library TestAddresses {
     address public constant safeAddress = address(0x12);
     address public constant minterNotaryAddress = address(0x13);
     address public constant lockerAddress = address(0x14);
+    address public constant registryOperatorAddress = address(0x15);
 }

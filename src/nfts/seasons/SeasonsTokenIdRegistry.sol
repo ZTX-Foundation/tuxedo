@@ -1,15 +1,18 @@
 pragma solidity 0.8.18;
 
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
+import {Roles} from "@protocol/core/Roles.sol";
 
 contract SeasonsTokenIdRegistry is CoreRef {
     mapping(uint256 tokenId => address seasonContract) public tokenIdSeasonContract;
 
     constructor(address _core) CoreRef(_core) {}
 
-    //TODO permission with a Role
     /// @notice Register a tokenId to a seasonContract
-    function register(uint256 tokenId, address seasonContract) public {
+    function register(
+        uint256 tokenId,
+        address seasonContract
+    ) external onlyRole(Roles.REGISTRY_OPERATOR) whenNotPaused {
         _register(tokenId, seasonContract);
     }
 
@@ -21,8 +24,10 @@ contract SeasonsTokenIdRegistry is CoreRef {
         tokenIdSeasonContract[tokenId] = seasonContract;
     }
 
-    // TODO permission with a Role
-    function registerBatch(uint256[] memory tokenIds, address seasonContract) external {
+    function registerBatch(
+        uint256[] memory tokenIds,
+        address seasonContract
+    ) external onlyRole(Roles.REGISTRY_OPERATOR) whenNotPaused {
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _register(tokenIds[i], seasonContract);
         }

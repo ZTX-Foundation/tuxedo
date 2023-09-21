@@ -31,6 +31,7 @@ contract Core is AccessControlEnumerable {
         _setRoleAdmin(Roles.LOCKER, Roles.ADMIN);
         _setRoleAdmin(Roles.MINTER_NOTARY, Roles.ADMIN);
         _setRoleAdmin(Roles.GAME_CONSUMER_NOTARY, Roles.ADMIN);
+        _setRoleAdmin(Roles.REGISTRY_OPERATOR, Roles.ADMIN);
     }
 
     /// @notice create a new role. This is the only way
@@ -45,7 +46,10 @@ contract Core is AccessControlEnumerable {
     /// @param _lock the address of the new lock
     /// @dev only callable by admin or token governor
     function setGlobalLock(address _lock) external {
-        require(hasRole(Roles.ADMIN, msg.sender) || hasRole(Roles.TOKEN_GOVERNOR, msg.sender), "Core: must be admin or token governor");
+        require(
+            hasRole(Roles.ADMIN, msg.sender) || hasRole(Roles.TOKEN_GOVERNOR, msg.sender),
+            "Core: must be admin or token governor"
+        );
 
         address oldLock = address(lock);
         lock = IGlobalReentrancyLock(_lock);
