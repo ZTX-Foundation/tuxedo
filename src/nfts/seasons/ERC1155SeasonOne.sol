@@ -27,7 +27,7 @@ contract ERC1155SeasonOne is SeasonsBase {
     /// @dev _nftContract much have setSupplyCap() set or this tx will revert.
     function configSeasonDistribution(
         TokenIdRewardAmount[] memory tokenIdRewardAmounts
-    ) external override whenNotPaused onlyRole(Roles.ADMIN) returns (uint256) {
+    ) external override onlyRole(Roles.DEPLOYER) sealAfter returns (uint256) {
         uint256 _totalRewardTokens = 0;
         // set tokenIdRewardAmount mapping
         for (uint256 i = 0; i < tokenIdRewardAmounts.length; i++) {

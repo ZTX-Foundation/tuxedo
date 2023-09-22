@@ -32,6 +32,7 @@ contract Core is AccessControlEnumerable {
         _setRoleAdmin(Roles.MINTER_NOTARY, Roles.ADMIN);
         _setRoleAdmin(Roles.GAME_CONSUMER_NOTARY, Roles.ADMIN);
         _setRoleAdmin(Roles.REGISTRY_OPERATOR, Roles.ADMIN);
+        _setRoleAdmin(Roles.DEPLOYER, Roles.ADMIN);
     }
 
     /// @notice create a new role. This is the only way

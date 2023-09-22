@@ -57,7 +57,9 @@ contract zip001 is Proposal {
         // erc1155SeasonOne.configSeasonDistribution(tokenIdRewardAmounts);
     }
 
-    function afterDeploy(Addresses, address) external {}
+    function afterDeploy(Addresses, address) external {
+        // TODO give seasonOne contract the registry operator role?
+    }
 
     function build(Addresses) external {}
 

@@ -6,10 +6,11 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 import {Roles} from "@protocol/core/Roles.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
+import {Sealable} from "@protocol/utils/extensions/Sealable.sol";
 
 /// Base ERC 1155 NFT with total supply
 /// Inherits CoreRef for roles and access
-contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef {
+contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef, Sealable {
     /// @notice an event emitted when a token's supply cap is updated
     event SupplyCapUpdated(uint256 tokenId, uint256 previousMaxSupply, uint256 maxSupply);
 
@@ -35,6 +36,20 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef {
     /// @param tokenId the id of the token to update
     /// @param maxSupply the new max supply of the token
     function setSupplyCap(uint256 tokenId, uint256 maxSupply) external onlyRole(Roles.ADMIN) {
+        _setSupplyCap(tokenId, maxSupply);
+    }
+
+    /// @notice set the supply cap for a given token, cannot be less than current supply. Can only be called once by the DEPLOYER role
+    /// @param tokenId the id of the token to update
+    /// @param maxSupply the new max supply of the token
+    function setSupplyCapAtDeployment(uint256 tokenId, uint256 maxSupply) external onlyRole(Roles.DEPLOYER) sealAfter {
+        _setSupplyCap(tokenId, maxSupply);
+    }
+
+    /// @dev internal function to set the supply cap for a given token, cannot be less than current supply
+    /// @param tokenId the id of the token to update
+    /// @param maxSupply the new max supply of the token
+    function _setSupplyCap(uint256 tokenId, uint256 maxSupply) internal {
         require(maxSupply >= totalSupply(tokenId), "BaseERC1155NFT: maxSupply cannot be less than current supply");
 
         uint256 oldSupplyCap = maxTokenSupply[tokenId];
