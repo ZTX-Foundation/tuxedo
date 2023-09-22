@@ -2,7 +2,7 @@ pragma solidity 0.8.18;
 
 import "@forge-std/Test.sol";
 
-contract Utilities is Test {
+contract UnitTestUtilities is Test {
     bytes32 internal nextUser = keccak256(abi.encodePacked("nextUser"));
 
     function getNextUserAddress() external returns (address payable) {

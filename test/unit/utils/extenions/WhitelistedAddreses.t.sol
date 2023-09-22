@@ -24,7 +24,7 @@ contract TestContract is WhitelistedAddresses {
     }
 }
 
-contract WhitelistedAddressesTest is Test {
+contract UnitTestWhitelistedAddressesTest is Test {
     TestContract public dummy;
 
     address[] public _defaultAddresses = [address(0x123), address(0x456), address(789)];

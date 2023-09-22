@@ -3,7 +3,7 @@ pragma solidity 0.8.18;
 import "@forge-std/Test.sol";
 import "@protocol/utils/Strings.sol";
 
-contract StringsUtils is Test {
+contract UnitTestStringsUtils is Test {
     using StringUtils for string;
 
     function testToLowerCase() public {
