@@ -13,7 +13,6 @@ contract Token is ERC20Permit, ERC20Votes {
         _mint(msg.sender, MAX_SUPPLY);
     }
 
-    /// TODO this should be reviewed as it is probably not necessary
     function maxSupply() public pure returns (uint256) {
         return MAX_SUPPLY;
     }
@@ -24,13 +23,14 @@ contract Token is ERC20Permit, ERC20Votes {
     }
 
     /// require for ERC20Votes
-    /// TODO confirm both erc20 and erc20votes _afterTokenTransfer hooks are called
     function _afterTokenTransfer(
         address from,
         address to,
         uint256 amount
     ) internal virtual override(ERC20, ERC20Votes) {
         super._afterTokenTransfer(from, to, amount);
+
+        _delegate(to, to);
     }
 
     function _burn(address account, uint256 amount) internal virtual override(ERC20, ERC20Votes) {

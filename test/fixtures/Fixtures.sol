@@ -64,7 +64,7 @@ function getSystem(
     ERC1155Sale sale;
     {
         MockWeth weth = new MockWeth();
-        nft = new ERC1155MaxSupplyMintable(address(core), "https://exampleUri.com/");
+        nft = new ERC1155MaxSupplyMintable(address(core), "https://exampleUri.com/", "NFT", "NFT");
         sale = new ERC1155Sale(address(core), address(nft), address(weth));
     }
 

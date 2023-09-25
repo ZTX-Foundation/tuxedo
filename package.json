@@ -1,5 +1,5 @@
 {
-    "name": "tuxeodo",
+    "name": "tuxedo",
     "version": "1.0.0",
     "type": "module",
     "description": "Solidity smart contracts for ZTX.",
@@ -18,6 +18,7 @@
         "install:foundry": "foundryup || curl -L https://foundry.paradigm.xyz | bash",
         "install:slither": "pip3 install slither-analyzer",
         "install:slither:utx0": "pip3 install git+https://github.com/utx0/slither.git",
+        "clean": "forge clean",
         "build": "forge build --extra-output-files abi",
         "test": "forge test -vvv",
         "test:unit": "forge test -vvv --match-contract UnitTest",
@@ -59,7 +60,7 @@
     },
     "homepage": "https://github.com/ZTX-Foundation/tuxeodo#README.md",
     "devDependencies": {
-        "@types/node": "^20.6.0",
+        "@types/node": "^20.6.2",
         "dotenv": "^16.3.1",
         "prettier": "^3.0.3",
         "prettier-plugin-solidity": "^1.1.3",
@@ -69,20 +70,20 @@
     },
     "dependencies": {
         "@ethersproject/keccak256": "^5.7.0",
-        "@moralisweb3/common-evm-utils": "^2.23.0",
+        "@moralisweb3/common-evm-utils": "^2.23.1",
         "@openzeppelin/merkle-tree": "^1.0.5",
-        "@typescript-eslint/eslint-plugin": "^6.7.0",
+        "@typescript-eslint/eslint-plugin": "^6.7.2",
         "axios": "^1.5.0",
         "commander": "^11.0.0",
         "eslint": "^8.49.0",
         "eslint-config-prettier": "^9.0.0",
-        "ethers": "5.7.0",
+        "ethers": "^5.7.0",
         "husky": "^8.0.3",
         "jose": "^4.14.6",
         "keccak256": "^1.0.6",
         "lint-staged": "^14.0.1",
         "merkletreejs": "^0.3.10",
-        "moralis": "^2.23.0",
+        "moralis": "^2.23.1",
         "soltypes": "^2.0.0"
     },
     "lint-staged": {

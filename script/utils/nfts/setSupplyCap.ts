@@ -28,7 +28,7 @@ const abi = JSON.parse(fs.readFileSync(program.opts().abiPath, "utf-8"));
 const provider = new ethers.providers.JsonRpcProvider(program.opts().rpcUrl);
 
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || "", provider);
-console.log(wallet.address);
+console.log(`Wallet address: ${wallet.address}`);
 
 /// call set supply cap contract function.
 const mintableContract = new ethers.Contract(
@@ -39,8 +39,10 @@ const mintableContract = new ethers.Contract(
 await mintableContract
     .setSupplyCap(program.opts().tokenId, Number(program.opts().supplyCap))
     .then((tx: any) => {
+        console.log("SUCCESS");
         console.log(tx);
     })
     .catch((err: any) => {
+        console.log("FAILED");
         console.log(err);
     });

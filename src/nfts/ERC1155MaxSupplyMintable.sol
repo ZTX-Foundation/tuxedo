@@ -11,6 +11,12 @@ import {Sealable} from "@protocol/utils/extensions/Sealable.sol";
 /// Base ERC 1155 NFT with total supply
 /// Inherits CoreRef for roles and access
 contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef, Sealable {
+    /// @notice contract name
+    string private _name;
+
+    /// @notice contract symbol
+    string private _symbol;
+
     /// @notice an event emitted when a token's supply cap is updated
     event SupplyCapUpdated(uint256 tokenId, uint256 previousMaxSupply, uint256 maxSupply);
 
@@ -30,7 +36,15 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef, Se
     mapping(uint256 tokenId => uint256 tokenMaxSupply) public maxTokenSupply;
 
     /// @notice construct the ERC1155 with total supply and CoreRef
-    constructor(address _core, string memory _uri) CoreRef(_core) ERC1155(_uri) {}
+    constructor(
+        address _core,
+        string memory _uri,
+        string memory name_,
+        string memory symbol_
+    ) CoreRef(_core) ERC1155(_uri) {
+        _name = name_;
+        _symbol = symbol_;
+    }
 
     /// @notice set the supply cap for a given token, cannot be less than current supply
     /// @param tokenId the id of the token to update
@@ -117,6 +131,16 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef, Se
         return maxTokenSupply[tokenId] - totalSupply(tokenId);
     }
 
+    /// @notice returns the name of the token
+    function name() public view returns (string memory) {
+        return _name;
+    }
+
+    /// @notice returns the symbol of the token
+    function symbol() public view returns (string memory) {
+        return _symbol;
+    }
+
     /// ----------- INTERNAL OVERRIDES ------------
 
     /// @notice disallow sending of tokens to the token contract itself
@@ -133,7 +157,6 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef, Se
     }
 
     // Needed for openSea with ERC1155
-    // TODO - confirm this in testnet
     function uri(uint256 _id) public view virtual override(ERC1155) returns (string memory) {
         //slither-disable-next-line encode-packed-collision
         return string(abi.encodePacked(super.uri(_id), Strings.toString(_id)));

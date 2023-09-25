@@ -1,0 +1,26 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_input",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_input2",
+        "type": "string"
+      }
+    ],
+    "name": "equals",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  }
+]
