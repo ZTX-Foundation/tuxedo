@@ -28,7 +28,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         _registry = new SeasonsTokenIdRegistry(address(core));
 
         // Deploy capsule NFT
-        _capsuleNFT = new ERC1155MaxSupplyMintable(address(core), "");
+        _capsuleNFT = new ERC1155MaxSupplyMintable(address(core), "", "Capsules NFTs", "CAPS");
 
         // Set supply
         vm.startPrank(addresses.adminAddress);
