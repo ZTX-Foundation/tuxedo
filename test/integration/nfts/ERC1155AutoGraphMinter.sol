@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.18;
 
 import {MockERC20} from "@test/mock/MockERC20.sol";
 import {ERC1155AutoGraphMinterHelperLib as Helper} from "@test/helpers/ERC1155AutoGraphMinterHelper.sol";
