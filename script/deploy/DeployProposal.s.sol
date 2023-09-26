@@ -6,6 +6,8 @@ import {zip000 as zip} from "@test/proposals/zips/zip000.sol";
 import {Script} from "@forge-std/Script.sol";
 import {Addresses} from "@test/proposals/Addresses.sol";
 
+import {zip000} from "@test/proposals/zips/zip000.sol";
+
 /*
 How to use:
 forge script script/deploy/DeployProposal.s.sol:DeployProposal \

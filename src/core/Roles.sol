@@ -30,6 +30,10 @@ library Roles {
     /// should only be owned by a protocol contract
     bytes32 internal constant MINTER = keccak256("MINTER_ROLE");
 
+    /// @notice can operate a registry contract
+    /// should only be owned by a protocol contract
+    bytes32 internal constant REGISTRY_OPERATOR = keccak256("REGISTRY_OPERATOR_ROLE");
+
     /// @notice can notarize a mint signature
     /// to be used by an offchain service to create a unique signature for a mint transaction for later use
     bytes32 internal constant MINTER_NOTARY = keccak256("MINTER_NOTARY_ROLE");
@@ -49,4 +53,7 @@ library Roles {
     /// @notice game consumer notary role.
     /// can issue signatures for in-game crafting and speed ups
     bytes32 internal constant GAME_CONSUMER_NOTARY = keccak256("GAME_CONSUMER_NOTARY_ROLE");
+
+    /// @notice DEPLOYER role.
+    bytes32 internal constant DEPLOYER = keccak256("DEPLOYER_ROLE");
 }

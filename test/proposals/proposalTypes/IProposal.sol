@@ -20,7 +20,7 @@ interface IProposal {
     function setDebug(bool) external;
 
     // Deploy contracts and add them to list of addresses
-    function deploy(Addresses, address) external;
+    function deploy(Addresses, address deployer) external;
 
     // After deploying, call initializers and link contracts
     // together, e.g. if you deployed Core and Volt contracts,
