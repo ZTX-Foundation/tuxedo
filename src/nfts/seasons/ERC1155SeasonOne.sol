@@ -49,7 +49,7 @@ contract ERC1155SeasonOne is SeasonsBase {
         return totalRewardTokens;
     }
 
-    function redeem(uint256 tokenId) public override {
+    function redeem(uint256 tokenId) public override whenNotPaused {
         /// ---- checks ---- ///
         require(solvent(), "ERC1155SeasonOne: Contract Not solvent");
         require(tokenIdRewardAmount[tokenId] > 0, "ERC1155SeasonOne: No redeemable tokens for given tokenId");

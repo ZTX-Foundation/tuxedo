@@ -203,4 +203,13 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         assertEq(token.balanceOf(address(this)), 400);
         assertEq(token.balanceOf(address(_seasonOne)), beforeTotalRewardTokens - 400);
     }
+
+    function testRedeemWhenPaused() public {
+        testConfigAndMakeSolvent(); // config and fund contract
+        vm.prank(addresses.adminAddress);
+        _seasonOne.pause();
+
+        vm.expectRevert("Pausable: paused");
+        _seasonOne.redeem(1);
+    }
 }
