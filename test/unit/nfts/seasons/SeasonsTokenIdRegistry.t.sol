@@ -1,7 +1,5 @@
 pragma solidity 0.8.18;
 
-import "forge-std/console.sol";
-
 import {BaseTest} from "@test/BaseTest.sol";
 import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
 import {Roles} from "@protocol/core/Roles.sol";
