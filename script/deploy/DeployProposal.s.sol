@@ -5,7 +5,6 @@ import {console} from "@forge-std/console.sol";
 import {zip000 as zip} from "@test/proposals/zips/zip000.sol";
 import {Script} from "@forge-std/Script.sol";
 import {Addresses} from "@test/proposals/Addresses.sol";
-import {Proposal} from "@test/proposals/proposalTypes/Proposal.sol";
 
 import {zip000} from "@test/proposals/zips/zip000.sol";
 
