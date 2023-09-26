@@ -270,8 +270,6 @@ contract zip000 is Proposal, TimelockProposal {
         }
 
         {
-            Core core = Core(addresses.getAddress("CORE"));
-
             // SeasonsTokenIdRegistry setup
             SeasonsTokenIdRegistry seasonsTokenIdRegistry = new SeasonsTokenIdRegistry(address(core));
             addresses.addAddress("SEASONS_TOKENID_REGISTRY", address(seasonsTokenIdRegistry));
