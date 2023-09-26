@@ -49,9 +49,8 @@ contract ERC1155SeasonOne is SeasonsBase {
         return totalRewardTokens;
     }
 
-    function redeem(uint256 tokenId) public override whenNotPaused {
+    function redeem(uint256 tokenId) public override whenNotPaused verifySolvent {
         /// ---- checks ---- ///
-        require(solvent(), "ERC1155SeasonOne: Contract Not solvent");
         require(tokenIdRewardAmount[tokenId] > 0, "ERC1155SeasonOne: No redeemable tokens for given tokenId");
         require(
             ERC1155MaxSupplyMintable(nftContract).balanceOf(msg.sender, tokenId) > 0,
@@ -76,7 +75,5 @@ contract ERC1155SeasonOne is SeasonsBase {
 
         // Release reward tokens
         rewardToken.safeTransfer(msg.sender, _rewardAmount);
-
-        require(solvent(), "Contract not solvent");
     }
 }

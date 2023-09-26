@@ -169,7 +169,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
 
     function testRedeemNotSolvent() public {
         testConfigNotSolvent();
-        vm.expectRevert("ERC1155SeasonOne: Contract Not solvent");
+        vm.expectRevert("SeasonsBase: Contract Not solvent");
         _seasonOne.redeem(1);
     }
 

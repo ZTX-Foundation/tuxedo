@@ -27,6 +27,13 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder, Sealable {
     /// @notice Total amount of reward tokens needed by the contract to be solvent
     uint256 public totalRewardTokens;
 
+    /// @notice Check if the contract has enough reward tokens to be solvent
+    modifier verifySolvent() {
+        require(solvent(), "SeasonsBase: Contract Not solvent");
+        _;
+        require(solvent(), "SeasonsBase: Contract Not solvent");
+    }
+
     constructor(
         address _core,
         address _nftSeasonContract,
