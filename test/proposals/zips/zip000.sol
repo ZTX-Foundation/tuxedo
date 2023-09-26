@@ -284,8 +284,8 @@ contract zip000 is Proposal, TimelockProposal {
             // CapsulesNFT ERC1155 setup
             ERC1155MaxSupplyMintable erc1155CapsulesNFT = new ERC1155MaxSupplyMintable(
                 address(core),
-                string(abi.encodePacked(_metadataBaseUri, "/seasons/1/capsules/metadata/")), //TODO confirm path
-                "Capsules NFTs",
+                string(abi.encodePacked(_metadataBaseUri, "/consumables/metadata/seasons/1/capsules/")), //TODO confirm path
+                "Capsules",
                 "CAPS"
             );
             addresses.addAddress("ERC1155_CAPSULES_NFT", address(erc1155CapsulesNFT));
