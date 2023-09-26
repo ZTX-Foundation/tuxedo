@@ -26,19 +26,19 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
     function testMintBatchWithoutRoleFails() public {
         uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId;
-        
+
         uint256[] memory amounts = new uint256[](1);
         amounts[0] = 100;
 
         vm.expectRevert("CoreRef: no role on core");
         nft.mintBatch(address(this), tokenIds, amounts);
     }
-    
+
     function testSetURIWithoutRoleFails() public {
         vm.expectRevert("CoreRef: no role on core");
         nft.setURI("https://exampleUri1.com/");
     }
-    
+
     function testSetURIWithRoleSucceeds() public {
         vm.prank(addresses.adminAddress);
         nft.setURI("https://exampleUri1.com/");
@@ -56,6 +56,19 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
 
         assertEq(nft.getMintAmountLeft(tokenId + 1), supplyCap);
         assertEq(nft.maxTokenSupply(tokenId + 1), supplyCap);
+    }
+
+    function testSetTokenSupplyCapAtDeploymentWithRoleSucceds() public {
+        vm.prank(addresses.deployerAddress);
+        nft.setSupplyCapAtDeployment(tokenId + 1, supplyCap);
+
+        assertEq(nft.getMintAmountLeft(tokenId + 1), supplyCap);
+        assertEq(nft.maxTokenSupply(tokenId + 1), supplyCap);
+    }
+
+    function testSetTokenSupplyCapAtDeploymentWithOutRoleFails() public {
+        vm.expectRevert("CoreRef: no role on core");
+        nft.setSupplyCapAtDeployment(tokenId + 1, supplyCap);
     }
 
     function testSetTokenSupplyCapUnderSupplyFails() public {
@@ -84,7 +97,7 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
     function testMintBatchFailsWhenPaused() public {
         uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId;
-        
+
         uint256[] memory amounts = new uint256[](1);
         amounts[0] = 100;
 
@@ -118,7 +131,7 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
         uint256[] memory tokenIds = new uint256[](2);
         tokenIds[0] = tokenId;
         tokenIds[1] = tokenId + 1;
-        
+
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = amount;
         amounts[1] = amount;
@@ -145,7 +158,7 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
         tokenIds[0] = tokenId;
         tokenIds[1] = tokenId;
         tokenIds[2] = tokenId;
-        
+
         uint256[] memory amounts = new uint256[](3);
         amounts[0] = amount;
         amounts[1] = amount;
@@ -169,7 +182,7 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
 
         vm.expectRevert("BaseERC1155NFT: supply exceeded");
         vm.prank(addresses.minterAddress);
-        nft.mint(address(this), tokenId, amount);        
+        nft.mint(address(this), tokenId, amount);
     }
 
     function testBurnDecreasesSupply() public {
@@ -193,7 +206,7 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
         uint256[] memory tokenIds = new uint256[](2);
         tokenIds[0] = tokenId;
         tokenIds[1] = tokenId + 1;
-        
+
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = amount;
         amounts[1] = amount;
@@ -224,7 +237,7 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
     function testNotLockedBatchMintFails() public {
         uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId;
-        
+
         uint256[] memory amounts = new uint256[](1);
         amounts[0] = supplyCap;
 
