@@ -29,8 +29,8 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder, Sealable {
     /// @notice Total amount of reward tokens needed by the contract to be solvent
     uint256 public totalRewardTokens;
 
-    /// @notice Total amount of reward tokens clawbacked. Kept for record keeping.
-    uint256 public totalClawbacked;
+    /// @notice Total amount of reward tokens clawedback. Kept for record keeping.
+    uint256 public totalClawedBack;
 
     /// --------------- modifiers -----------------///
 
@@ -100,10 +100,10 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder, Sealable {
         }
 
         // effects
-        totalClawbacked = totalRewardTokens;
+        totalClawedBack = totalRewardTokens;
         totalRewardTokens = 0;
 
         // interaction
-        IERC20(rewardToken).safeTransfer(to, totalClawbacked);
+        IERC20(rewardToken).safeTransfer(to, totalClawedBack);
     }
 }
