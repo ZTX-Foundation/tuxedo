@@ -46,7 +46,7 @@ abstract contract CoreRef is Pausable {
 
     // Modifiers to allow any combination of roles
     modifier hasAnyOfTwoRoles(bytes32 role1, bytes32 role2) {
-        require(core.hasRole(role1, msg.sender) || core.hasRole(role2, msg.sender), "UNAUTHORIZED");
+        require(core.hasRole(role1, msg.sender) || core.hasRole(role2, msg.sender), "CoreRef: no role on core");
         _;
     }
 
@@ -57,7 +57,7 @@ abstract contract CoreRef is Pausable {
     ) {
         require(
             core.hasRole(role1, msg.sender) || core.hasRole(role2, msg.sender) || core.hasRole(role3, msg.sender),
-            "UNAUTHORIZED"
+            "CoreRef: no role on core"
         );
         _;
     }
@@ -73,7 +73,7 @@ abstract contract CoreRef is Pausable {
                 core.hasRole(role2, msg.sender) ||
                 core.hasRole(role3, msg.sender) ||
                 core.hasRole(role4, msg.sender),
-            "UNAUTHORIZED"
+            "CoreRef: no role on core"
         );
         _;
     }

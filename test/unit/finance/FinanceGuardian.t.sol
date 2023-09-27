@@ -118,7 +118,7 @@ contract UnitTestFinanceGuardian is BaseTest {
     }
 
     function testWithdrawToSafeAddressFailWhenNoRole() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         guardian.withdrawToSafeAddress(address(deposit), mintAmount);
     }
 
@@ -127,7 +127,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         core.revokeRole(Roles.FINANCIAL_GUARDIAN, addresses.financialGuardianAddress);
 
         vm.prank(addresses.financialGuardianAddress);
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
 
         guardian.withdrawToSafeAddress(address(deposit), mintAmount);
     }
@@ -137,7 +137,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         core.revokeRole(Roles.FINANCIAL_GUARDIAN, addresses.financialGuardianAddress);
 
         vm.prank(addresses.financialGuardianAddress);
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
 
         guardian.withdrawToSafeAddress(address(deposit), mintAmount);
     }
@@ -196,7 +196,7 @@ contract UnitTestFinanceGuardian is BaseTest {
     }
 
     function testWithdrawAllToSafeAddressFailWhenNoRole() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         guardian.withdrawAllToSafeAddress(address(deposit));
     }
 
@@ -205,7 +205,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         core.revokeRole(Roles.FINANCIAL_GUARDIAN, addresses.financialGuardianAddress);
 
         vm.prank(addresses.financialGuardianAddress);
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
 
         guardian.withdrawAllToSafeAddress(address(deposit));
     }
@@ -215,7 +215,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         core.revokeRole(Roles.FINANCIAL_GUARDIAN, addresses.financialGuardianAddress);
 
         vm.prank(addresses.financialGuardianAddress);
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
 
         guardian.withdrawAllToSafeAddress(address(deposit));
     }
@@ -258,7 +258,7 @@ contract UnitTestFinanceGuardian is BaseTest {
     }
 
     function testWithdrawERC20ToSafeAddressFailWhenNoRole() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         guardian.withdrawERC20ToSafeAddress(address(deposit), address(token), mintAmount);
     }
 
@@ -267,7 +267,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         core.revokeRole(Roles.FINANCIAL_GUARDIAN, addresses.financialGuardianAddress);
 
         vm.prank(addresses.financialGuardianAddress);
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
 
         guardian.withdrawERC20ToSafeAddress(address(deposit), address(token), mintAmount);
     }
@@ -277,7 +277,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         core.emergencyRevoke(Roles.FINANCIAL_GUARDIAN, addresses.financialGuardianAddress);
 
         vm.prank(addresses.financialGuardianAddress);
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
 
         guardian.withdrawERC20ToSafeAddress(address(deposit), address(token), mintAmount);
     }
@@ -320,12 +320,12 @@ contract UnitTestFinanceGuardian is BaseTest {
     }
 
     function testWithdrawAllERC20ToSafeAddressFailWhenNoRole() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         guardian.withdrawAllERC20ToSafeAddress(address(deposit), address(token));
     }
 
     function testRemoveWhitelistAddressFailsNonGovernor() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         guardian.removeWhitelistAddress(addresses.tokenGovernorAddress);
     }
 
@@ -333,7 +333,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         address[] memory addressesToRemove = new address[](1);
         addressesToRemove[0] = address(deposit);
 
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         guardian.removeWhitelistAddresses(addressesToRemove);
     }
 
@@ -342,7 +342,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         core.revokeRole(Roles.FINANCIAL_GUARDIAN, addresses.financialGuardianAddress);
 
         vm.prank(addresses.financialGuardianAddress);
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
 
         guardian.withdrawAllERC20ToSafeAddress(address(deposit), address(token));
     }
@@ -352,7 +352,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         core.revokeRole(Roles.FINANCIAL_GUARDIAN, addresses.financialGuardianAddress);
 
         vm.prank(addresses.financialGuardianAddress);
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
 
         guardian.withdrawAllERC20ToSafeAddress(address(deposit), address(token));
     }
@@ -396,13 +396,13 @@ contract UnitTestFinanceGuardian is BaseTest {
     }
 
     function testAddWhiteListAddressNonGovernorFails() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         guardian.addWhitelistAddress(address(0x123));
     }
 
     function testAddWhiteListAddressesNonGovernorFails() public {
         address[] memory toWhitelist = new address[](1);
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         guardian.addWhitelistAddresses(toWhitelist);
     }
 
@@ -437,7 +437,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         address[] memory toRemove = new address[](1);
         toRemove[0] = address(deposit);
 
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         guardian.removeWhitelistAddresses(toRemove);
     }
 

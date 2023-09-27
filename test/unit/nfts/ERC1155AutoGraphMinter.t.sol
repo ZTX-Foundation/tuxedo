@@ -622,12 +622,12 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
     function testAddWhitelistedContractFail() public {
         assertFalse(_autoGraphMinter.isWhitelistedAddress(address(0x123)));
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         _autoGraphMinter.addWhitelistedContract(address(0x123));
     }
 
     function testAddWhitelistedContractsFail() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         _autoGraphMinter.addWhitelistedContracts(addressesToAdd);
     }
 
@@ -646,7 +646,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
     }
 
     function testRemoveWhitelistedContractFail() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         _autoGraphMinter.removeWhitelistedContract(address(0x321));
     }
 
@@ -659,7 +659,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
     }
 
     function testRemoveWhitelistedContractsFail() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         _autoGraphMinter.removeWhitelistedContracts(defaultWhitelistedAddresses);
     }
 
