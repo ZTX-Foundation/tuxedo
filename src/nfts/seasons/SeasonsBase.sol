@@ -20,12 +20,31 @@ struct TokenIdRewardAmount {
 abstract contract SeasonsBase is CoreRef, ERC1155Holder, Sealable {
     using SafeERC20 for IERC20;
 
+    /// --------------- Storage -----------------///
+
     ERC1155MaxSupplyMintable public immutable nftContract;
     IERC20 public immutable rewardToken;
     SeasonsTokenIdRegistry public immutable tokenIdRegistryContract;
 
     /// @notice Total amount of reward tokens needed by the contract to be solvent
     uint256 public totalRewardTokens;
+
+    /// @notice Total amount of reward tokens clawedback. Kept for record keeping.
+    uint256 public totalClawedBack;
+
+    /// --------------- modifiers -----------------///
+
+    /// @notice Check if the contract has enough reward tokens to be solvent
+    modifier verifySolvent() {
+        require(solvent(), "SeasonsBase: Contract Not solvent");
+        _;
+        require(solvent(), "SeasonsBase: Contract Not solvent");
+    }
+
+    /// --------------- errors -----------------///
+    error NoPaused();
+
+    /// --------------- events -----------------///
 
     constructor(
         address _core,
@@ -71,5 +90,20 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder, Sealable {
             tokenIds[i] = tokenIdRewardAmounts[i].tokenId;
         }
         tokenIdRegistryContract.registerBatch(tokenIds, address(this));
+    }
+
+    // TODO confirm roles?
+    function clawback(address to) public hasAnyOfTwoRoles(Roles.ADMIN, Roles.FINANCIAL_CONTROLLER) {
+        // checks
+        if (!paused()) {
+            revert NoPaused();
+        }
+
+        // effects
+        totalClawedBack = totalRewardTokens;
+        totalRewardTokens = 0;
+
+        // interaction
+        IERC20(rewardToken).safeTransfer(to, totalClawedBack);
     }
 }

@@ -842,7 +842,7 @@ contract UnitTestERC1155Sale is BaseTest {
 
     function testSetFeeNonGovOrAdminFails() public {
         vm.prank(addresses.guardianAddress);
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         sale.setFee(tokenId, 100);
     }
 

@@ -80,7 +80,7 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
     }
 
     function testPauseWithoutRoleFails() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         nft.pause();
     }
 

@@ -50,7 +50,7 @@ contract UnitTestRateLimited is Test {
     /// ACL Tests
 
     function testSetBufferCapNoAuthFails() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         rlm.setBufferCap(0);
     }
 
@@ -79,7 +79,7 @@ contract UnitTestRateLimited is Test {
     }
 
     function testSetRateLimitPerSecondNoAuthedFails() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         rlm.setReplenishRatePerSecond(0);
     }
 

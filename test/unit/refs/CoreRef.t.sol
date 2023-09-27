@@ -173,7 +173,7 @@ contract CoreRefTest is Test {
     }
 
     function testPauseFailsNonGovernor() public {
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert("CoreRef: no role on core");
         coreRef.pause();
     }
 
