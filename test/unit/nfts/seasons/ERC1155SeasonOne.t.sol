@@ -146,7 +146,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         assertEq(_seasonOne.solvent(), false); // no funds in contract.
     }
 
-    function testConfigAndMakeSolvent() public {
+    function testConfigAndMakeSolvent() public returns (uint256) {
         uint256 totalNeeded = testConfigSeasonDistribution(); // config contract.
 
         token.mint(address(this), totalNeeded);
@@ -154,6 +154,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         _seasonOne.fund();
 
         assertEq(_seasonOne.solvent(), true);
+        return totalNeeded;
     }
 
     function testBalance() public {
@@ -211,5 +212,54 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
 
         vm.expectRevert("Pausable: paused");
         _seasonOne.redeem(1);
+    }
+
+    function testClawbackWithAdminRoleSuccess() public {
+        uint totals = testConfigAndMakeSolvent(); // config and fund contract
+        uint _tokenId = 1;
+        address recepitent = address(123);
+
+        assertEq(token.balanceOf(address(_seasonOne)), totals);
+
+        vm.startPrank(addresses.adminAddress);
+        _seasonOne.pause();
+        _seasonOne.clawback(recepitent);
+        vm.stopPrank();
+
+        assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 0);
+        assertEq(_seasonOne.totalClawbacked(), totals);
+
+        assertEq(token.balanceOf(address(_seasonOne)), 0);
+        assertEq(token.balanceOf(recepitent), totals);
+    }
+
+    function testClawbackWithFinanicalControllerRoleSuccess() public {
+        uint totals = testConfigAndMakeSolvent(); // config and fund contract
+        uint _tokenId = 1;
+        address recepitent = address(123);
+
+        assertEq(token.balanceOf(address(_seasonOne)), totals);
+
+        vm.prank(addresses.adminAddress);
+        _seasonOne.pause();
+
+        vm.prank(addresses.financialControllerAddress);
+        _seasonOne.clawback(recepitent);
+
+        assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 0);
+        assertEq(_seasonOne.totalClawbacked(), totals);
+
+        assertEq(token.balanceOf(address(_seasonOne)), 0);
+        assertEq(token.balanceOf(recepitent), totals);
+    }
+
+    function testClawbackWithOutRoleFail() public {
+        uint totals = testConfigAndMakeSolvent(); // config and fund contract
+        address recepitent = address(123);
+
+        assertEq(token.balanceOf(address(_seasonOne)), totals);
+
+        vm.expectRevert("CoreRef: no role on core");
+        _seasonOne.clawback(recepitent);
     }
 }
