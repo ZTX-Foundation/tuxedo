@@ -43,6 +43,7 @@ contract GovernorDAO is
         GovernorTimelockControl(TimelockController(payable(_timelock)))
         GovernorSettings(initialVotingDelay, initialVotingPeriod, initialProposalThreshold)
     {
+        require(initialQuorum > 0, "GovernorDAO: quorum must be greater than 0");
         _setQuorum(initialQuorum);
     }
 
@@ -76,6 +77,7 @@ contract GovernorDAO is
 
     /// @notice Adjust quorum, restricted to TOKEN_GOVERNOR role.
     function setQuorum(uint256 newQuorum) public onlyRole(Roles.TOKEN_GOVERNOR) {
+        require(newQuorum > 0, "GovernorDAO: quorum must be greater than 0");
         _setQuorum(newQuorum);
     }
 
