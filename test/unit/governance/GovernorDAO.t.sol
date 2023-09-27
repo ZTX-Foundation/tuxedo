@@ -45,6 +45,19 @@ contract UnitTestGovernorDAO is Test {
         token = new MockERC20();
         timelock = new TimelockController(_TIMELOCK_MIN_DELAY, new address[](0), new address[](0), address(this));
 
+        /// @dev quorum must be greater than 0
+        vm.expectRevert("GovernorDAO: quorum must be greater than 0");
+        new GovernorDAO(
+            "Protocol Governor",
+            address(core),
+            address(timelock),
+            address(token),
+            _VOTING_DELAY,
+            _VOTING_PERIOD,
+            _PROPOSAL_THRESHOLD,
+            0
+        );
+
         governor = new GovernorDAO(
             "Protocol Governor",
             address(core),
@@ -335,6 +348,12 @@ contract UnitTestGovernorDAO is Test {
         vm.prank(addresses.tokenGovernorAddress);
         governor.setQuorum(34);
         assertEq(governor.quorum(999), 34);
+    }
+
+    function testSetQuorumZeroFails() public {
+        vm.prank(addresses.tokenGovernorAddress);
+        vm.expectRevert("GovernorDAO: quorum must be greater than 0");
+        governor.setQuorum(0);
     }
 
     function testSetQuorumNonTokenGovernor() public {
