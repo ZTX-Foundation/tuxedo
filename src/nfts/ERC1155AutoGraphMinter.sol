@@ -277,6 +277,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @notice - Mint NFTs to a given address with a given signature
     /// @dev when creating the hash set paymentToken to address(0) and paymentAmount to 0
     /// @param recipient - Address of the receiver of the NFT
+    /// @param jobId - ID of the job
     /// @param tokenId - ID of the NFT
     /// @param units - Amount of NFTs to mint
     /// @param hash - Hash of the message to be signed
