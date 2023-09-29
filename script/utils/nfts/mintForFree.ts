@@ -20,6 +20,7 @@ program
     )
     .requiredOption("-n, --nft-contract-address <address>", "NFT contract")
     .requiredOption("-r, --recipient <address>", "Recipient address to mint to")
+    .requiredOption("-j, --job-id <id>", "Job ID")
     .requiredOption("-t, --token-id <id>", "Token ID")
     .requiredOption("-a, --units <amount>", "Number of NFTs to mint")
     .requiredOption("-s, --salt <salt>", "Salt")
@@ -50,6 +51,7 @@ const autoGraphMinterContract = new ethers.Contract(
 await autoGraphMinterContract
     .mintForFree(
         program.opts().recipient,
+        program.opts().jobId,
         program.opts().tokenId,
         program.opts().units,
         program.opts().hash,
