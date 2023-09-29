@@ -16,7 +16,7 @@ import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
 import {ERC1155AutoGraphMinterHelperLib as Helper} from "@test/helpers/ERC1155AutoGraphMinterHelper.sol";
 import {BaseTest} from "@test/BaseTest.sol";
 
-contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
+contract UnitTestERC1155AutoGraphMinter is BaseTest {
     ERC1155AutoGraphMinter private _autoGraphMinter;
 
     uint256 private _privateKey;
@@ -70,7 +70,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
         // setup hash manually
         bytes32 hashFirstPass = keccak256(
             abi.encode(
-                parts.recipent,
+                parts.recipient,
+                parts.jobId,
                 parts.tokenId,
                 parts.units,
                 parts.salt,
@@ -98,12 +99,13 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
     /// --------------------- Testing Mint for free functions --------------------- ///
 
-    function testMintForFreeSuccessAndExpireHash() public {
+    function testMintForFreeWithExpiredHash() public {
         Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
 
         // mint
         _autoGraphMinter.mintForFree(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -114,11 +116,12 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
         );
 
         // assert balance
-        assertEq(nft.balanceOf(parts.recipent, parts.tokenId), parts.units);
+        assertEq(nft.balanceOf(parts.recipient, parts.tokenId), parts.units);
 
         vm.expectRevert("ERC1155AutoGraphMinter: Hash expired");
         _autoGraphMinter.mintForFree(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -126,6 +129,43 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
             parts.signature,
             address(nft),
             block.timestamp
+        );
+    }
+
+    function testMintForFreeWithExpiredJob() public {
+        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
+
+        // mint
+        _autoGraphMinter.mintForFree(
+            parts.recipient,
+            parts.jobId,
+            parts.tokenId,
+            parts.units,
+            parts.hash,
+            parts.salt,
+            parts.signature,
+            address(nft),
+            block.timestamp
+        );
+
+        // assert balance
+        assertEq(nft.balanceOf(parts.recipient, parts.tokenId), parts.units);
+
+        // expired job with valid hash
+        parts = Helper.setupTx(
+            Helper.SetupTxParams(vm, _privateKey, address(nft), 99, 1, 1, address(0), 0, block.timestamp)
+        );
+        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        _autoGraphMinter.mintForFree(
+            parts.recipient,
+            parts.jobId,
+            parts.tokenId,
+            parts.units,
+            parts.hash,
+            parts.salt,
+            parts.signature,
+            address(nft),
+            parts.expiryToken
         );
     }
 
@@ -137,7 +177,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         vm.expectRevert("ERC1155AutoGraphMinter: Missing MINTER_NOTARY Role");
         _autoGraphMinter.mintForFree(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -155,7 +196,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         vm.expectRevert("ERC1155AutoGraphMinter: Hash mismatch");
         _autoGraphMinter.mintForFree(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             _tokenId,
             parts.units,
             parts.hash,
@@ -173,7 +215,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         vm.expectRevert("ERC1155AutoGraphMinter: Hash mismatch");
         _autoGraphMinter.mintForFree(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             units,
             parts.hash,
@@ -189,7 +232,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         vm.expectRevert("WhitelistedAddress: Provided address is not whitelisted");
         _autoGraphMinter.mintForFree(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -205,7 +249,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         vm.expectRevert("ERC1155AutoGraphMinter: Hash mismatch");
         _autoGraphMinter.mintForFree(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -222,6 +267,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
         vm.expectRevert("ERC1155AutoGraphMinter: Hash mismatch");
         _autoGraphMinter.mintForFree(
             address(0x123),
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -234,7 +280,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
     /// --------------------- Testing Mint With paymentToken Fee functions --------------------- ///
 
-    function testMintWithPaymentTokenSuccessAndExpireHash() public {
+    function testMintWithPaymentTokenSuccessAndExpiredHash() public {
         uint paymentAmount = 111;
         Helper.TxParts memory parts = Helper.setupTx(
             vm,
@@ -250,7 +296,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
             .MintWithPaymentTokenAsFeeParams(
-                parts.recipent,
+                parts.recipient,
+                parts.jobId,
                 parts.tokenId,
                 parts.units,
                 parts.hash,
@@ -264,7 +311,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         _autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
 
-        assertEq(nft.balanceOf(parts.recipent, parts.tokenId), parts.units);
+        assertEq(nft.balanceOf(parts.recipient, parts.tokenId), parts.units);
         assertEq(token.balanceOf(address(_defaultPaymentRecipient)), paymentAmount);
 
         vm.expectRevert("ERC1155AutoGraphMinter: Hash expired");
@@ -283,7 +330,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
             .MintWithPaymentTokenAsFeeParams(
-                parts.recipent,
+                parts.recipient,
+                parts.jobId,
                 parts.tokenId,
                 parts.units,
                 parts.hash,
@@ -311,7 +359,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
             .MintWithPaymentTokenAsFeeParams(
-                parts.recipent,
+                parts.recipient,
+                parts.jobId,
                 parts.tokenId,
                 parts.units,
                 parts.hash,
@@ -339,7 +388,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
             .MintWithPaymentTokenAsFeeParams(
-                parts.recipent,
+                parts.recipient,
+                parts.jobId,
                 parts.tokenId,
                 parts.units,
                 parts.hash,
@@ -358,7 +408,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
     /// --------------------- Testing Mint for ETH Fee functions --------------------- ///
 
-    function testMintWithEthAsFeeSuccessAndExpireHash() public {
+    function testMintWithEthAsFeeWithExpiredHash() public {
         emit log_named_decimal_uint("balance", address(this).balance, 18);
         uint256 paymentAmount = 10_000;
 
@@ -372,7 +422,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
         );
 
         ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -386,12 +437,67 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
         _autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
 
         // assert nft balance
-        assertEq(nft.balanceOf(parts.recipent, parts.tokenId), parts.units);
+        assertEq(nft.balanceOf(parts.recipient, parts.tokenId), parts.units);
 
         // assert payment Fee balance
         assertEq(address(_defaultPaymentRecipient).balance, paymentAmount);
 
         vm.expectRevert("ERC1155AutoGraphMinter: Hash expired");
+        _autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
+    }
+
+    function testMintWithEthAsFeeWithExpiredJob() public {
+        emit log_named_decimal_uint("balance", address(this).balance, 18);
+        uint256 paymentAmount = 10_000;
+
+        Helper.TxParts memory parts = Helper.setupTx(
+            vm,
+            _privateKey,
+            address(nft),
+            address(0),
+            paymentAmount,
+            block.timestamp
+        );
+
+        ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+            parts.recipient,
+            parts.jobId,
+            parts.tokenId,
+            parts.units,
+            parts.hash,
+            parts.salt,
+            parts.signature,
+            address(nft),
+            paymentAmount,
+            block.timestamp
+        );
+
+        _autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
+
+        // assert nft balance
+        assertEq(nft.balanceOf(parts.recipient, parts.tokenId), parts.units);
+
+        // assert payment Fee balance
+        assertEq(address(_defaultPaymentRecipient).balance, paymentAmount);
+
+        // expired job with valid hash
+        parts = Helper.setupTx(
+            Helper.SetupTxParams(vm, _privateKey, address(nft), 99, 1, 1, address(0), paymentAmount, block.timestamp)
+        );
+        inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+            parts.recipient,
+            parts.jobId,
+            parts.tokenId,
+            parts.units,
+            parts.hash,
+            parts.salt,
+            parts.signature,
+            address(nft),
+            paymentAmount,
+            block.timestamp
+        );
+
+        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
         _autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
     }
 
@@ -408,7 +514,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
         );
 
         ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -436,7 +543,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
         );
 
         ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -504,7 +612,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
     /// --------------------- Testing Mint Batch With PaymentToken as fee functions --------------------- ///
 
-    function testMintBatchWithPaymentTokenAsFeeSucessAndExpireHash() public {
+    function testMintBatchWithPaymentTokenAsFeeSucceedsAndExpiresHash() public {
         uint256 testItems = 10;
         uint256 paymentAmountPerMint = 10_000;
         uint256 totalCost = testItems * paymentAmountPerMint;
@@ -512,6 +620,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
             vm,
             _privateKey,
             nft,
+            0,
             addresses.adminAddress,
             testItems,
             address(token),
@@ -539,7 +648,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
     /// --------------------- Testing Mint Batch With Eth as Fee functions --------------------- ///
 
-    function testMintBatchWithEthAsFeeShouldSucessedAndExpireHash() public {
+    function testMintBatchWithEthAsFeeShouldSucceedsAndExpiresHash() public {
         uint256 testItems = 10;
         uint256 paymentAmountPerMint = 10_000;
         uint256 totalCost = testItems * paymentAmountPerMint;
@@ -547,6 +656,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
             vm,
             _privateKey,
             nft,
+            0,
             addresses.adminAddress,
             testItems,
             address(0),
@@ -574,6 +684,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
             vm,
             _privateKey,
             nft,
+            0,
             addresses.adminAddress,
             testItems,
             address(0),
@@ -696,7 +807,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         vm.expectRevert("ERC1155AutoGraphMinter: Expiry token is expired");
         _autoGraphMinter.mintForFree(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -715,7 +827,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
         vm.warp(block.timestamp + 1 hours + 1);
 
         ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipent,
+            parts.recipient,
+            parts.jobId,
             parts.tokenId,
             parts.units,
             parts.hash,
@@ -739,7 +852,8 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
 
         ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
             .MintWithPaymentTokenAsFeeParams(
-                parts.recipent,
+                parts.recipient,
+                parts.jobId,
                 parts.tokenId,
                 parts.units,
                 parts.hash,
@@ -784,6 +898,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
             vm,
             _privateKey,
             nft,
+            0,
             addresses.adminAddress,
             testItems,
             address(token),
@@ -810,6 +925,7 @@ contract UnitTestERC1155AutoGraphMinterTest is BaseTest {
             vm,
             _privateKey,
             nft,
+            0,
             addresses.adminAddress,
             testItems,
             address(0),

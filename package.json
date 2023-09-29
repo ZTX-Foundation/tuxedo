@@ -45,7 +45,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ZTX-Foundation/tuxeodo.git"
+        "url": "git+https://github.com/ZTX-Foundation/tuxedo.git"
     },
     "keywords": [
         "smart",
@@ -56,13 +56,16 @@
     "author": "",
     "license": "",
     "bugs": {
-        "url": "https://github.com/ZTX-Foundation/tuxeodo/issues"
+        "url": "https://github.com/ZTX-Foundation/tuxedo/issues"
     },
-    "homepage": "https://github.com/ZTX-Foundation/tuxeodo#README.md",
+    "homepage": "https://github.com/ZTX-Foundation/tuxedo#README.md",
     "devDependencies": {
         "@types/node": "^20.7.0",
+        "@typescript-eslint/eslint-plugin": "^6.7.3",
         "dotenv": "^16.3.1",
-        "prettier": "^3.0.3",
+        "eslint": "^8.50.0",
+        "eslint-config-prettier": "^9.0.0",
+        "prettier": "2.8.8",
         "prettier-plugin-solidity": "^1.1.3",
         "solhint": "^3.6.2",
         "ts-node": "^10.9.1",
@@ -72,11 +75,8 @@
         "@ethersproject/keccak256": "^5.7.0",
         "@moralisweb3/common-evm-utils": "^2.23.1",
         "@openzeppelin/merkle-tree": "^1.0.5",
-        "@typescript-eslint/eslint-plugin": "^6.7.3",
         "axios": "^1.5.0",
         "commander": "^11.0.0",
-        "eslint": "^8.50.0",
-        "eslint-config-prettier": "^9.0.0",
         "ethers": "^5.7.0",
         "husky": "^8.0.3",
         "jose": "^4.14.6",
