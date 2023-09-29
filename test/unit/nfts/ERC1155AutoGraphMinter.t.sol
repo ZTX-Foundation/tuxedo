@@ -145,7 +145,7 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
             parts.salt,
             parts.signature,
             address(nft),
-            block.timestamp
+            parts.expiryToken
         );
 
         // assert balance
