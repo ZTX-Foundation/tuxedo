@@ -9,7 +9,8 @@ library ERC1155AutoGraphMinterHelperLib {
     using ECDSA for bytes32;
 
     struct TxParts {
-        address recipent;
+        address recipient;
+        uint256 jobId;
         uint256 tokenId;
         uint256 units;
         uint256 salt;
@@ -23,6 +24,7 @@ library ERC1155AutoGraphMinterHelperLib {
         Vm vm;
         uint256 privateKey;
         address nftContract;
+        uint256 jobId;
         uint256 tokenId;
         uint256 units;
         address paymentToken;
@@ -34,6 +36,7 @@ library ERC1155AutoGraphMinterHelperLib {
         bytes32 hash = keccak256(
             abi.encode(
                 input.recipient,
+                input.jobId,
                 input.tokenId,
                 input.units,
                 input.salt,
@@ -47,7 +50,7 @@ library ERC1155AutoGraphMinterHelperLib {
     }
 
     function setupTx(Vm vm, uint256 privateKey, address nftContract) public view returns (TxParts memory parts) {
-        SetupTxParams memory txx = SetupTxParams(vm, privateKey, nftContract, 0, 1, address(0), 0, block.timestamp);
+        SetupTxParams memory txx = SetupTxParams(vm, privateKey, nftContract, 99, 0, 1, address(0), 0, block.timestamp);
         return setupTx(txx);
     }
 
@@ -63,6 +66,7 @@ library ERC1155AutoGraphMinterHelperLib {
             vm,
             privateKey,
             nftContract,
+            99, // jobId
             0, // tokenId
             1, // units
             paymentToken,
@@ -74,11 +78,12 @@ library ERC1155AutoGraphMinterHelperLib {
 
     // @dev setup a happy path txx
     function setupTx(SetupTxParams memory txx) public view returns (TxParts memory parts) {
-        address recipent = address(this);
+        address recipient = address(this);
         uint256 salt = block.timestamp;
 
         ERC1155AutoGraphMinter.HashInputsParams memory inputs = ERC1155AutoGraphMinter.HashInputsParams(
-            recipent,
+            recipient,
+            txx.jobId,
             txx.tokenId,
             txx.units,
             salt,
@@ -97,7 +102,8 @@ library ERC1155AutoGraphMinterHelperLib {
         // encode signature
         bytes memory signature = abi.encodePacked(r, s, v);
 
-        parts.recipent = recipent;
+        parts.recipient = recipient;
+        parts.jobId = txx.jobId;
         parts.tokenId = txx.tokenId;
         parts.units = txx.units;
         parts.salt = salt;
@@ -115,13 +121,14 @@ library ERC1155AutoGraphMinterHelperLib {
         ERC1155MaxSupplyMintable nftContract,
         address adminAddress
     ) public returns (ERC1155AutoGraphMinter.MintBatchParams[] memory) {
-        return setupTxs(vm, privateKey, nftContract, adminAddress, 10, address(0), 0, block.timestamp);
+        return setupTxs(vm, privateKey, nftContract, 0, adminAddress, 10, address(0), 0, block.timestamp);
     }
 
     function setupTxs(
         Vm vm,
         uint256 privateKey,
         ERC1155MaxSupplyMintable nft,
+        uint256 offset,
         address adminAddress,
         uint256 testItems,
         address paymentToken,
@@ -140,6 +147,7 @@ library ERC1155AutoGraphMinterHelperLib {
                 vm,
                 privateKey,
                 address(nft),
+                i + offset,
                 i,
                 testItems,
                 paymentToken,
@@ -149,6 +157,7 @@ library ERC1155AutoGraphMinterHelperLib {
 
             TxParts memory parts = setupTx(txx);
             params[i] = ERC1155AutoGraphMinter.MintBatchParams(
+                parts.jobId,
                 parts.tokenId,
                 parts.units,
                 parts.hash,

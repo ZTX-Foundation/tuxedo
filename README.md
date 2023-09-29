@@ -117,7 +117,7 @@ npm run deploy:mainnet
 | `0x3F5DEdE9A945887C60b64EC82F758a6249d109bf` | [ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES](./src/nfts/ERC1155MaxSupplyMintable.sol)                                                                 |
 | `0xdC00e09fa79EC1a4489EDa68Bc911073cEad2c6c` | [ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES](./src/nfts/ERC1155MaxSupplyMintable.sol)                                                                  |
 | `0x0D1485e5C5c43610e45A7951271599Ad89477207` | [ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES](./src/nfts/ERC1155MaxSupplyMintable.sol)                                                                   |
-| `0xFCbb6D5bDc0FC357a44Eb1E89adFC1C8AB646FB9` | [ERC1155_AUTO_GRAPH_MINTER](./src/nfts/ERC1155AutoGraphMinter.sol)                                                                                 |
+| `0x5A6Ca288b656745b540d5Fa7B068229A9aCD97C1` | [ERC1155_AUTO_GRAPH_MINTER](./src/nfts/ERC1155AutoGraphMinter.sol)                                                                                 |
 | `0x04f1267c0dEf0582C049597e8beD5FB36518aC1E` | [WETH_ERC20_HOLDING_DEPOSIT](./src/finance/ERC20HoldingDeposit.sol)                                                                                |
 | `0xFc601A8654aA5857C8C2336AA5f1EC9197e51450` | [ZTX HOODIE](./src/nfts/ERC721ZepetoUA.sol)                                                                                                        |
 | `0x5d6ce3C67Da4c13cb02Be63E06a989C1d4aF1CED` | [ERC1155_SALE_CONSUMABLES](./src/sale/ERC1155Sale.sol)                                                                                             |

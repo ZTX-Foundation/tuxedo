@@ -349,6 +349,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "jobId",
+        "type": "uint256"
+      }
+    ],
+    "name": "completedJobs",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "completed",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "core",
     "outputs": [
@@ -409,7 +428,7 @@
     "outputs": [
       {
         "internalType": "bool",
-        "name": "used",
+        "name": "expired",
         "type": "bool"
       }
     ],
@@ -437,6 +456,11 @@
             "internalType": "address",
             "name": "recipient",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "jobId",
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -551,6 +575,11 @@
         "components": [
           {
             "internalType": "uint256",
+            "name": "jobId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "tokenId",
             "type": "uint256"
           },
@@ -609,6 +638,11 @@
       },
       {
         "components": [
+          {
+            "internalType": "uint256",
+            "name": "jobId",
+            "type": "uint256"
+          },
           {
             "internalType": "uint256",
             "name": "tokenId",
@@ -676,6 +710,11 @@
         "components": [
           {
             "internalType": "uint256",
+            "name": "jobId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "tokenId",
             "type": "uint256"
           },
@@ -729,6 +768,11 @@
       },
       {
         "internalType": "uint256",
+        "name": "jobId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
       },
@@ -776,6 +820,11 @@
             "internalType": "address",
             "name": "recipient",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "jobId",
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -836,6 +885,11 @@
             "internalType": "address",
             "name": "recipient",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "jobId",
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
