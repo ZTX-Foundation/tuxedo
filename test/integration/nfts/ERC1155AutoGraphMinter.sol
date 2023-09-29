@@ -193,7 +193,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             Helper.SetupTxParams(vm, _privateKey, erc1155Consumables, 99, 1, 1, address(0), 0, block.timestamp)
         );
 
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintForFree(
             parts.recipient,
             parts.jobId,
@@ -228,7 +228,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         parts = Helper.setupTx(
             Helper.SetupTxParams(vm, _privateKey, erc1155Placeables, 100, 1, 1, address(0), 0, block.timestamp)
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintForFree(
             parts.recipient,
             parts.jobId,
@@ -263,7 +263,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         parts = Helper.setupTx(
             Helper.SetupTxParams(vm, _privateKey, erc1155Wearables, 101, 1, 1, address(0), 0, block.timestamp)
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintForFree(
             parts.recipient,
             parts.jobId,
@@ -465,7 +465,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
 
         /// ------- erc1155Placeables -------
@@ -537,7 +537,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
 
         /// ------- erc1155Wearables -------
@@ -608,7 +608,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
     }
 
@@ -793,7 +793,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
 
         /// ------- erc1155Placeables -------
@@ -862,7 +862,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
 
         /// ------- erc1155Wearables -------
@@ -930,7 +930,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
     }
 
@@ -1034,7 +1034,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp - 100
         );
 
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintBatchForFree(erc1155Consumables, address(this), params);
 
         /// ------- erc1155Placeables -------
@@ -1070,7 +1070,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             0,
             block.timestamp - 100
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintBatchForFree(erc1155Placeables, address(this), params);
 
         /// ------- erc1155Wearables -------
@@ -1106,7 +1106,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             0,
             block.timestamp - 100
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintBatchForFree(erc1155Wearables, address(this), params);
     }
 
@@ -1259,7 +1259,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             paymentAmountPerMint,
             block.timestamp - 100
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintBatchWithPaymentTokenAsFee(erc1155Consumables, address(this), address(token), params);
 
         /// ------- erc1155Placeables -------
@@ -1308,7 +1308,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             paymentAmountPerMint,
             block.timestamp - 100
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintBatchWithPaymentTokenAsFee(erc1155Placeables, address(this), address(token), params);
 
         /// ------- erc1155Wearables -------
@@ -1355,7 +1355,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             paymentAmountPerMint,
             block.timestamp - 100
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintBatchWithPaymentTokenAsFee(erc1155Wearables, address(this), address(token), params);
     }
 
@@ -1494,7 +1494,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             paymentAmountPerMint,
             block.timestamp - 100
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintBatchWithEthAsFee{value: totalCost}(erc1155Consumables, address(this), params);
 
         /// ------- erc1155Placeables -------
@@ -1539,7 +1539,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             paymentAmountPerMint,
             block.timestamp - 100
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintBatchWithEthAsFee{value: totalCost}(erc1155Placeables, address(this), params);
 
         /// ------- erc1155Wearables -------
@@ -1582,7 +1582,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             paymentAmountPerMint,
             block.timestamp - 100
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         autoGraphMinter.mintBatchWithEthAsFee{value: totalCost}(erc1155Wearables, address(this), params);
     }
 }

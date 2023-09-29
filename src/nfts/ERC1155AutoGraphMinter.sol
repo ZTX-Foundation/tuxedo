@@ -36,11 +36,11 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// --------- Storage ---------- ///
     address public paymentRecipient;
 
-    /// @notice hashes that have been registered
-    mapping(bytes32 hash => bool used) public expiredHashes;
+    /// @notice hashes that have expired
+    mapping(bytes32 hash => bool expired) public expiredHashes;
 
-    /// @notice job IDs to prevent replay attacks
-    mapping(uint256 jobId => bool completed) public expiredJobs;
+    /// @notice jobs that have completed
+    mapping(uint256 jobId => bool completed) public completedJobs;
 
     /// @notice - expiryToken value for x amount hours
     uint8 public expiryTokenHoursValid; // 1 - 24 hours
@@ -179,7 +179,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
         require(_isExpiryTokenValid(params.expiryToken), "ERC1155AutoGraphMinter: Expiry token is expired");
         require(params.inputHash == params.generatedHash, "ERC1155AutoGraphMinter: Hash mismatch");
         require(!expiredHashes[params.inputHash], "ERC1155AutoGraphMinter: Hash expired");
-        require(!expiredJobs[params.jobId], "ERC1155AutoGraphMinter: Job expired");
+        require(!completedJobs[params.jobId], "ERC1155AutoGraphMinter: Job already completed");
         require(
             core.hasRole(Roles.MINTER_NOTARY, recoverSigner(params.inputHash, params.signature)),
             "ERC1155AutoGraphMinter: Missing MINTER_NOTARY Role"
@@ -189,7 +189,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
         expiredHashes[params.inputHash] = true;
 
         /// @dev expire the job
-        expiredJobs[params.jobId] = true;
+        completedJobs[params.jobId] = true;
 
         // _deplete the rate limit buffer
         _depleteBuffer(params.units);

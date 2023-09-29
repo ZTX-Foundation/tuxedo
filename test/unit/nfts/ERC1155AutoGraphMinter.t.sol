@@ -155,7 +155,7 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
         parts = Helper.setupTx(
             Helper.SetupTxParams(vm, _privateKey, address(nft), 99, 1, 1, address(0), 0, block.timestamp)
         );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         _autoGraphMinter.mintForFree(
             parts.recipient,
             parts.jobId,
@@ -497,7 +497,7 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        vm.expectRevert("ERC1155AutoGraphMinter: Job expired");
+        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
         _autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
     }
 
