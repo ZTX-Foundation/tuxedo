@@ -20,7 +20,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     event WhitelistedContractAdded(address indexed nftContract);
     /// @notice - Event emitted when a contract is removed from the whitelist
     event WhitelistedContractRemoved(address indexed nftContract);
-    /// @notice - Events emitted when the mint is successful
+    /// @notice - Event emitted when the mint is successful
     event ERC1155Minted(address indexed nftContract, address indexed recipient, uint256 indexed tokenId, uint256 units);
 
     /// @notice - Event emitted when the batch mint is successful
