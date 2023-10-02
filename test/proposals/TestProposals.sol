@@ -7,6 +7,7 @@ import {Addresses} from "@test/proposals/Addresses.sol";
 import {Proposal} from "@test/proposals/proposalTypes/Proposal.sol";
 
 import {zip000} from "@test/proposals/zips/zip000.sol";
+import {zip999} from "@test/proposals/zips/zip999.sol";
 
 /*
 How to use:
@@ -44,6 +45,7 @@ contract TestProposals is Test {
 
         // Load proposals
         proposals.push(Proposal(address(new zip000())));
+        proposals.push(Proposal(address(new zip999())));
 
         nProposals = proposals.length;
     }
