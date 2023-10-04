@@ -3,9 +3,9 @@ pragma solidity 0.8.18;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {Addresses} from "@test/proposals/Addresses.sol";
-import {Proposal} from "@test/proposals/proposalTypes/Proposal.sol";
-import {TimelockProposal} from "@test/proposals/proposalTypes/TimelockProposal.sol";
+import {Addresses} from "@proposals/Addresses.sol";
+import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
+import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";

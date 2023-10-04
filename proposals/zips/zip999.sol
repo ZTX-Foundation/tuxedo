@@ -5,9 +5,9 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IVotes} from "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
 
-import {Addresses} from "@test/proposals/Addresses.sol";
-import {Proposal} from "@test/proposals/proposalTypes/Proposal.sol";
-import {TimelockProposal} from "@test/proposals/proposalTypes/TimelockProposal.sol";
+import {Addresses} from "@proposals/Addresses.sol";
+import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
+import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
@@ -224,7 +224,6 @@ contract zip999 is Proposal, TimelockProposal {
             allocations[1].ratio = 5_000;
 
             /// ERC20Splitter
-            ERC20Splitter splitter = new ERC20Splitter(address(_core), addresses.getAddress("TOKEN"), allocations);
             ERC20Splitter consumableSplitter = new ERC20Splitter(
                 address(_core),
                 addresses.getAddress("TOKEN"),

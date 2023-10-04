@@ -2,11 +2,11 @@
 pragma solidity 0.8.18;
 
 import {Test} from "@forge-std/Test.sol";
-import {IProposal} from "@test/proposals/proposalTypes/IProposal.sol";
+import {IProposal} from "@proposals/proposalTypes/IProposal.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
-import {Addresses} from "@test/proposals/Addresses.sol";
+import {Addresses} from "@proposals/Addresses.sol";
 
 abstract contract Proposal is IProposal, Test {
     bool public DEBUG = true;

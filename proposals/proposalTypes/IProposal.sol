@@ -1,6 +1,6 @@
 pragma solidity 0.8.18;
 
-import {Addresses} from "@test/proposals/Addresses.sol";
+import {Addresses} from "@proposals/Addresses.sol";
 
 interface IProposal {
     // Proposal name, e.g. "ZIP16"

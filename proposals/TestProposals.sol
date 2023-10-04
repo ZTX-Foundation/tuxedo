@@ -4,11 +4,11 @@ pragma solidity 0.8.18;
 import {console} from "@forge-std/console.sol";
 import {Test} from "@forge-std/Test.sol";
 
-import {Addresses} from "@test/proposals/Addresses.sol";
-import {Proposal} from "@test/proposals/proposalTypes/Proposal.sol";
+import {Addresses} from "@proposals/Addresses.sol";
+import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 
-import {zip000} from "@test/proposals/zips/zip000.sol";
-import {zip999} from "@test/proposals/zips/zip999.sol";
+import {zip000} from "@proposals/zips/zip000.sol";
+import {zip999} from "@proposals/zips/zip999.sol";
 
 /*
 How to use:

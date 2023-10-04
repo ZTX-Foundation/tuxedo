@@ -2,8 +2,8 @@ pragma solidity 0.8.18;
 
 import {console} from "@forge-std/console.sol";
 
-import {ITimelockController} from "@test/proposals/proposalTypes/ITimelockController.sol";
-import {Proposal} from "@test/proposals/proposalTypes/Proposal.sol";
+import {ITimelockController} from "@proposals/proposalTypes/ITimelockController.sol";
+import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 
 abstract contract TimelockProposal is Proposal {
     struct TimelockAction {
