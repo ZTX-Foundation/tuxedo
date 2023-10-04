@@ -14,20 +14,20 @@ interface IProposal {
     function setDebug(bool) external;
 
     // Deploy contracts and add them to list of addresses
-    function deploy(Addresses, address deployer) external;
+    // function _deploy(Addresses) external;
 
     // After deploying, call initializers and link contracts
     // together, e.g. if you deployed Core and Volt contracts,
     // you could link them in this step by calling core.setVolt(volt).
-    function afterDeploy(Addresses, address) external;
+    // function _afterDeploy(Addresses) external;
 
     /// After finishing deploy and deploy cleanup, build the proposal
-    function build(Addresses) external;
+    // function _build(Addresses) external;
 
     // Actually run the proposal (e.g. queue actions in the Timelock,
     // or execute a serie of Multisig calls...).
     // See contracts/test/proposals/proposalTypes for helper contracts.
-    function run(Addresses, address) external;
+    // function _run(Addresses) external;
 
     // After a proposal executed, if you mocked some behavior in the
     // afterDeploy step, you might want to tear down the mocks here.
@@ -36,7 +36,7 @@ interface IProposal {
     // of changes that must happen before your proposal execution), and here
     // you could revert these changes, to make sure the integration tests
     // run on a state that is as close to mainnet as possible.
-    function teardown(Addresses, address) external;
+    // function _teardown(Addresses) external;
 
     // For small post-proposal checks, e.g. read state variables of the
     // contracts you deployed, to make sure your deploy() and afterDeploy()
@@ -50,5 +50,5 @@ interface IProposal {
     // If you want to add extensive validation of a new component
     // deployed by your proposal, you might want to add a post-proposal
     // test file instead.
-    function validate(Addresses, address) external;
+    // function _validate(Addresses) external;
 }

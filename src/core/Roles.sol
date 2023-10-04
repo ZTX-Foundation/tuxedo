@@ -53,7 +53,4 @@ library Roles {
     /// @notice game consumer notary role.
     /// can issue signatures for in-game crafting and speed ups
     bytes32 internal constant GAME_CONSUMER_NOTARY = keccak256("GAME_CONSUMER_NOTARY_ROLE");
-
-    /// @notice DEPLOYER role.
-    bytes32 internal constant DEPLOYER = keccak256("DEPLOYER_ROLE");
 }

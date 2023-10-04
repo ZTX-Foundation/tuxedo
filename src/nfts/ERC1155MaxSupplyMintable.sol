@@ -54,13 +54,6 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef, Se
         _setSupplyCap(tokenId, maxSupply);
     }
 
-    /// @notice set the supply cap for a given token, cannot be less than current supply. Can only be called once by the DEPLOYER role
-    /// @param tokenId the id of the token to update
-    /// @param maxSupply the new max supply of the token
-    function setSupplyCapAtDeployment(uint256 tokenId, uint256 maxSupply) external onlyRole(Roles.DEPLOYER) sealAfter {
-        _setSupplyCap(tokenId, maxSupply);
-    }
-
     /// @dev internal function to set the supply cap for a given token, cannot be less than current supply
     /// @param tokenId the id of the token to update
     /// @param maxSupply the new max supply of the token

@@ -11,7 +11,6 @@ library TestAddresses {
     address public constant minterAddress = address(0x007);
     address public constant guardianAddress = address(0x008);
     address public constant financialGuardianAddress = address(0x009);
-    address public constant deployerAddress = address(0x010);
     address public constant adminAddress = address(0x011);
     address public constant safeAddress = address(0x012);
     address public constant minterNotaryAddress = address(0x013);
