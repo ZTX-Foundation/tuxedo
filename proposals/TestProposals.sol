@@ -37,13 +37,6 @@ contract TestProposals is Test {
     address public deployer = address(0x00000108);
 
     function setUp() public {
-        // debug = vm.envOr("DEBUG", true);
-        // doDeploy = vm.envOr("DO_DEPLOY", true);
-        // doAfterDeploy = vm.envOr("DO_AFTER_DEPLOY", true);
-        // doBuild = vm.envOr("DO_BUILD", true);
-        // doRun = vm.envOr("DO_RUN", true);
-        // doTeardown = vm.envOr("DO_TEARDOWN", true);
-        // doValidate = vm.envOr("DO_VALIDATE", true);
         addresses = new Addresses();
 
         // Load proposals
@@ -73,7 +66,7 @@ contract TestProposals is Test {
             console.log("Proposal", name, "deploy()");
             addresses.resetRecordingAddresses();
 
-            // Deploy step
+            // Run the deploy for testing only workflow
             proposals[i].deployForTestingOnly(addresses, deployer);
 
             /// output deployed contract addresses and names
@@ -88,84 +81,4 @@ contract TestProposals is Test {
 
         return postProposalVmSnapshots;
     }
-
-    // function testProposals() public returns (uint256[] memory postProposalVmSnapshots) {
-    //     if (debug) {
-    //         console.log("TestProposals: running", proposals.length, "proposals.");
-    //     }
-    //     postProposalVmSnapshots = new uint256[](proposals.length);
-    //     for (uint256 i = 0; i < proposals.length; i++) {
-    //         string memory name = proposals[i].name();
-
-    //         // Deploy step
-    //         if (doDeploy) {
-    //             if (debug) {
-    //                 console.log("Proposal", name, "deploy()");
-    //                 addresses.resetRecordingAddresses();
-    //             }
-
-    //             vm.startBroadcast(deployer);
-    //             proposals[i].deploy(addresses, deployer);
-    //             vm.stopBroadcast();
-
-    //             if (debug) {
-    //                 (string[] memory recordedNames, address[] memory recordedAddresses) = addresses
-    //                     .getRecordedAddresses();
-    //                 for (uint256 j = 0; j < recordedNames.length; j++) {
-    //                     console.log("  Deployed", recordedAddresses[j], recordedNames[j]);
-    //                 }
-    //             }
-    //         }
-
-    //         // After-deploy step
-    //         if (doAfterDeploy) {
-    //             if (debug) console.log("Proposal", name, "afterDeploy()");
-
-    //             vm.startBroadcast(deployer);
-    //             proposals[i].afterDeploy(addresses, deployer);
-    //             vm.stopBroadcast();
-    //         }
-
-    //         // Build step
-    //         if (doBuild) {
-    //             if (debug) console.log("Proposal", name, "build()");
-
-    //             vm.startBroadcast(deployer);
-    //             proposals[i].build(addresses);
-    //             vm.stopBroadcast();
-    //         }
-
-    //         // Run step
-    //         if (doRun) {
-    //             if (debug) console.log("Proposal", name, "run()");
-
-    //             vm.startBroadcast(deployer);
-    //             proposals[i].run(addresses, deployer);
-    //             vm.stopBroadcast();
-    //         }
-
-    //         // Teardown step
-    //         if (doTeardown) {
-    //             if (debug) console.log("Proposal", name, "teardown()");
-
-    //             vm.startBroadcast(deployer);
-    //             proposals[i].teardown(addresses, deployer);
-    //             vm.stopBroadcast();
-    //         }
-
-    //         // Validate step
-    //         if (doValidate) {
-    //             if (debug) console.log("Proposal", name, "validate()");
-    //             vm.startBroadcast(deployer);
-    //             proposals[i].validate(addresses, deployer);
-    //             vm.stopBroadcast();
-    //         }
-
-    //         if (debug) console.log("Proposal", name, "done.");
-
-    //         postProposalVmSnapshots[i] = vm.snapshot();
-    //     }
-
-    //     return postProposalVmSnapshots;
-    // }
 }

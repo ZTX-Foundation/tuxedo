@@ -39,23 +39,14 @@ contract DeployProposal is Script, zip {
     function run() public {
         Addresses addresses = new Addresses();
         addresses.resetRecordingAddresses();
-        // address deployerAddress = vm.addr(privateKey);
 
+        /// Run the deploy OnChain deployment workflow
         deployOnChain(addresses, privateKey);
 
-        // vm.startBroadcast(privateKey); /// This wont work due to call depth issues?
-        // if (doDeploy) deploy(addresses, deployerAddress);
-        // if (doAfterdeploy) afterDeploy(addresses, deployerAddress);
-        // if (doValidate) validate(addresses, deployerAddress);
-        // if (doTeardown) teardown(addresses, deployerAddress);
-        // vm.stopBroadcast();
-
-        // if (doDeploy) {
-        //     (string[] memory recordedNames, address[] memory recordedAddresses) = addresses.getRecordedAddresses();
-        //     for (uint256 i = 0; i < recordedNames.length; i++) {
-        //         // solhint-disable-next-line
-        //         console.log("Deployed", recordedAddresses[i], recordedNames[i]);
-        //     }
-        // }
+        (string[] memory recordedNames, address[] memory recordedAddresses) = addresses.getRecordedAddresses();
+        for (uint256 i = 0; i < recordedNames.length; i++) {
+            // solhint-disable-next-line
+            console.log("Deployed", recordedAddresses[i], recordedNames[i]);
+        }
     }
 }
