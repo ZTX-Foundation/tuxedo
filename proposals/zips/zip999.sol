@@ -340,25 +340,9 @@ contract zip999 is Proposal, TimelockProposal {
         _core.grantRole(Roles.FINANCIAL_GUARDIAN, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
     }
 
-    function _build(Addresses addresses, address deployer) internal override {
-        // _pushTimelockAction(
-        //     addresses.getAddress("CORE"),
-        //     abi.encodeWithSignature(
-        //         "grantRole(bytes32,address)",
-        //         Roles.FINANCIAL_CONTROLLER,
-        //         addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER")
-        //     ),
-        //     "Grant Governor DAO timelock controller the role FINANCIAL_CONTROLLER"
-        // );
-    }
+    function _build(Addresses addresses, address deployer) internal override {}
 
-    function _run(Addresses addresses, address deployer) internal override {
-        // _simulateTimelockActions(
-        //     addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"), // timelockAddress
-        //     addresses.getAddress("ADMIN_MULTISIG"), // proposerAddress
-        //     addresses.getAddress("ADMIN_MULTISIG") // executorAddress
-        // );
-    }
+    function _run(Addresses addresses, address deployer) internal override {}
 
     function _teardown(Addresses addresses, address deployer) internal override {}
 
