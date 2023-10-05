@@ -35,7 +35,7 @@ contract zip999 is Proposal, TimelockProposal {
 
     function _beforeDeploy(Addresses addresses, address deployer) internal override {
         // Get Core
-        _core = Core(addresses.getAddress("CORE"));
+        _core = Core(addresses.getCore());
 
         // Check deployer is admin before deploy starts
         assertEq(_core.hasRole(Roles.ADMIN, deployer), true);

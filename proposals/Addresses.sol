@@ -152,6 +152,10 @@ contract Addresses is Test {
         vm.label(addr, name);
     }
 
+    function getCore() public view returns (address) {
+        return _addresses["CORE"][chainId];
+    }
+
     function getAddress(string memory name) public view returns (address) {
         return _addresses[name][chainId];
     }
