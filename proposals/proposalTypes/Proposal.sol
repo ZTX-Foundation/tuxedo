@@ -37,20 +37,30 @@ abstract contract Proposal is IProposal, Test {
     /// @notice run the deployment on-chain
     /// @dev this is run on-chain and is used with the foundry `forge script` command
     function deployOnChain(Addresses addresses, uint256 privateKey) public {
-        vm.startBroadcast(privateKey);
         address deployer = vm.addr(privateKey);
+
+        // start broadcast
+        vm.startBroadcast(privateKey);
 
         _beforeDeploy(addresses, deployer);
         _deploy(addresses, deployer);
         _afterDeploy(addresses, deployer);
         _afterDeployOnChain(addresses, deployer); // revoke admin role from deployer
+
+        // stop broadcast
+        vm.stopBroadcast();
+
         _build(addresses, deployer);
+
+        // start broadcast
+        vm.startBroadcast(privateKey);
         _run(addresses, deployer);
+        vm.stopBroadcast();
+        // stop broadcast
+
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
         _validateOnChain(addresses, deployer); // check admin role was revoked
-
-        vm.stopBroadcast();
     }
 
     /// @notice runs before all deployments.
