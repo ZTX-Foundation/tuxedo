@@ -9,7 +9,7 @@ import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
-import {Token} from "@protocol/token/Token.sol";
+import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 
 contract zip000 is Proposal, TimelockProposal {
@@ -37,10 +37,7 @@ contract zip000 is Proposal, TimelockProposal {
 
     function _afterDeploy(Addresses addresses, address) internal override {
         /// Token transfer
-        IERC20(addresses.getAddress("TOKEN")).transfer(
-            addresses.getAddress("TREASURY_WALLET_MULTISIG"),
-            10_000_000_000e18
-        );
+        IERC20(addresses.getAddress("TOKEN")).transfer(addresses.getAddress("TREASURY_WALLET_MULTISIG"), MAX_SUPPLY);
 
         // Setup ADMIN_MULTISIG
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG"));
@@ -50,7 +47,7 @@ contract zip000 is Proposal, TimelockProposal {
         /// Check Treasury balance
         assertEq(
             IERC20(addresses.getAddress("TOKEN")).balanceOf(addresses.getAddress("TREASURY_WALLET_MULTISIG")),
-            10_000_000_000e18
+            10_000_000_000e18 // hardcoded to verfiy all code is working
         );
 
         // Check Roles
