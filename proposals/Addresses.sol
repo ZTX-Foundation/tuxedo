@@ -46,6 +46,11 @@ contract Addresses is Test {
         _addAddress("WETH", 421614, 0x7331d7864ad4d32F1EBE86E26Dcba90787503757);
         _addAddress("WETH", 11155111, 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
 
+        // TODO change to real addresses!!
+        /// Treasury wallet multisig
+        _addAddress("TREASURY_WALLET_MULTISIG", 31337, 0x0000000000000000000000000000000000000101);
+        _addAddress("TREASURY_WALLET_MULTISIG", 42161, 0x0000000000000000000000000000000000000101);
+
         /// Admin multisig
         _addAddress("ADMIN_MULTISIG", 5, 0xA25f95B2106fE3935bA3229ec6C2960614F69e21);
         _addAddress("ADMIN_MULTISIG", 31337, 0x2145cc1cc05690eBa6eAD2782B3fD547CE66C29C);

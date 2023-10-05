@@ -33,36 +33,28 @@ contract zip000 is Proposal, TimelockProposal {
             );
             addresses.addAddress("TOKEN", address(token));
         }
-
-        /// Treasury wallet
-        {
-            ERC20HoldingDeposit treasuryHoldingDeposit = new ERC20HoldingDeposit(
-                address(_core),
-                addresses.getAddress("TOKEN")
-            );
-            addresses.addAddress("TREASURY_WALLET", address(treasuryHoldingDeposit));
-        }
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {
         /// Token transfer
-        IERC20(addresses.getAddress("TOKEN")).transfer(addresses.getAddress("TREASURY_WALLET"), 10_000_000_000e18);
+        IERC20(addresses.getAddress("TOKEN")).transfer(
+            addresses.getAddress("TREASURY_WALLET_MULTISIG"),
+            10_000_000_000e18
+        );
 
         // Setup ADMIN_MULTISIG
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG"));
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER, addresses.getAddress("ADMIN_MULTISIG")); // can withdraw from treasury
     }
 
     function _validate(Addresses addresses, address) internal override {
         /// Check Treasury balance
         assertEq(
-            IERC20(addresses.getAddress("TOKEN")).balanceOf(addresses.getAddress("TREASURY_WALLET")),
+            IERC20(addresses.getAddress("TOKEN")).balanceOf(addresses.getAddress("TREASURY_WALLET_MULTISIG")),
             10_000_000_000e18
         );
 
         // Check Roles
         assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true);
-        assertEq(_core.hasRole(Roles.FINANCIAL_CONTROLLER, addresses.getAddress("ADMIN_MULTISIG")), true);
     }
 
     function _teardown(Addresses addresses, address deployer) internal override {}
