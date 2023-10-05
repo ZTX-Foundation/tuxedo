@@ -40,7 +40,7 @@ contract DeployProposal is Script, zip {
         Addresses addresses = new Addresses();
         addresses.resetRecordingAddresses();
 
-        /// Run the deploy OnChain deployment workflow
+        /// Run the deploy OnChain workflow
         deployOnChain(addresses, privateKey);
 
         (string[] memory recordedNames, address[] memory recordedAddresses) = addresses.getRecordedAddresses();
