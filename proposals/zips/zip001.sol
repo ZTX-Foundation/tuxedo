@@ -12,7 +12,7 @@ import {Roles} from "@protocol/core/Roles.sol";
 import {Token} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 
-contract zip000 is Proposal, TimelockProposal {
+contract zip001 is Proposal, TimelockProposal {
     string public name = "ZIP001";
     string public description = "The ZTX PlayTest Proposal";
 
