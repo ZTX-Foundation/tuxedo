@@ -27,7 +27,7 @@ import {ERC1155SeasonTwo} from "@protocol/nfts/seasons/ERC1155SeasonTwo.sol";
 import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 
-contract zip999 is Proposal, TimelockProposal {
+contract zipTest is Proposal, TimelockProposal {
     string public name = "ZIP999";
     string public description = "The Last ZTX Proposal (For Testing only)";
 
