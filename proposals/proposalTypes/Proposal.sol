@@ -100,5 +100,6 @@ abstract contract Proposal is IProposal, Test {
     /// @notice validate the deployment on-chain only
     function _validateOnChain(Addresses, address deployer) internal virtual {
         assertEq(_core.hasRole(Roles.ADMIN, deployer), false);
+        assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1);
     }
 }
