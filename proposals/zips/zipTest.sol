@@ -27,7 +27,7 @@ import {ERC1155SeasonTwo} from "@protocol/nfts/seasons/ERC1155SeasonTwo.sol";
 import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 
-contract zip999 is Proposal, TimelockProposal {
+contract zipTest is Proposal, TimelockProposal {
     string public name = "ZIP999";
     string public description = "The Last ZTX Proposal (For Testing only)";
 
@@ -143,16 +143,7 @@ contract zip999 is Proposal, TimelockProposal {
 
         {
             /// Timelock Controller (Governor Bravo DAO)
-            /// @notice we do this as the deployer is different when running in fork mode,
-            /// versus deploying to a live chain
             address governorDAOTimelockAdmin = deployer;
-            // if (addresses.getAddress("DEPLOYER") == deployer) {
-            //     governorDAOTimelockAdmin = deployer;
-            // } else {
-            //     governorDAOTimelockAdmin = address(this);
-            // }
-
-            // governorDAOTimelockAdmin = address(this);
 
             // /// @notice set a temporary admin and then transfer
             TimelockController governorDAOTimelock = new TimelockController(
@@ -300,8 +291,6 @@ contract zip999 is Proposal, TimelockProposal {
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {
-        // Core core = Core(addresses.getAddress("CORE"));
-
         /// Set global lock
         _core.setGlobalLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
 
