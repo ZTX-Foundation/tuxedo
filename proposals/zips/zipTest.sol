@@ -291,8 +291,6 @@ contract zipTest is Proposal, TimelockProposal {
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {
-        // Core core = Core(addresses.getAddress("CORE"));
-
         /// Set global lock
         _core.setGlobalLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
 
