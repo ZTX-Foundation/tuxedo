@@ -84,13 +84,13 @@ contract zip001 is Proposal, TimelockProposal {
         addresses.addAddress("ERC1155_AUTO_GRAPH_MINTER", address(erc1155AutoGraphMinter));
 
         /// Game consumer
-        GameConsumer consumer = new GameConsumer(
+        GameConsumer gameConsumer = new GameConsumer(
             address(_core),
             addresses.getAddress("TOKEN"),
             addresses.getAddress("GAME_CONSUMER_PAYMENT_RECIPIENT"),
             addresses.getAddress("WETH")
         );
-        addresses.addAddress("GAME_CONSUMABLE", address(consumer));
+        addresses.addAddress("GAME_CONSUMABLE", address(gameConsumer));
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {
