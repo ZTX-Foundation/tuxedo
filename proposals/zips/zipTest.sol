@@ -143,16 +143,7 @@ contract zipTest is Proposal, TimelockProposal {
 
         {
             /// Timelock Controller (Governor Bravo DAO)
-            /// @notice we do this as the deployer is different when running in fork mode,
-            /// versus deploying to a live chain
             address governorDAOTimelockAdmin = deployer;
-            // if (addresses.getAddress("DEPLOYER") == deployer) {
-            //     governorDAOTimelockAdmin = deployer;
-            // } else {
-            //     governorDAOTimelockAdmin = address(this);
-            // }
-
-            // governorDAOTimelockAdmin = address(this);
 
             // /// @notice set a temporary admin and then transfer
             TimelockController governorDAOTimelock = new TimelockController(
