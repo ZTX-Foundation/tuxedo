@@ -21,10 +21,6 @@ contract zip000 is Proposal, TimelockProposal {
     }
 
     function _deploy(Addresses addresses, address) internal override {
-        /// Core protocol
-        _core = new Core();
-        addresses.addAddress("CORE", address(_core));
-
         /// Token deployment
         {
             Token token = new Token(
@@ -38,10 +34,9 @@ contract zip000 is Proposal, TimelockProposal {
     function _afterDeploy(Addresses addresses, address) internal override {
         /// Token transfer
         IERC20(addresses.getAddress("TOKEN")).transfer(addresses.getAddress("TREASURY_WALLET_MULTISIG"), MAX_SUPPLY);
-
-        // Setup ADMIN_MULTISIG
-        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG"));
     }
+
+    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
 
     function _validate(Addresses addresses, address) internal override {
         /// Check Treasury balance
@@ -49,10 +44,11 @@ contract zip000 is Proposal, TimelockProposal {
             IERC20(addresses.getAddress("TOKEN")).balanceOf(addresses.getAddress("TREASURY_WALLET_MULTISIG")),
             10_000_000_000e18 // hardcoded to verfiy all code is working
         );
-
-        // Check Roles
-        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true);
     }
+
+    function _validateOnChain(Addresses, address deployer) internal virtual override {}
+
+    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
 
     function _teardown(Addresses addresses, address deployer) internal override {}
 

@@ -75,9 +75,7 @@ abstract contract Proposal is IProposal, Test {
 
     /// @notice runs after all deployments on-chain only and will ensure that admin role is revoked from deployer
     /// @dev Revoked admin role after all deployments and needs to added again before another deployment can be done.
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual {
-        _core.revokeRole(Roles.ADMIN, deployer);
-    }
+    function _afterDeployOnChain(Addresses, address deployer) internal virtual;
 
     /// @notice build governance proposal
     function _build(Addresses addresses, address deployer) internal virtual;
@@ -93,12 +91,8 @@ abstract contract Proposal is IProposal, Test {
 
     /// @notice validate the deployment for testing only
     /// @dev as an example in testing mode we dont drop the admin role as its needed for further deployments in an automated test
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual {
-        assertEq(_core.hasRole(Roles.ADMIN, deployer), true);
-    }
+    function _validateForTestingOnly(Addresses, address deployer) internal virtual;
 
     /// @notice validate the deployment on-chain only
-    function _validateOnChain(Addresses, address deployer) internal virtual {
-        assertEq(_core.hasRole(Roles.ADMIN, deployer), false);
-    }
+    function _validateOnChain(Addresses, address deployer) internal virtual;
 }

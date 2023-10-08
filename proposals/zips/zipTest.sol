@@ -33,15 +33,13 @@ contract zipTest is Proposal, TimelockProposal {
 
     address[] public whitelistAddresses;
 
-    function _beforeDeploy(Addresses addresses, address deployer) internal override {
-        // Get Core
-        _core = Core(addresses.getAddress("CORE"));
-
-        // Check deployer is admin before deploy starts
-        assertEq(_core.hasRole(Roles.ADMIN, deployer), true);
-    }
+    function _beforeDeploy(Addresses addresses, address deployer) internal override {}
 
     function _deploy(Addresses addresses, address deployer) internal override {
+        /// Core protocol
+        _core = new Core();
+        addresses.addAddress("CORE", address(_core));
+
         /// GlobalReentrancyLock
         GlobalReentrancyLock globalReentrancyLock = new GlobalReentrancyLock(addresses.getAddress("CORE"));
         addresses.addAddress("GLOBAL_REENTRANCY_LOCK", address(globalReentrancyLock));
@@ -291,6 +289,9 @@ contract zipTest is Proposal, TimelockProposal {
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {
+        // Setup ADMIN_MULTISIG
+        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG"));
+
         /// Set global lock
         _core.setGlobalLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
 
@@ -329,6 +330,8 @@ contract zipTest is Proposal, TimelockProposal {
         _core.grantRole(Roles.FINANCIAL_GUARDIAN, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
     }
 
+    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
+
     function _build(Addresses addresses, address deployer) internal override {}
 
     function _run(Addresses addresses, address deployer) internal override {}
@@ -336,8 +339,10 @@ contract zipTest is Proposal, TimelockProposal {
     function _teardown(Addresses addresses, address deployer) internal override {}
 
     function _validate(Addresses addresses, address) internal override {
+        // Check Roles
+        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true);
+
         /// Check that everything is pointing to the right core contract address
-        // Core core = Core(addresses.getAddress("CORE"));
 
         /// Reentrancy lock
         assertEq(address(GlobalReentrancyLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK")).core()), address(_core));
@@ -441,4 +446,8 @@ contract zipTest is Proposal, TimelockProposal {
         /// FINANCIAL_GUARDIAN role
         assertEq(_core.getRoleMember(Roles.FINANCIAL_GUARDIAN, 0), addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
     }
+
+    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
+
+    function _validateOnChain(Addresses, address deployer) internal virtual override {}
 }
