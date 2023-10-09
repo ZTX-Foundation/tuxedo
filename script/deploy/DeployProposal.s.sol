@@ -2,11 +2,9 @@
 pragma solidity 0.8.18;
 
 import {console} from "@forge-std/console.sol";
-import {zip000 as zip} from "@test/proposals/zips/zip000.sol";
+import {zip000 as zip} from "@proposals/zips/zip000.sol";
 import {Script} from "@forge-std/Script.sol";
-import {Addresses} from "@test/proposals/Addresses.sol";
-
-import {zip000} from "@test/proposals/zips/zip000.sol";
+import {Addresses} from "@proposals/Addresses.sol";
 
 /*
 How to use:
@@ -41,21 +39,14 @@ contract DeployProposal is Script, zip {
     function run() public {
         Addresses addresses = new Addresses();
         addresses.resetRecordingAddresses();
-        address deployerAddress = vm.addr(privateKey);
 
-        vm.startBroadcast(privateKey);
-        if (doDeploy) deploy(addresses, deployerAddress);
-        if (doAfterdeploy) afterDeploy(addresses, deployerAddress);
-        if (doValidate) validate(addresses, deployerAddress);
-        if (doTeardown) teardown(addresses, deployerAddress);
-        vm.stopBroadcast();
+        /// Run the deploy OnChain workflow
+        deployOnChain(addresses, privateKey);
 
-        if (doDeploy) {
-            (string[] memory recordedNames, address[] memory recordedAddresses) = addresses.getRecordedAddresses();
-            for (uint256 i = 0; i < recordedNames.length; i++) {
-                // solhint-disable-next-line
-                console.log("Deployed", recordedAddresses[i], recordedNames[i]);
-            }
+        (string[] memory recordedNames, address[] memory recordedAddresses) = addresses.getRecordedAddresses();
+        for (uint256 i = 0; i < recordedNames.length; i++) {
+            // solhint-disable-next-line
+            console.log("Deployed", recordedAddresses[i], recordedNames[i]);
         }
     }
 }

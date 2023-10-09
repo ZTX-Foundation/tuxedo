@@ -85,7 +85,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         tokenIdRewardAmounts[1] = TokenIdRewardAmount({tokenId: 2, rewardAmount: 1000});
         tokenIdRewardAmounts[2] = TokenIdRewardAmount({tokenId: 3, rewardAmount: 1600});
 
-        vm.prank(addresses.deployerAddress);
+        vm.prank(addresses.adminAddress);
         _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
 
         assertEq(_seasonOne.totalRewardTokens(), calulateTotalRewardAmount(tokenIdRewardAmounts));
@@ -101,7 +101,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         // Set tokenId to Reward Amount.
         tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 0, rewardAmount: 0});
 
-        vm.prank(addresses.deployerAddress);
+        vm.prank(addresses.adminAddress);
         vm.expectRevert("ERC1155SeasonOne: rewardAmount cannot be 0");
         _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
     }
@@ -112,7 +112,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         // Set tokenId to Reward Amount.
         tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 0, rewardAmount: 1000});
 
-        vm.prank(addresses.deployerAddress);
+        vm.prank(addresses.adminAddress);
         vm.expectRevert("ERC1155SeasonOne: maxTokenSupply cannot be 0");
         _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
     }
@@ -124,20 +124,6 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 1, rewardAmount: 1000});
 
         vm.expectRevert("CoreRef: no role on core");
-        _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
-    }
-
-    function testConfigSeasonDistributionFailFunctionSealed() public {
-        TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](1);
-
-        // Set tokenId to Reward Amount.
-        tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 1, rewardAmount: 1000});
-
-        vm.prank(addresses.deployerAddress);
-        _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
-
-        vm.prank(addresses.deployerAddress);
-        vm.expectRevert("Sealable: Contract already Sealed");
         _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
     }
 

@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 import {Test} from "@forge-std/Test.sol";
 
 import {MockERC721} from "@test/mock/MockERC721.sol";
-import {Addresses} from "@test/proposals/Addresses.sol";
+import {Addresses} from "@proposals/Addresses.sol";
 import {MerkleProof} from "@test/fixtures/MerkleProof.sol";
 import {TestAddresses as testAddresses} from "@test/fixtures/TestAddresses.sol";
 import {configureSale, setSupplyCap} from "@test/fixtures/Fixtures.sol";
