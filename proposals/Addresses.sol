@@ -107,9 +107,11 @@ contract Addresses is Test {
         _addAddress("CONSUMABLE_SPLITTER", 421614, 0xaeF3AeF1C1869834E6b6523F28033E442897f775);
         _addAddress("ERC1155_SALE_SPLITTER", 421614, 0xc2FBCA41B9dbb7debE9E5Ce349708602E441C608);
         _addAddress("GAME_CONSUMABLE", 421614, 0x21d993233a9E5F7E3C5F9Ca57d0c103273427840);
+        _addAddress("TREASURY_WALLET_MULTISIG", 421614, 0x0000000000000000000000000000000000000101); // placeholder for tests to work
 
         // 42161: Arbitrum  mainNet
         _addAddress("TREASURY_WALLET_MULTISIG", 42161, 0xb9d7CB819Cf09c1aF796c23e7a5F0b7EE9a62902);
+        _addAddress("TOKEN", 42161, 0x1C43D05be7E5b54D506e3DdB6f0305e8A66CD04e);
     }
 
     /// @notice add an address for a specific _chainId
