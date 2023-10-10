@@ -11,9 +11,7 @@ jobs:
             DOMAIN: example.com
             TOKEN_NAME: "TKN Token"
             TOKEN_SYMBOL: TKN
-            SEA_DROP_NAME: 'TKN Sea Drop'
-            SEA_DROP_SYMBOL: 'TKN'
-            ARBITRUM_RPC_URL: ${{ vars.ARBITRUM_RPC_URL }}
+            ARBITRUM_TESTNET_SEPOLIA_RPC_URL: ${{ vars.ARBITRUM_TESTNET_SEPOLIA_RPC_URL }}
         steps:
             - uses: actions/checkout@v3
               with:

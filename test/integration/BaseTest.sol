@@ -14,7 +14,7 @@ contract BaseTest is Test, ERC1155Holder {
     uint256 arbitrumFork;
 
     function setUp() public virtual {
-        arbitrumFork = vm.createFork(vm.envString("ARBITRUM_RPC_URL"));
+        arbitrumFork = vm.createFork(vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL"));
         vm.selectFork(arbitrumFork);
 
         runProposals();
