@@ -58,19 +58,6 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
         assertEq(nft.maxTokenSupply(tokenId + 1), supplyCap);
     }
 
-    function testSetTokenSupplyCapAtDeploymentWithRoleSucceds() public {
-        vm.prank(addresses.deployerAddress);
-        nft.setSupplyCapAtDeployment(tokenId + 1, supplyCap);
-
-        assertEq(nft.getMintAmountLeft(tokenId + 1), supplyCap);
-        assertEq(nft.maxTokenSupply(tokenId + 1), supplyCap);
-    }
-
-    function testSetTokenSupplyCapAtDeploymentWithOutRoleFails() public {
-        vm.expectRevert("CoreRef: no role on core");
-        nft.setSupplyCapAtDeployment(tokenId + 1, supplyCap);
-    }
-
     function testSetTokenSupplyCapUnderSupplyFails() public {
         testMintSucceedsMinter(10_000);
 

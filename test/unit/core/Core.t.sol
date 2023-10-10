@@ -6,7 +6,7 @@ import {TestAddresses} from "@test/fixtures/TestAddresses.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import "@forge-std/Test.sol";
 
-contract CoreTest is Test {
+contract UnitTestCore is Test {
     Core public core;
 
     function setUp() public {
@@ -121,6 +121,7 @@ contract CoreTest is Test {
                 newRole != Roles.MINTER &&
                 newRole != Roles.TOKEN_GOVERNOR &&
                 newRole != Roles.MINTER_NOTARY &&
+                newRole != Roles.REGISTRY_OPERATOR &&
                 newRole != Roles.GAME_CONSUMER_NOTARY
         );
 

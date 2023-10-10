@@ -4,9 +4,9 @@ Solidity smart contracts for ZTX.
 
 ## Dependencies
 
--   [Foundry](https://github.com/foundry-rs/foundry)
--   [npm](https://docs.npmjs.com/getting-started)
--   [Slither](https://github.com/crytic/slither)
+- [Foundry](https://github.com/foundry-rs/foundry)
+- [npm](https://docs.npmjs.com/getting-started)
+- [Slither](https://github.com/crytic/slither)
 
 ## Documentation
 
@@ -29,6 +29,7 @@ The system also requires the following environment variables to be set:
 | `DEPLOYER_PRIVATE_KEY` | The private key of the deployer.                                      |
 | `MAINNET_RPC_URL`      | Arbitrum mainnet RPC host.                                            |
 | `TESTNET_RPC_URL`      | Arbitrum testnet RPC host.                                            |
+| `ARBITRUM_TESTNET_SEPOLIA_RPC_URL` | Arbitrum Sepolia Testnet RPC host                         |
 
 See the included `.env.example` for an example.
 
@@ -72,7 +73,7 @@ npm run clean && npm run build
 
 ## Static Analysis
 
-We use [Slither](https://github.com/crytic/slither) to analyse our contracts. 
+We use [Slither](https://github.com/crytic/slither) to analyse our contracts.
 
 ### Install
 

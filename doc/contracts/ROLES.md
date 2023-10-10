@@ -20,8 +20,6 @@ The system roles in the contract are categorized into two main categories: Major
 
 8. `REGISTRY_OPERATOR`: The role that can operator a registry contract. This role is typically used by a protocol contract.
 
-9. `DEPLOYER`: This role enables the deployerAddress to preform operations as part of a contract deployment. This can also be paired with the use of the Sealable extension so these functions can also only be called once as part of deployment then locked.
-
 ## Admin Roles
 
 1. `ADMIN`: The ultimate role that controls all other roles and protocol functionality. This role should only be owned by a multisig or a timelock contract, ensuring careful management and control. Can revoke other roles and itself.
