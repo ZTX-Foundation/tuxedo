@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 import "@forge-std/Test.sol";
-import "@protocol/utils/extensions/WhitelistedAddreses.sol";
+import "@protocol/utils/extensions/WhitelistedAddresses.sol";
 
 contract TestContract is WhitelistedAddresses {
     constructor(address[] memory _addresses) WhitelistedAddresses(_addresses) {}
