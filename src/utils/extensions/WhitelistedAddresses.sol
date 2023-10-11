@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import {IWhitelistedAddresses} from "@protocol/utils/extensions/IWhitelistedAddreses.sol";
+import {IWhitelistedAddresses} from "@protocol/utils/extensions/IWhitelistedAddresses.sol";
 
 abstract contract WhitelistedAddresses is IWhitelistedAddresses {
     using EnumerableSet for EnumerableSet.AddressSet;

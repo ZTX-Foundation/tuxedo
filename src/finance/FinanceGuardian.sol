@@ -8,7 +8,7 @@ import {CoreRef} from "@protocol/refs/CoreRef.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {IDepositBase} from "@protocol/finance/IDepositBase.sol";
 import {IFinanceGuardian} from "@protocol/finance/IFinanceGuardian.sol";
-import {WhitelistedAddresses} from "@protocol/utils/extensions/WhitelistedAddreses.sol";
+import {WhitelistedAddresses} from "@protocol/utils/extensions/WhitelistedAddresses.sol";
 
 /// @notice Finance Guardian is a contract to safeguard protocol funds
 /// by being able to withdraw from whitelisted deposits to a safe address

@@ -6,92 +6,81 @@ Allows users to purchase ERC1155 tokens using either ETH or specific ERC20 token
 ### Overview
 These diagrams provide a visual representation of how `ERC1155Sale.sol` interacts with its various features and dependencies. It primarily shows the flow of actions a user can initiate and how the contract interacts with other referenced contracts and utilities.
 
+#### Top-down
 ```mermaid
 graph TD
-
-User --> |"buyTokenWithEth"| ERC1155Sale
-User --> |"buyTokensWithEth"| ERC1155Sale
-User --> |"buyToken"| ERC1155Sale
-User --> |"buyTokens"| ERC1155Sale
-
-Admin --> |"setTokenRecipients"| ERC1155Sale
-Admin --> |"setTokenConfig"| ERC1155Sale
-Admin --> |"wrapEth"| ERC1155Sale
-Admin --> |"setFee"| ERC1155Sale
-
-FinancialController --> |"withdrawERC20"| ERC1155Sale
-
-ERC1155Sale --> |"Uses"| MerkleProof
-ERC1155Sale --> |"Uses"| SafeERC20
-ERC1155Sale --> |"Uses"| SafeCast
-ERC1155Sale --> |"Interacts With"| IERC20
-ERC1155Sale --> |"Interacts With"| IWETH
-ERC1155Sale --> |"Uses"| CoreRef
-ERC1155Sale --> |"Uses"| Constants
-ERC1155Sale --> |"Implements"| IERC1155Sale
-ERC1155Sale --> |"Interacts With"| ERC1155MaxSupplyMintable
+    ERC1155Sale --> MerkleProof
+    ERC1155Sale --> SafeERC20
+    ERC1155Sale --> SafeCast
+    ERC1155Sale --> IERC20
+    ERC1155Sale --> Roles
+    ERC1155Sale --> IWETH
+    ERC1155Sale --> CoreRef
+    ERC1155Sale --> Constants
+    ERC1155Sale --> IERC1155Sale
+    ERC1155Sale --> ERC1155MaxSupplyMintable
 ```
 
+#### Sequence
 ```mermaid
 sequenceDiagram
-    participant User
-    participant ERC1155Sale
-    participant ERC20 (from OpenZeppelin)
-    participant Roles
-    participant ERC1155MaxSupplyMintable (NFT Contract)
-    participant IWETH
-    participant MerkleProof
-    participant Constants
-    
-    User->>ERC1155Sale: buyTokenWithEth(...)
-    ERC1155Sale->>MerkleProof: verify(...)
-    MerkleProof-->>ERC1155Sale: Verification Result
-    ERC1155Sale->>Constants: BASIS_POINTS_GRANULARITY
-    Constants-->>ERC1155Sale: Granularity Value
-    ERC1155Sale->>ERC1155MaxSupplyMintable: mint(...)
-    ERC1155MaxSupplyMintable-->>User: NFT Minted
+    participant User as User/Caller
+    participant ERC1155Sale as ERC1155Sale
+    participant ERC1155NFT as ERC1155
+    participant ERC20 as ERC20
+    participant WETH as WETH
 
-    User->>ERC1155Sale: buyTokensWithEth(...)
-    ERC1155Sale->>ERC1155Sale: _arityCheck(...)
-    ERC1155Sale->>MerkleProof: verify(...)
-    MerkleProof-->>ERC1155Sale: Verification Result
-    ERC1155Sale->>ERC1155MaxSupplyMintable: mintBatch(...)
-    ERC1155MaxSupplyMintable-->>User: NFTs Minted
+    User->>ERC1155Sale: constructor(_core, _nft, _weth)
+    ERC1155Sale->>ERC1155NFT: Initialize ERC1155 reference
+    ERC1155Sale->>WETH: Initialize WETH reference
 
-    User->>ERC1155Sale: buyToken(...)
-    ERC1155Sale->>ERC20: safeTransferFrom(...)
-    ERC20-->>ERC1155Sale: Tokens transferred
-    ERC1155Sale->>ERC1155MaxSupplyMintable: mint(...)
-    ERC1155MaxSupplyMintable-->>User: NFT Minted
+    User->>ERC1155Sale: buyTokenWithEth(erc1155TokenId, amountToPurchase, approvedAmount, merkleProof, recipient)
+    alt require ERC1155Sale is not paused, merkleProof is valid, etc.
+        ERC1155Sale->>ERC1155Sale: Calculate total cost
+        ERC1155Sale->>WETH: Deposit ETH
+        ERC1155Sale->>ERC1155NFT: mint(recipient, erc1155TokenId, amountToPurchase)
+    else
+        ERC1155Sale-->>User: Revert transaction
+    end
 
-    User->>ERC1155Sale: buyTokens(...)
-    ERC1155Sale->>ERC20: safeTransferFrom(...) for each token
-    ERC20-->>ERC1155Sale: Tokens transferred for each token
-    ERC1155Sale->>ERC1155MaxSupplyMintable: mintBatch(...)
-    ERC1155MaxSupplyMintable-->>User: NFTs Minted
+    User->>ERC1155Sale: buyTokensWithEth(erc1155TokenIds[], amountsToPurchase[], approvedAmounts[], merkleProofs[], recipient)
+    alt all conditions are met (e.g., merkleProofs are valid)
+        ERC1155Sale->>ERC1155Sale: Calculate total cost
+        ERC1155Sale->>WETH: Deposit ETH
+        ERC1155Sale->>ERC1155NFT: mintBatch(recipient, erc1155TokenIds[], amountsToPurchase[])
+    else
+        ERC1155Sale-->>User: Revert transaction
+    end
 
-    User->>ERC1155Sale: sweepUnclaimed(...)
-    ERC1155Sale->>ERC20: safeTransfer(...) for fees and proceeds
-    ERC20-->>ERC1155Sale: Tokens transferred
-    
-    User->>ERC1155Sale: wrapEth()
-    note right of ERC1155Sale: Check if user has ADMIN role
-    ERC1155Sale->>Roles: hasRole(ADMIN, User)
-    Roles-->>ERC1155Sale: Result (true/false)
-    ERC1155Sale->>IWETH: deposit(...)
-    IWETH-->>ERC1155Sale: ETH Wrapped
+    User->>ERC1155Sale: buyToken(erc1155TokenId, amountToPurchase, approvedAmount, merkleProof, recipient)
+    alt all conditions are met (e.g., merkleProof is valid)
+        ERC1155Sale->>ERC1155Sale: Calculate total cost
+        ERC1155Sale->>ERC20: TransferFrom (msg.sender, Sale, totalCost)
+        ERC1155Sale->>ERC1155NFT: mint(recipient, erc1155TokenId, amountToPurchase)
+    else
+        ERC1155Sale-->>User: Revert transaction
+    end
 
-    User->>ERC1155Sale: setCore(...)
-    note right of ERC1155Sale: Check if user has ADMIN role
-    ERC1155Sale->>Roles: hasRole(ADMIN, User)
-    Roles-->>ERC1155Sale: Result (true/false)
-    ERC1155Sale-->>User: Core Updated (or error)
-    
-    User->>ERC1155Sale: emergencyAction(...)
-    note right of ERC1155Sale: Check if user has ADMIN role
-    ERC1155Sale->>Roles: hasRole(ADMIN, User)
-    Roles-->>ERC1155Sale: Result (true/false)
-    ERC1155Sale-->>User: Actions executed (or error)
+    alt has ADMIN role
+        User->>ERC1155Sale: setTokenRecipients(purchaseToken, proceedsRecipient, feeRecipient)
+        ERC1155Sale->>ERC1155Sale: Update tokenRecipients mapping
+    else
+        ERC1155Sale-->>User: Revert transaction
+    end
+
+    alt has ADMIN role
+        User->>ERC1155Sale: setTokenConfig(...)
+        ERC1155Sale->>ERC1155Sale: Update tokenInfo mapping
+    else
+        ERC1155Sale-->>User: Revert transaction
+    end
+
+    alt has FINANCIAL_CONTROLLER role
+        User->>ERC1155Sale: withdrawERC20(token, to, amount)
+        ERC1155Sale->>ERC20: safeTransfer(to, amount)
+    else
+        ERC1155Sale-->>User: Revert transaction
+    end
 ```
 
 ## Base Contracts

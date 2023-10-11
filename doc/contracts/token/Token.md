@@ -6,70 +6,47 @@ Custom implementation built upon several extensions of the OpenZeppelin's ERC20 
 ### Overview
 These diagrams provide a visual representation of how `Token.sol` interacts with its various features and dependencies. It primarily shows the flow of actions a user can initiate and how the contract interacts with other referenced contracts and utilities.
 
+#### Top-down
 ```mermaid
 graph TD
-
-A[User] --> B[Token Contract]
-B --> C[ERC20 Base]
-B --> D[ERC20Permit]
-B --> E[ERC20Votes]
-
-subgraph Base Contracts
-    C --> |"Inherits/Uses"| F[transfer]
-    C --> |"Inherits/Uses"| G[approve]
-    C --> |"Inherits/Uses"| H[balanceOf]
-    C --> |"Inherits/Uses"| I[allowance]
-    D --> |"Inherits/Uses"| J[permit]
-    E --> |"Inherits/Uses"| K[delegate]
-    E --> |"Inherits/Uses"| L[getPastVotes]
-    E --> |"Inherits/Uses"| M[getVotes]
-end
-
-B --> |"Defines/Uses"| N[maxSupply]
-B --> |"Defines/Uses"| O[_beforeTokenTransfer]
-B --> |"Defines/Uses"| P[_afterTokenTransfer]
-B --> |"Defines/Uses"| Q[_burn]
-B --> |"Defines/Uses"| R[_mint]
+    Token --> ERC20
+    Token --> ERC20Permit
+    Token --> ERC20Votes
 ```
 
+#### Sequence
 ```mermaid
 sequenceDiagram
-    participant User
+    participant User as User/Caller
     participant Token
-    participant ERC20 (from OpenZeppelin)
-    participant Roles
-    
-    User->>Token: setTokenName(newName)
-    note right of Token: Check if user has TOKEN_GOVERNOR role
-    Token->>Roles: hasRole(TOKEN_GOVERNOR, User)
-    Roles-->>Token: Result (true/false)
-    Token-->>User: Token name updated (or error)
+    participant ERC20
+    participant ERC20Permit
+    participant ERC20Votes
 
-    User->>Token: setTokenSymbol(newSymbol)
-    note right of Token: Check if user has TOKEN_GOVERNOR role
-    Token->>Roles: hasRole(TOKEN_GOVERNOR, User)
-    Roles-->>Token: Result (true/false)
-    Token-->>User: Token symbol updated (or error)
+    User->>Token: constructor(name, symbol)
+    Token->>ERC20: Initialize(name, symbol)
+    Token->>ERC20Permit: Initialize(name)
+    Token->>Token: _mint(msg.sender, MAX_SUPPLY)
+    activate Token
+    Token->>ERC20Votes: _mint(account, amount)
+    Token->>ERC20: _mint(account, amount)
+    deactivate Token
 
-    User->>Token: mint(to, amount)
-    note right of Token: Check if user has MINTER role
-    Token->>Roles: hasRole(MINTER, User)
-    Roles-->>Token: Result (true/false)
-    Token->>ERC20: _mint(to, amount)
-    ERC20-->>Token: Tokens minted
-    Token-->>User: Tokens minted (or error)
+    User->>Token: Transfer (to, amount)
+    Token->>Token: _beforeTokenTransfer(from, to, amount)
+    Token->>ERC20: Transfer(from, to, amount)
+    Token->>Token: _afterTokenTransfer(from, to, amount)
+    activate Token
+    Token->>ERC20Votes: _afterTokenTransfer(from, to, amount)
+    Token->>ERC20Votes: _delegate(to, to)
+    deactivate Token
 
-    User->>Token: burn(amount)
-    note right of Token: Check if user can burn tokens (balances and allowances)
-    Token->>ERC20: _burn(User, amount)
-    ERC20-->>Token: Tokens burned
-    Token-->>User: Tokens burned (or error)
-
-    User->>Token: burnFrom(account, amount)
-    note right of Token: Check if user can burn tokens on behalf of another account
+    User->>Token: Burn (amount)
+    Token->>Token: _burn(account, amount)
+    activate Token
+    Token->>ERC20Votes: _burn(account, amount)
     Token->>ERC20: _burn(account, amount)
-    ERC20-->>Token: Tokens burned
-    Token-->>User: Tokens burned from account (or error)
+    deactivate Token
 ```
 
 ## Base Contracts

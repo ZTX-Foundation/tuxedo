@@ -6,104 +6,77 @@ The contract serves as a foundational component within the ZTX protocol's ecosys
 ### Overview
 These diagrams provide a visual representation of how `CoreRef.sol` interacts with its various features and dependencies. It primarily shows the flow of actions a user can initiate and how the contract interacts with other referenced contracts and utilities.
 
+#### Top-down
 ```mermaid
 graph TD
-
-    A[User]
-    B[CoreRef Contract]
-    C[Core Contract]
-    D[Pausable]
-    E[Roles]
-    F[IGlobalReentrancyLock]
-    G[Emergency Call Actions]
-    H[CoreUpdate Event]
-    
-    A -->|"setCore(newCore)"| B
-    B -->|Check Role| E
-    B --> H[CoreUpdate Event]
-    
-    A -->|"emergencyAction(calls)"| B
-    B -->|Check Role| E
-    B --> G
-    
-    A -->|"pause()"| B
-    B -->|Check Multiple Roles| E
-    B --> D
-    
-    A -->|"unpause()"| B
-    B -->|Check Multiple Roles| E
-    B --> D
-    
-    B --> C[References and Checks Role]
-    B -->|"globalLock(level)"| F
-    
-    subgraph "Modifiers & Internals"
-        I{globalLock Modifier}
-        J{onlyRole Modifier}
-        K{hasRole Modifier}
-        L{hasAnyOfTwoRoles Modifier}
-        M{hasAnyOfThreeRoles Modifier}
-        N{hasAnyOfFourRoles Modifier}
-        
-        B -.-> I
-        B -.-> J
-        B -.-> K
-        B -.-> L
-        B -.-> M
-        B -.-> N
-        
-        I -->|Uses| F
-        J -->|Checks Role| E
-        K -->|Checks Role| E
-        L -->|Checks Any Of Two Roles| E
-        M -->|Checks Any Of Three Roles| E
-        N -->|Checks Any Of Four Roles| E
-    end
+    CoreRef --> AccessControlEnumerable
+    CoreRef --> AccessControl
+    CoreRef --> Pausable
+    CoreRef --> Core
+    CoreRef --> Roles
 ```
 
+#### Sequence
 ```mermaid
 sequenceDiagram
-    participant User
+    participant User as User/Caller
     participant CoreRef
     participant Core
-    participant IGlobalReentrancyLock
-    participant Roles
-    
-    User->>CoreRef: setCore(newCoreAddress)
-    note right of CoreRef: Check if user has ADMIN role
-    CoreRef->>Roles: hasRole(ADMIN, User)
-    Roles-->>CoreRef: Result (true/false)
-    CoreRef-->>User: Core address updated (or error)
-    
+    participant Lock as IGlobalReentrancyLock
+
+    User->>CoreRef: constructor(coreAddress)
+    alt coreAddress is valid
+        CoreRef->>Core: Initialize Core reference
+    else
+        CoreRef-->>User: Revert
+    end
+
+    User->>CoreRef: Call function with globalLock modifier
+    CoreRef->>Core: Get reference to global reentrancy lock
+    Core->>Lock: Provide reference
+    CoreRef->>Lock: Lock (level)
+    CoreRef->>CoreRef: Execute function code
+    CoreRef->>Lock: Unlock (level - 1)
+
+    User->>CoreRef: Call function with onlyRole modifier
+    alt has the required role
+        CoreRef->>Core: hasRole(role, msg.sender)
+        Core-->>CoreRef: True
+        CoreRef->>CoreRef: Execute function code
+    else
+        CoreRef-->>User: Revert
+    end
+
     User->>CoreRef: pause()
-    note right of CoreRef: Check if user has ADMIN, TOKEN_GOVERNOR, or GUARDIAN role
-    CoreRef->>Roles: hasAnyOfThreeRoles(ADMIN, TOKEN_GOVERNOR, GUARDIAN)
-    Roles-->>CoreRef: Result (true/false)
-    CoreRef-->>User: Paused (or error)
-    
+    alt User has ADMIN, TOKEN_GOVERNOR, or GUARDIAN role
+        CoreRef->>CoreRef: _pause()
+    else
+        CoreRef-->>User: Revert
+    end
+
     User->>CoreRef: unpause()
-    note right of CoreRef: Check if user has ADMIN, TOKEN_GOVERNOR, or GUARDIAN role
-    CoreRef->>Roles: hasAnyOfThreeRoles(ADMIN, TOKEN_GOVERNOR, GUARDIAN)
-    Roles-->>CoreRef: Result (true/false)
-    CoreRef-->>User: Unpaused (or error)
+    alt has ADMIN, TOKEN_GOVERNOR, or GUARDIAN role
+        CoreRef->>CoreRef: _unpause()
+    else
+        CoreRef-->>User: Revert
+    end
+
+    User->>CoreRef: setCore(newCore)
+    alt has ADMIN role and newCore is valid
+        CoreRef->>Core: Update Core reference
+        CoreRef-->>CoreRef: Emit CoreUpdate event
+    else
+        CoreRef-->>User: Revert
+    end
 
     User->>CoreRef: emergencyAction(calls)
-    note right of CoreRef: Check if user has ADMIN role
-    CoreRef->>Roles: hasRole(ADMIN, User)
-    Roles-->>CoreRef: Result (true/false)
-    CoreRef-->>User: Actions executed (or error)
-    
-    User->>CoreRef: Interact with function using globalLock modifier
-    CoreRef->>Core: lock()
-    Core->>IGlobalReentrancyLock: lock(level)
-    IGlobalReentrancyLock-->>Core: Locked
-    Core-->>CoreRef: Locked
-    note right of CoreRef: Execute function logic
-    CoreRef->>Core: unlock(level-1)
-    Core->>IGlobalReentrancyLock: unlock(level-1)
-    IGlobalReentrancyLock-->>Core: Unlocked
-    Core-->>CoreRef: Unlocked
-    CoreRef-->>User: Action completed (or error)
+    alt has ADMIN role
+        loop for each call in calls
+            CoreRef->>CoreRef: Call target with provided callData and value
+        end
+    else
+        CoreRef-->>User: Revert
+    end
 ```
 
 ## Base Contracts
