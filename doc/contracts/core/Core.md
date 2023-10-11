@@ -59,9 +59,9 @@ sequenceDiagram
 - [IGlobalReentrancyLock](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/IGlobalReentrancyLock.sol): An interface for `GlobalReentrancyLock`.
 
 ## Features
-- Inherits Access Control: The contract inherits from OpenZeppelin's `AccessControlEnumerable`, meaning it can define a flexible set of roles and permissions. Each role can have an associated admin role, and only accounts with the admin role can grant or revoke the associated role from other accounts.
-- Predefined Roles: At the contract's creation (constructor execution), several roles are defined. The `ADMIN` role is granted to the account that deploys the contract, and it's the highest level of permission.
-- Dynamic Role Creation: The createRole function allows the `ADMIN` to dynamically create new roles and specify their admin roles. This offers flexibility in expanding the role-based access system as the protocol grows.
-- Emergency Role Revocation: The `emergencyRevoke()` function provides a mechanism for the `GUARDIAN` role to revoke roles from accounts in case of emergencies. However, the guardian cannot revoke the `ADMIN` role. This ensures that in the event of a security threat or other issues, rapid action can be taken.
-- Lock Reference: The contract holds a reference to a global reentrancy lock (of type `IGlobalReentrancyLock`) named lock.
-- Updating the Lock: The setGlobalLock function allows the `ADMIN` or `TOKEN_GOVERNOR` roles to update the address of the reentrancy lock. When updated, an event `GlobalReentrancyLockUpdate` is emitted. This global lock mechanism is essential for preventing reentrancy attacks on associated contracts.
+- Inherits from OpenZeppelin's `AccessControlEnumerable`, meaning it can define a flexible set of roles and permissions. Each role can have an associated admin role, and only accounts with the admin role can grant or revoke the associated role from other accounts.
+- On deployment, several roles are defined. The `ADMIN` role is granted to the account that deploys the contract, and it's the highest level of permission.
+- The `createRole()` function allows the `ADMIN` to dynamically create new roles and specify their admin roles. This offers flexibility in expanding the role-based access system as the protocol grows.
+- The `emergencyRevoke()` function provides a mechanism for the `GUARDIAN` role to revoke roles from accounts in case of emergencies. However, the guardian cannot revoke the `ADMIN` role. This ensures that in the event of a security threat or other issues, rapid action can be taken.
+- The contract holds a reference to a global reentrancy lock (of type `IGlobalReentrancyLock`) named lock.
+- The `setGlobalLock()` function allows the `ADMIN` or `TOKEN_GOVERNOR` roles to update the address of the reentrancy lock.
