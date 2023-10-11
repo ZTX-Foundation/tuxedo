@@ -64,4 +64,4 @@ sequenceDiagram
 - The `createRole()` function allows the `ADMIN` to dynamically create new roles and specify their admin roles. This offers flexibility in expanding the role-based access system as the protocol grows.
 - The `emergencyRevoke()` function provides a mechanism for the `GUARDIAN` role to revoke roles from accounts in case of emergencies. However, the guardian cannot revoke the `ADMIN` role. This ensures that in the event of a security threat or other issues, rapid action can be taken.
 - The contract holds a reference to a global reentrancy lock (of type `IGlobalReentrancyLock`) named lock.
-- The `setGlobalLock()` function allows the `ADMIN` or `TOKEN_GOVERNOR` roles to update the address of the reentrancy lock.
+- The `setGlobalLock()` function allows `ADMIN` or `TOKEN_GOVERNOR` to update the address of the reentrancy lock.
