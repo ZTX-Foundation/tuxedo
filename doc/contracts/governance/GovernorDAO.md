@@ -71,3 +71,10 @@ sequenceDiagram
 ### Protocol Specific
 - [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Manages different roles for access control.
 - [CoreRef](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/refs/CoreRef.sol): Provides a reference to the protocol's core contract.
+
+## Features
+- Manages the creation, execution, and cancellation of governance proposals.
+- Maintains a `_quorum` private state variable to track the minimum number of votes required for a proposal to pass.
+- The constructor initializes the contract with a governance token, timelock address, and governance settings (voting delay, voting period, proposal threshold, and initial quorum).
+- Allows adjustment of voting settings (voting delay, voting period, and proposal threshold) with associated functions (`setVotingDelay()`, `setVotingPeriod()`, and `setProposalThreshold()`).
+- Provides a cancel function for the guardian (defined by the `GUARDIAN` role) to cancel a proposal in progress.

@@ -51,22 +51,22 @@ sequenceDiagram
 
 ## Base Contracts
 ### OpenZeppelin
-* [ERC20](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol): This is the core implementation provided by OpenZeppelin for the ERC20 standard, which is a widely-used fungible token standard on Ethereum.
-* [ERC20Permit](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Permit.sol): An extension of ERC20 that introduces a permit function, which allows holders to give a spender allowance to transfer tokens with a signed message, eliminating the need for an initial transaction to approve the transfer.
-* [ERC20Votes](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Votes.sol): An extension of ERC20 that facilitates on-chain voting with token-backed votes.
+- [ERC20](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol): This is the core implementation provided by OpenZeppelin for the ERC20 standard, which is a widely-used fungible token standard on Ethereum.
+- [ERC20Permit](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Permit.sol): An extension of ERC20 that introduces a permit function, which allows holders to give a spender allowance to transfer tokens with a signed message, eliminating the need for an initial transaction to approve the transfer.
+- [ERC20Votes](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Votes.sol): An extension of ERC20 that facilitates on-chain voting with token-backed votes.
 
 ## Features
-* Non-Burnable: The contract does not allow burning tokens, meaning tokens once minted cannot be destroyed.
-* Fixed Supply: The contract has a fixed maximum supply of 10 billion tokens (10^10) with 18 decimals. This means no new tokens can be minted beyond this limit.
+- Non-Burnable: The contract does not allow burning tokens, meaning tokens once minted cannot be destroyed.
+- Fixed Supply: The contract has a fixed maximum supply of 10 billion tokens (10^10) with 18 decimals. This means no new tokens can be minted beyond this limit.
 
 ## Constants
-* `MAX_SUPPLY`: Represents the maximum supply of the token, which is 10 billion tokens with 18 decimals.
+- `MAX_SUPPLY`: Represents the maximum supply of the token, which is 10 billion tokens with 18 decimals.
 
 ## Constructor
 The constructor accepts two string arguments:
 
-* `name`: Represents the name of the token.
-* `symbol`: Represents the symbol or ticker of the token.
+- `name`: Represents the name of the token.
+- `symbol`: Represents the symbol or ticker of the token.
 
 Upon deployment, the contract mints the `MAX_SUPPLY` of tokens and assigns them to the deployer of the contract. 
 

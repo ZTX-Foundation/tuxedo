@@ -75,3 +75,11 @@ sequenceDiagram
 - [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Defines the various roles utilized within the system.
 - [IDepositBase](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/finance/IDepositBase.sol): An interface that outlines the functions for deposit-related operations.
 - [IFinanceGuardian](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/finance/IFinanceGuardian.sol): The primary interface which dictates the expected structure and functions the `FinanceGuardian` should implement.
+
+## Features
+- An `address` state variable, `safeAddress`, holds the designated safe destination to which funds can be withdrawn.
+- Ensures the provided safe address is not the zero address.
+- `withdrawToSafeAddress()` allows authorized roles to withdraw a specified amount from a whitelisted deposit to the safe address.
+- `withdrawAllToSafeAddress()` withdraws the entire balance from a specified whitelisted deposit to the safe address.
+- If the deposit source is paused, the function temporarily unpauses it, performs the withdrawal, and then pauses it again.
+- Flexibility to either specify an amount or withdraw the entire balance of the token from the deposit.

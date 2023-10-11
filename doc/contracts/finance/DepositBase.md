@@ -21,24 +21,23 @@ graph TD
 ```mermaid
 sequenceDiagram
     participant User as User/Caller
-    participant DepositBase as DepositBase
-    participant IERC20 as IERC20 Token
-    participant CoreRef as CoreRef Contract
+    participant IDepositBase
+    participant IERC20
 
-    User->>DepositBase: Call withdrawERC20(token, to, amount)
+    User->>IDepositBase: Call withdrawERC20(token, to, amount)
     alt has FINANCIAL_CONTROLLER Role
-        DepositBase->>IERC20: Invoke safeTransfer(to, amount)
+        IDepositBase->>IERC20: Invoke safeTransfer(to, amount)
         IERC20-->>User: Transfer ERC20 tokens
-        DepositBase-->>DepositBase: Emit WithdrawERC20 Event
+        IDepositBase-->>IDepositBase: Emit WithdrawERC20 Event
     else
-        DepositBase-->>User: Revert
+        IDepositBase-->>User: Revert
     end
 
-    User->>DepositBase: Query balance()
-    DepositBase-->>User: Return balance value
+    User->>IDepositBase: Query balance()
+    IDepositBase-->>User: Return balance value
 
-    User->>DepositBase: Query balanceReportedIn()
-    DepositBase-->>User: Return address for which balance is reported
+    User->>IDepositBase: Query balanceReportedIn()
+    IDepositBase-->>User: Return address for which balance is reported
 ```
 
 ## Base Contracts
@@ -50,3 +49,7 @@ sequenceDiagram
 - [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Defines the various roles utilized within the system.
 - [CoreRef](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/refs/CoreRef.sol): Provides a reference to the protocol's core contract.
 - [IDepositBase](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/finance/IDepositBase.sol): An interface that specifies the methods any deposit-based contract should implement.
+
+## Features
+- Allows the `FINANCIAL_CONTROLLER` to withdraw a specified amount of any ERC20 token from the contract. This ensures that only authorized parties can move funds from the contract.
+- The withdrawal function can also only be called when the contract is not paused, which provides an extra layer of control.

@@ -48,3 +48,8 @@ sequenceDiagram
 - [CoreRef](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/refs/CoreRef.sol): Provides a reference to the protocol's core contract.
 - [Constants](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/Constants.sol): Protocol constants.
 - [DepositBase](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/finance/DepositBase.sol): Abstract contract for withdrawing ERC-20 tokens using a Financial Controller.
+
+## Features
+- The contract has an immutable state variable, `token`, which represents the ERC20 token that this contract is designed to hold and manage. This token address is set during the contract's deployment and cannot be altered afterward.
+- The `withdraw()` function allows `FINANCIAL_CONTROLLER` to withdraw a specific amount of the ERC20 token from the contract. The withdrawal sends the specified token amount to a provided address.
+- The contract uses the `SafeERC20` library to handle ERC20 token operations safely, preventing potential reentrancy issues and other vulnerabilities.

@@ -66,3 +66,11 @@ sequenceDiagram
 - [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Defines the various roles utilized within the system.
 - [CoreRef](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/refs/CoreRef.sol): Provides a reference to the protocol's core contract.
 - [IGlobalReentrancyLock](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/IGlobalReentrancyLock.sol): An interface for `GlobalReentrancyLock`.
+
+## Features
+- Locking and unlocking must occur in the same block to prevent unknown state changes.
+- Only accounts with the `LOCKER` role can lock or unlock the system.
+- The system restricts lock progression to ensure a consistent state, e.g., you cannot lock to level 2 directly from an unlocked state.
+- The contract offers an emergency recovery mechanism. If the system remains locked beyond the current block, the `ADMIN` role can reset the lock, potentially saving the system from being locked indefinitely.
+- There's also a mechanism for the `ADMIN` to pause the entire system by setting the lock to level two.
+- Can easily query the current state of the lock.

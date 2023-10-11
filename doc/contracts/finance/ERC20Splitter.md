@@ -22,8 +22,10 @@ sequenceDiagram
     participant ERC20Splitter
     participant IERC20
 
+    User->>ERC20Splitter: constructor(_core, _token, _deposits)
+
     User->>ERC20Splitter: allocate()
-    loop for each allocation
+    loop for each allocation when not paused
         ERC20Splitter->>IERC20: balanceOf(ERC20Splitter)
         IERC20-->>ERC20Splitter: total balance
         ERC20Splitter->>IERC20: safeTransfer(deposit, amount)
@@ -32,7 +34,7 @@ sequenceDiagram
     ERC20Splitter-->>ERC20Splitter: Emit Allocate event
 
     User->>ERC20Splitter: allocate(tokenToAllocate)
-    loop for each allocation
+    loop for each allocation when not paused
         ERC20Splitter->>IERC20: balanceOf(ERC20Splitter)
         IERC20-->>ERC20Splitter: total balance of tokenToAllocate
         ERC20Splitter->>IERC20: safeTransfer(deposit, amount)
@@ -41,8 +43,12 @@ sequenceDiagram
     ERC20Splitter-->>ERC20Splitter: Emit Allocate event
 
     User->>ERC20Splitter: setAllocation(_allocations)
-    ERC20Splitter->>ERC20Splitter: _setAllocation(_allocations)
-    ERC20Splitter-->>ERC20Splitter: Emit AllocationUpdate event
+    alt has ADMIN role
+        ERC20Splitter->>ERC20Splitter: _setAllocation(_allocations)
+        ERC20Splitter-->>ERC20Splitter: Emit AllocationUpdate event
+    else
+        ERC20Splitter-->>User: Revert
+    end
 
     User->>ERC20Splitter: getAllocations()
     ERC20Splitter-->>User: Return allocations[]

@@ -50,3 +50,11 @@ sequenceDiagram
 - [CoreRef](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/refs/CoreRef.sol): Provides a reference to the protocol's core contract.
 - [ERC20HoldingDeposit](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/finance/ERC20HoldingDeposit.sol): Hold and manage deposits of ERC20 tokens.
 - [WhitelistedAddreses](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/utils/extensions/WhitelistedAddreses.sol): Manages a list of approved addresses that are permitted to interact with specific functionalities of the contract.
+
+## Features
+- Maintains a reference to a WETH token through `weth`.
+- Tracks used hashes to prevent replays with `usedHashes`.
+- Has a `proceedsRecipient` address which is the destination for unclaimed funds.
+- A signature is required to verify the authenticity of the payment, ensuring it matches the expected details (jobId, paymentToken, jobFee, etc.).
+- Offers `wrapEth()` to convert any native ETH in the contract to WETH.
+- Allows unclaimed tokens and WETH to be swept to the `proceedsRecipient` through `sweepUnclaimed()` and `sweepUnclaimedWeth()`.
