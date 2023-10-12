@@ -147,4 +147,8 @@ contract Addresses is Test {
             addresses[i] = recordedAddresses[i].addr;
         }
     }
+
+    function getCore() external view returns (address) {
+        return getAddress("CORE");
+    }
 }

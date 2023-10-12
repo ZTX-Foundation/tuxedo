@@ -28,71 +28,17 @@ import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegis
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 
 contract zipTest is Proposal, TimelockProposal {
-    string public name = "ZIP999";
+    string public name = "ZIPTest";
     string public description = "The Last ZTX Proposal (For Testing only)";
 
     address[] public whitelistAddresses;
 
-    function _beforeDeploy(Addresses addresses, address deployer) internal override {}
+    function _beforeDeploy(Addresses addresses, address) internal override {
+        _core = Core(addresses.getCore());
+    }
 
     function _deploy(Addresses addresses, address deployer) internal override {
-        /// Core protocol
-        _core = new Core();
-        addresses.addAddress("CORE", address(_core));
-
-        /// GlobalReentrancyLock
-        GlobalReentrancyLock globalReentrancyLock = new GlobalReentrancyLock(addresses.getAddress("CORE"));
-        addresses.addAddress("GLOBAL_REENTRANCY_LOCK", address(globalReentrancyLock));
-
         {
-            /// ERC1155MaxSupplyMintable
-            string memory _metadataBaseUri = string(
-                abi.encodePacked("https://meta.", vm.envString("ENVIRONMENT"), ".", vm.envString("DOMAIN"), "/")
-            );
-            ERC1155MaxSupplyMintable erc1155Consumables = new ERC1155MaxSupplyMintable(
-                address(_core),
-                string(abi.encodePacked(_metadataBaseUri, "consumables/metadata/")),
-                "ZTX Consumables",
-                "ZTXC"
-            );
-
-            addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES", address(erc1155Consumables));
-
-            ERC1155MaxSupplyMintable erc1155Placeables = new ERC1155MaxSupplyMintable(
-                address(_core),
-                string(abi.encodePacked(_metadataBaseUri, "placeables/metadata/")),
-                "ZTX Placeables",
-                "ZTXP"
-            );
-
-            addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES", address(erc1155Placeables));
-
-            ERC1155MaxSupplyMintable erc1155Wearables = new ERC1155MaxSupplyMintable(
-                address(_core),
-                string(abi.encodePacked(_metadataBaseUri, "wearables/metadata/")),
-                "ZTX Wearables",
-                "ZTXW"
-            );
-
-            addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", address(erc1155Wearables));
-
-            address[] memory nftContractAddresses = new address[](3);
-            nftContractAddresses[0] = address(erc1155Consumables);
-            nftContractAddresses[1] = address(erc1155Placeables);
-            nftContractAddresses[2] = address(erc1155Wearables);
-
-            /// ERC1155RateLimitedMinter
-            ERC1155AutoGraphMinter erc1155AutoGraphMinter = new ERC1155AutoGraphMinter(
-                address(_core),
-                nftContractAddresses,
-                10_000e18, // TODO get offical values from the HQ
-                10_000_000e18,
-                addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"),
-                1 // 1 hour for valid expiryToken
-            );
-
-            addresses.addAddress("ERC1155_AUTO_GRAPH_MINTER", address(erc1155AutoGraphMinter));
-
             ERC20HoldingDeposit wethErc20HoldingDeposit = new ERC20HoldingDeposit(
                 address(_core),
                 addresses.getAddress("WETH")
@@ -289,12 +235,6 @@ contract zipTest is Proposal, TimelockProposal {
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {
-        // Setup ADMIN_MULTISIG
-        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG"));
-
-        /// Set global lock
-        _core.setGlobalLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
-
         /// ADMIN role
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
 
@@ -302,16 +242,11 @@ contract zipTest is Proposal, TimelockProposal {
         _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
         _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
         _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_SALE_WEARABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
 
         /// MINTER role
         _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
         _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
         _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_SALE_WEARABLES"));
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
 
         /// TOKEN_GOVERNOR role
         _core.grantRole(Roles.TOKEN_GOVERNOR, addresses.getAddress("GOVERNOR_DAO"));
@@ -339,32 +274,6 @@ contract zipTest is Proposal, TimelockProposal {
     function _teardown(Addresses addresses, address deployer) internal override {}
 
     function _validate(Addresses addresses, address) internal override {
-        // Check Roles
-        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true);
-
-        /// Check that everything is pointing to the right core contract address
-
-        /// Reentrancy lock
-        assertEq(address(GlobalReentrancyLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK")).core()), address(_core));
-
-        /// ERC1155MaxSupplyMintable
-        assertEq(
-            address(ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")).core()),
-            address(_core)
-        );
-        assertEq(
-            address(ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).core()),
-            address(_core)
-        );
-        assertEq(
-            address(ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")).core()),
-            address(_core)
-        );
-        assertEq(
-            address(ERC1155AutoGraphMinter(addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")).core()),
-            address(_core)
-        );
-
         assertEq(address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_CONSUMABLES")).core()), address(_core));
         assertEq(address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_WEARABLES")).core()), address(_core));
         assertEq(address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_PLACEABLES")).core()), address(_core));
@@ -377,7 +286,6 @@ contract zipTest is Proposal, TimelockProposal {
         assertEq(address(FinanceGuardian(addresses.getAddress("FINANCE_GUARDIAN")).core()), address(_core));
 
         assertEq(address(CoreRef(addresses.getAddress("CONSUMABLE_SPLITTER")).core()), address(_core));
-        assertEq(address(CoreRef(addresses.getAddress("GAME_CONSUMABLE")).core()), address(_core));
         assertEq(address(CoreRef(addresses.getAddress("BURNER_WALLET")).core()), address(_core));
 
         /// ERC1155Sale
@@ -411,25 +319,10 @@ contract zipTest is Proposal, TimelockProposal {
         assertEq(_core.getRoleMemberCount(Roles.GUARDIAN), 2);
         assertEq(_core.getRoleMemberCount(Roles.FINANCIAL_GUARDIAN), 1);
         assertEq(_core.getRoleMemberCount(Roles.LOCKER), 7);
-        assertEq(_core.getRoleMemberCount(Roles.MINTER), 4);
+        assertEq(_core.getRoleMemberCount(Roles.MINTER), 7);
 
         /// ADMIN role
         // assertEq(_core.getRoleMember(Roles.ADMIN, 1), addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
-
-        /// LOCKER role
-        assertEq(_core.getRoleMember(Roles.LOCKER, 0), addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
-        assertEq(_core.getRoleMember(Roles.LOCKER, 1), addresses.getAddress("ERC1155_SALE_PLACEABLES"));
-        assertEq(_core.getRoleMember(Roles.LOCKER, 2), addresses.getAddress("ERC1155_SALE_WEARABLES"));
-        assertEq(_core.getRoleMember(Roles.LOCKER, 3), addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
-        assertEq(_core.getRoleMember(Roles.LOCKER, 4), addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
-        assertEq(_core.getRoleMember(Roles.LOCKER, 5), addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
-        assertEq(_core.getRoleMember(Roles.LOCKER, 6), addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
-
-        /// MINTER role
-        assertEq(_core.getRoleMember(Roles.MINTER, 0), addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
-        assertEq(_core.getRoleMember(Roles.MINTER, 1), addresses.getAddress("ERC1155_SALE_PLACEABLES"));
-        assertEq(_core.getRoleMember(Roles.MINTER, 2), addresses.getAddress("ERC1155_SALE_WEARABLES"));
-        assertEq(_core.getRoleMember(Roles.MINTER, 3), addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
 
         /// TOKEN_GOVERNOR role
         assertEq(_core.getRoleMember(Roles.TOKEN_GOVERNOR, 0), addresses.getAddress("GOVERNOR_DAO"));
