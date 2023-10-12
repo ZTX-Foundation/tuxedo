@@ -85,3 +85,11 @@ Logs:
 - `token`: The address of the token that was swept.
 - `proceedsCollector`: The address of where the proceeds were withdrawn to.
 - `amount`: The amount of tokens swept.
+
+## Constructor
+The constructor accepts four arguments:
+
+- `_core`: The address of the core contract that provides roles and access control.
+- `_token`: The address of the ZTX token contract.
+- `_proceedsRecipient`: The address where all proceeds will be sent.
+- `_weth`: The address of the Wrapped Ether (WETH) token.

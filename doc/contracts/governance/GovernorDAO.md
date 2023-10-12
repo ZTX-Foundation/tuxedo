@@ -87,3 +87,17 @@ Emitted when quorum is updated.
 Logs:
 - `oldQuorum`: The old quorum value.
 - `newQuorum`: The new quorum value.
+
+## Constructor
+The constructor accepts eight arguments:
+
+- `name`: A string representing the name of the Governor contract.
+- `_core`: The address of the core contract that provides roles and access control.
+- `_timelock`: The address of the Timelock contract.
+- `_token`: The address of the ZTX token contract.
+- `initialVotingDelay`: An initial voting delay value in blocks.
+- `initialVotingPeriod`: An initial voting period value in blocks.
+- `initialProposalThreshold`: An initial proposal threshold value.
+- `initialQuorum`: An initial quorum value.
+
+The constructor ensures that the initial quorum value is greater than zero.

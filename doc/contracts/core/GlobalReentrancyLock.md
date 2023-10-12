@@ -78,3 +78,8 @@ sequenceDiagram
 ## Constants
 - `_NOT_ENTERED`: The initial state of the lock.
 - `_ENTERED_LEVEL_TWO`: The state of the lock after the first lock.
+
+## Constructor
+The constructor accepts a single argument:
+
+- `_core`: The address of the core contract that provides roles and access control.

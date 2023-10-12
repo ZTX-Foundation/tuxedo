@@ -53,3 +53,9 @@ sequenceDiagram
 - The contract has an immutable state variable, `token`, which represents the ERC20 token that this contract is designed to hold and manage. This token address is set during the contract's deployment and cannot be altered afterward.
 - The `withdraw()` function allows `FINANCIAL_CONTROLLER` to withdraw a specific amount of the ERC20 token from the contract. The withdrawal sends the specified token amount to a provided address.
 - The contract uses the `SafeERC20` library to handle ERC20 token operations safely, preventing potential reentrancy issues and other vulnerabilities.
+
+## Constructor
+The constructor accepts two arguments:
+
+- `_core`: The address of the core contract that provides roles and access control.
+- `_token`: The address of the ERC20 token that this contract is designed to hold and manage.

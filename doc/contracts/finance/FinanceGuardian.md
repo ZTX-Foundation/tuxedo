@@ -83,3 +83,10 @@ sequenceDiagram
 - `withdrawAllToSafeAddress()` withdraws the entire balance from a specified whitelisted deposit to the safe address.
 - If the deposit source is paused, the function temporarily unpauses it, performs the withdrawal, and then pauses it again.
 - Flexibility to either specify an amount or withdraw the entire balance of the token from the deposit.
+
+## Constructor
+The constructor accepts three arguments:
+
+- `_core`: The address of the core contract that provides roles and access control.
+- `_safeAddress`: The address where funds can be withdrawn to.
+- `_whitelistAddresses`: An array of addresses that are initially whitelisted for fund withdrawals.

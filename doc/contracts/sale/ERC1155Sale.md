@@ -176,9 +176,9 @@ Logs:
 ## Constructor
 The constructor accepts three arguments:
 
-* `_core`: An address representing the core contract.
-* `_nft`: An address representing the ERC1155 contract.
-* `_weth`: An address representing the WETH (Wrapped Ethereum) contract.
+- `_core`: An address representing the core contract.
+- `_nft`: An address representing the ERC1155 contract.
+- `_weth`: An address representing the WETH (Wrapped Ethereum) contract.
 
 The constructor doesn't have any explicit modifiers, but it contains checks to ensure non-zero addresses for `_nft` and `_weth`.
 

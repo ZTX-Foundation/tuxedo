@@ -63,7 +63,7 @@ sequenceDiagram
 - `MAX_SUPPLY`: Represents the maximum supply of the token, which is 10 billion tokens with 18 decimals.
 
 ## Constructor
-The constructor accepts two string arguments:
+The constructor accepts two arguments:
 
 - `name`: Represents the name of the token.
 - `symbol`: Represents the symbol or ticker of the token.

@@ -71,3 +71,9 @@ sequenceDiagram
 
 ## Constants
 - `REWARD_TIME`: The length of time to stake per point distributed.
+
+## Constructor
+The constructor accepts two arguments:
+
+- `_core`: The address of the core contract that provides roles and access control.
+- `_stakingToken`: The address of an ERC721 token contract. It is used to initialize the public variable `stakingToken`, which is an instance of the ERC721 token contract that users will be staking.

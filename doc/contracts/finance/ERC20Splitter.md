@@ -77,3 +77,10 @@ Emitted when funds are allocated to deposits.
 Logs:
 - `caller`: Address of the caller.
 - `amount`: Amount of tokens allocated.
+
+## Constructor
+The constructor accepts three arguments:
+
+- `_core`: The address of the core contract that provides roles and access control.
+- `_token`: The address of the token to split.
+- `_deposits`: An array of deposit addresses to allocate tokens to.

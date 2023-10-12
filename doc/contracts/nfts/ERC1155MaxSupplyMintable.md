@@ -135,3 +135,18 @@ Logs:
 - `account`: The recipient of the minted tokens.
 - `tokenIds`: The IDs of the minted tokens.
 - `amounts`: The amounts of tokens minted.
+
+## Constructor
+The constructor accepts four arguments:
+
+- `_core`: The address of a core contract that provides roles and access control.
+- `_uri`: The base URI for the metadata of the tokens.
+- `name_`: The name of the NFT contract.
+- `symbol_`: The symbol of the NFT contract.
+
+Upon deployment, The contract initializes several contract state variables, including:
+
+- `_name`: Stores the name of the NFT contract.
+- `_symbol`: Stores the symbol of the NFT contract.
+
+and sets up the core functionality needed for minting and managing the supply cap of individual tokens within the contract.

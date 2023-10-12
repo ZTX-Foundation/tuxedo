@@ -86,3 +86,6 @@ This event is emitted when the pointer to the global reentrancy lock is updated.
 Logs:
 - `oldLock`: The address of the previous global reentrancy lock.
 - `newLock`: The address of the new global reentrancy lock.
+
+## Constructor
+The constructor accepts no arguments. The constructor sets the initial protocol roles and grants the `ADMIN` role to the account that deploys the contract.

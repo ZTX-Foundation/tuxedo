@@ -55,7 +55,6 @@ sequenceDiagram
 - Provides flexibility in controlling the pace of certain operations within the ZTX protocol.
 
 ## Events
-
 ### `BufferUsed`
 Emitted when buffer gets eaten into.
 Logs:
@@ -79,3 +78,11 @@ Emitted when the replenish rate per second is updated.
 Logs:
 - `oldReplenishRatePerSecond`: The previous replenish rate per second.
 - `newReplenishRatePerSecond`: The new replenish rate per second.
+
+## Constructor
+The constructor accepts two arguments:
+
+- `_replenishRatePerSecond`: Specifies the rate at which the contract's buffer is replenished per second.
+- `_bufferCap`: Sets the maximum size (cap) of the buffer that can be used at once.
+
+Upon deployment, the contract's replenish rate and buffer cap are set to the values provided.

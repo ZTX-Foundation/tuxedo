@@ -238,3 +238,18 @@ Logs:
 Emitted when the payment recipient is updated.
 Logs:
 - `paymentRecipient`: The address of the new payment recipient.
+
+## Constructor
+The constructor accepts six arguments:
+
+- `_core`: The address of the core contract that provides roles and access control.
+- `_nftContracts`: An array of addresses representing NFT contracts that will be whitelisted.
+- `_replenishRatePerSecond`: The rate at which the rate limit buffer is replenished per second.
+- `_bufferCap`: The maximum limit for the rate limit buffer.
+- `_paymentRecipient`: The address that will receive payments.
+- `_expiryTokenHoursValid`: The validity period (in hours) for an expiry token.
+
+The constructor checks that `_paymentRecipient` is not the zero address and that `_expiryTokenHoursValid` is within a valid range (between 1 and 24 hours), and it initializes several state variables including:
+
+- `paymentRecipient`: Stores the payment recipient's address.
+- `expiryTokenHoursValid`: Sets the validity period for an expiry token.

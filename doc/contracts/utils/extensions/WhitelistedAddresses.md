@@ -63,3 +63,16 @@ sequenceDiagram
 - Allows certain addresses to be added to and removed from the whitelist, and it provides functions to check whether an address is whitelisted.
 - Stores the whitelisted addresses in a set, ensuring uniqueness and efficient lookups.
 - Provides a convenient and reusable way to manage whitelists of addresses within the ZTX protocol.
+
+## Modifiers
+### `onlyWhitelist()`
+Checks if a deposit address is whitelisted.
+Parameters:
+- `addr`: The address to check.
+
+## Constructor
+The constructor accepts a single argument:
+
+- `_addresses`: An array of addresses to whitelist.
+
+Upon deployment, the contract populates its whitelist with the addresses provided in the `_addresses` array, ensuring that these addresses are allowed to interact with the contract's functions that use the `onlyWhitelist` modifier.
