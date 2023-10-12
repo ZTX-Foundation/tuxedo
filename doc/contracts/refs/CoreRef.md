@@ -81,22 +81,29 @@ sequenceDiagram
 
 ## Base Contracts
 ### OpenZeppelin
-* [AccessControlEnumerable](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/extensions/AccessControlEnumerable.sol): This contract provides a mechanism to define roles and grant/revoke them to/from individual accounts. It offers an enumeration feature, allowing one to enumerate over all role bearers, which is an enhancement over OpenZeppelin's basic `AccessControl`.
-* [Pausable](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Pausable.sol): A contract that allows specific functionalities to be paused and resumed. This is especially useful in cases of detected vulnerabilities or during contract upgrades.
+- [AccessControlEnumerable](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/extensions/AccessControlEnumerable.sol): This contract provides a mechanism to define roles and grant/revoke them to/from individual accounts. It offers an enumeration feature, allowing one to enumerate over all role bearers, which is an enhancement over OpenZeppelin's basic `AccessControl`.
+- [Pausable](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Pausable.sol): A contract that allows specific functionalities to be paused and resumed. This is especially useful in cases of detected vulnerabilities or during contract upgrades.
 ### Protocol Specific
-* [IGlobalReentrancyLock](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/IGlobalReentrancyLock.sol): An interface that deals with reentrancy protection at a global level.
-* [Core](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Core.sol): The central contract for the protocol.
-* [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Defines the various roles utilized within the system.
+- [IGlobalReentrancyLock](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/IGlobalReentrancyLock.sol): An interface that deals with reentrancy protection at a global level.
+- [Core](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Core.sol): The central contract for the protocol.
+- [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Defines the various roles utilized within the system.
 
 ## Features
-* Holds a reference to `Core`, enabling derived contracts to interact with and execute core functionalities.
-* It integrates role-based access control mechanisms, checking permissions based on the protocol's Access Control List (ACL).
-* Multiple modifiers (`onlyRole`, `hasRole`, `hasAnyOfTwoRoles`, etc.) enable granular control over function access based on roles like `ADMIN`, `TOKEN_GOVERNOR`, and more.
-* Inherits from `Pausable`, which provides the ability to pause or resume functionalities as a safety measure. This can be crucial during emergencies or system upgrades.
-* The `globalLock` modifier facilitates reentrancy protection, leveraging the `IGlobalReentrancyLock` interface. This safety measure ensures that recursive or nested calls do not exploit contract functions.
-* Provides an `emergencyAction` function that allows executing arbitrary calldata against arbitrary addresses. This powerful feature, intended only for emergencies, can call multiple contract functions in one transaction. It's tightly controlled and is accessible only by the `ADMIN` role for security reasons.
-* The contract offers the ability to point to a new `Core` address through the `setCore` function. While this offers flexibility, it comes with a cautionary note as pointing to an invalid core can potentially disrupt the system.
-* Events like `CoreUpdate` provide transparency and traceability, signaling important state changes like updates to the `Core` reference.
+- Holds a reference to `Core`, enabling derived contracts to interact with and execute core functionalities.
+- It integrates role-based access control mechanisms, checking permissions based on the protocol's Access Control List (ACL).
+- Multiple modifiers (`onlyRole`, `hasRole`, `hasAnyOfTwoRoles`, etc.) enable granular control over function access based on roles like `ADMIN`, `TOKEN_GOVERNOR`, and more.
+- Inherits from `Pausable`, which provides the ability to pause or resume functionalities as a safety measure. This can be crucial during emergencies or system upgrades.
+- The `globalLock` modifier facilitates reentrancy protection, leveraging the `IGlobalReentrancyLock` interface. This safety measure ensures that recursive or nested calls do not exploit contract functions.
+- Provides an `emergencyAction` function that allows executing arbitrary calldata against arbitrary addresses. This powerful feature, intended only for emergencies, can call multiple contract functions in one transaction. It's tightly controlled and is accessible only by the `ADMIN` role for security reasons.
+- The contract offers the ability to point to a new `Core` address through the `setCore` function. While this offers flexibility, it comes with a cautionary note as pointing to an invalid core can potentially disrupt the system.
+- Events like `CoreUpdate` provide transparency and traceability, signaling important state changes like updates to the `Core` reference.
+
+## Structs
+### `Call`
+Pack calldata and targets for an emergency action.
+- `target`: The address of the contract to call.
+- `value`: The amount of ETH to send with the call.
+- `callData`: The calldata to pass to the contract.
 
 ## Events
 ### `CoreUpdate()`
@@ -109,7 +116,7 @@ Logs:
 ### `globalLock()`
 Ensures a global reentrancy lock mechanism by interacting with the core's lock. It locks at the given level before function execution and unlocks it back to the starting level afterwards.
 Parameters:
- - `level`: The level of the reentrancy lock.
+- `level`: The level of the reentrancy lock.
 
 ### `onlyRole()`
 Restricts function access based on a specific user role in the Core contract.

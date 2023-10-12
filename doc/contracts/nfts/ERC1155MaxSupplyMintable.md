@@ -92,3 +92,46 @@ sequenceDiagram
 - [Strings](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/utils/Strings.sol): A utility library for handling string operations in Solidity.
 - [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Manages different roles for access control.
 - [CoreRef](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/refs/CoreRef.sol): Provides a reference to the protocol's core contract.
+
+## Features
+- Easily track of the total supply of each token ID.
+- Enables token holders to burn (destroy) their tokens.
+- Ability to change the metadata base URI.
+- Setting and updating of supply caps for individual token IDs.
+- Batch minting.
+
+## Events
+These events offer a mechanism to track and audit the various interactions and updates that occur within the `ERC1155MaxSupplyMintable` contract.
+
+### `SupplyCapUpdated`
+Emitted when a token's supply cap is updated.
+Logs:
+- `tokenId`: The ID of the token whose supply cap was updated.
+- `previousMaxSupply`: The previous supply cap of the token.
+- `maxSupply`: The new supply cap of the token.
+
+### `URIUpdated`
+Emitted when the metadata base URI is updated.
+Logs:
+- `newuri`: The new metadata base URI.
+
+### `TokenMinted`
+Emitted when a token is minted.
+Logs:
+- `account`: The recipient of the minted token.
+- `tokenId`: The ID of the minted token.
+- `amount`: The amount of tokens minted.
+
+### `TokenBurned`
+Emitted when a token is burned.
+Logs:
+- `account`: The holder of the burned token.
+- `tokenId`: The ID of the burned token.
+- `amount`: The amount of tokens burned.
+
+### `BatchMinted`
+Emitted when a batch of tokens is minted.
+Logs:
+- `account`: The recipient of the minted tokens.
+- `tokenIds`: The IDs of the minted tokens.
+- `amounts`: The amounts of tokens minted.

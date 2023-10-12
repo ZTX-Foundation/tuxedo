@@ -74,3 +74,7 @@ sequenceDiagram
 - The contract offers an emergency recovery mechanism. If the system remains locked beyond the current block, the `ADMIN` role can reset the lock, potentially saving the system from being locked indefinitely.
 - There's also a mechanism for the `ADMIN` to pause the entire system by setting the lock to level two.
 - Can easily query the current state of the lock.
+
+## Constants
+- `_NOT_ENTERED`: The initial state of the lock.
+- `_ENTERED_LEVEL_TWO`: The state of the lock after the first lock.

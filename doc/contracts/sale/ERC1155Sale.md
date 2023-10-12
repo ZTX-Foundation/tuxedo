@@ -105,8 +105,28 @@ sequenceDiagram
 * Wrapping ETH: Converts raw Ethereum into WETH (Wrapped ETH).
 * Role-based Access Control: Uses OpenZeppelin's Roles system for controlling access to administrative functions.
 
+## Constants
+- `MAX_FEE`: Max fee for a purchase.
+
+## Structs
+### `TokenInfo`
+Stores information related to a specific token, including:
+- `tokenPricedIn`: The ERC20 token in which the ERC1155 token is priced.
+- `saleStartTime`: The time at which the sale for the ERC1155 token begins.
+- `price`: The price of the ERC1155 token.
+- `fee`: The fee for the ERC1155 token.
+- `overrideMerkleRoot`: Override the merkle root check.
+- `merkleRoot`: The default merkle root for a given token.
+
+### `TokenRecipient`
+Keeps track of the recipients for token proceeds and fees.
+- `proceedsRecipient`: The address to which proceeds from the sale of the token are sent.
+- `feeRecipient`: The address to which fees from the sale of the token are sent.
+- `unclaimedProceeds`: The amount of proceeds that have not yet been claimed.
+- `unclaimedFees`: The amount of fees that have not yet been claimed.
+
 ## Events
-These events offer a mechanism to track and audit the various interactions and updates that occur within the ERC1155Sale contract, providing insights into purchases, configuration changes, and fund movements.
+These events offer a mechanism to track and audit the various interactions and updates that occur within the `ERC1155Sale` contract.
 
 ### `TokensPurchased`
 Emitted when tokens are successfully purchased.
@@ -152,17 +172,6 @@ Logs:
 - `token`: Address of the ERC20 token that's withdrawn.
 - `to`: Destination address receiving the withdrawn tokens.
 - `amount`: Amount of tokens that were withdrawn.
-
-## Structs
-### `TokenInfo`
-Stores information related to a specific token, including:
-- the token's price,
-- sale start time,
-- the ERC20 token in which the ERC1155 token is priced 
-- and a merkle root for verification purposes.
-
-### `TokenRecipient`
-Keeps track of the recipients for token proceeds and fees. Also manages unclaimed amounts.
 
 ## Constructor
 The constructor accepts three arguments:

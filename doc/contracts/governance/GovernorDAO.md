@@ -78,3 +78,12 @@ sequenceDiagram
 - The constructor initializes the contract with a governance token, timelock address, and governance settings (voting delay, voting period, proposal threshold, and initial quorum).
 - Allows adjustment of voting settings (voting delay, voting period, and proposal threshold) with associated functions (`setVotingDelay()`, `setVotingPeriod()`, and `setProposalThreshold()`).
 - Provides a cancel function for the guardian (defined by the `GUARDIAN` role) to cancel a proposal in progress.
+
+## Events
+These events offer a mechanism to track and audit the various interactions and updates that occur within the `GovernorDAO` contract.
+
+### `QuorumUpdated`
+Emitted when quorum is updated.
+Logs:
+- `oldQuorum`: The old quorum value.
+- `newQuorum`: The new quorum value.

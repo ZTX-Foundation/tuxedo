@@ -62,3 +62,18 @@ sequenceDiagram
 - [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Defines the various roles utilized within the system.
 - [CoreRef](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/refs/CoreRef.sol): Provides a reference to the protocol's core contract.
 - [Constants](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/Constants.sol): Protocol constants.
+
+## Structs
+### `Allocation`
+Defines the allocation ratio and deposit address for a given token.
+- `deposit`: The deposit address to allocate tokens to.
+- `ratio`: The ratio of the total balance to allocate to the deposit address.
+
+## Events
+These events offer a mechanism to track and audit the various interactions and updates that occur within the `ERC20Splitter` contract.
+
+### `Allocate`
+Emitted when funds are allocated to deposits.
+Logs:
+- `caller`: Address of the caller.
+- `amount`: Amount of tokens allocated.

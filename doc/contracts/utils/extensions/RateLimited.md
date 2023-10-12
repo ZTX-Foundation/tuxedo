@@ -49,3 +49,33 @@ sequenceDiagram
 ### Protocol Specific
 - [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Defines the various roles utilized within the system.
 - [CoreRef](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/refs/CoreRef.sol): Provides a reference to the protocol's core contract.
+
+## Features
+- Allows other contracts to implement rate limits on specific actions. It provides a mechanism to limit how quickly a contract can perform certain actions, such as minting tokens.
+- Provides flexibility in controlling the pace of certain operations within the ZTX protocol.
+
+## Events
+
+### `BufferUsed`
+Emitted when buffer gets eaten into.
+Logs:
+- `amountUsed`: The amount of buffer used.
+- `amountRemaining`: The amount of buffer remaining.
+
+### `BufferReplenished`
+Emitted when buffer gets replenished.
+Logs:
+- `amountReplenished`: The amount of buffer replenished.
+- `bufferRemaining`: The amount of buffer remaining.
+
+### `BufferCapUpdate`
+Emitted when the buffer cap is updated.
+Logs:
+- `oldBufferCap`: The previous buffer cap.
+- `newBufferCap`: The new buffer cap.
+
+### `ReplenishRatePerSecondUpdate`
+Emitted when the replenish rate per second is updated.
+Logs:
+- `oldReplenishRatePerSecond`: The previous replenish rate per second.
+- `newReplenishRatePerSecond`: The new replenish rate per second.

@@ -58,3 +58,30 @@ sequenceDiagram
 - A signature is required to verify the authenticity of the payment, ensuring it matches the expected details (jobId, paymentToken, jobFee, etc.).
 - Offers `wrapEth()` to convert any native ETH in the contract to WETH.
 - Allows unclaimed tokens and WETH to be swept to the `proceedsRecipient` through `sweepUnclaimed()` and `sweepUnclaimedWeth()`.
+
+## Events
+These events offer a mechanism to track and audit the various interactions and updates that occur within the `GameConsumer` contract.
+
+### `TakePayment`
+Emitted when in payment is taken.
+Logs:
+- `jobId`: The backend job ID.
+- `amount`: Payment amount.
+
+### `WithdrawToCollector`
+Emitted when proceeds are withdrawn.
+Logs:
+- `proceedsCollector`: The address of where the proceeds were withdrawn to.
+- `amount`: The amount of proceeds withdrawn.
+
+### `ProceedsRecipientUpdated`
+Emitted when proceeds collector is updated.
+Logs:
+- `proceedsCollector`: The new address of where the proceeds collector.
+
+### `TokensSwept`
+Emitted when tokens are swept.
+Logs:
+- `token`: The address of the token that was swept.
+- `proceedsCollector`: The address of where the proceeds were withdrawn to.
+- `amount`: The amount of tokens swept.

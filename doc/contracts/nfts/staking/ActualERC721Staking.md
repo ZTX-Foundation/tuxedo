@@ -68,3 +68,6 @@ sequenceDiagram
 - [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Defines the various roles utilized within the system.
 - [CoreRef](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/refs/CoreRef.sol): Provides a reference to the protocol's core contract.
 - [IActualERC721Staking](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/nfts/staking/IActualERC721Staking.sol): Interface for `ActualERC721Staking`.
+
+## Constants
+- `REWARD_TIME`: The length of time to stake per point distributed.

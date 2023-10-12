@@ -65,3 +65,24 @@ sequenceDiagram
 - The `emergencyRevoke()` function provides a mechanism for the `GUARDIAN` role to revoke roles from accounts in case of emergencies. However, the guardian cannot revoke the `ADMIN` role. This ensures that in the event of a security threat or other issues, rapid action can be taken.
 - The contract holds a reference to a global reentrancy lock (of type `IGlobalReentrancyLock`) named lock.
 - The `setGlobalLock()` function allows `ADMIN` or `TOKEN_GOVERNOR` to update the address of the reentrancy lock.
+
+## Events
+These events offer a mechanism to track and audit the various interactions and updates that occur within the `Core` contract.
+
+### `EmergencyRevoke`
+This event is emitted when a role is revoked by the guardian.
+Logs:
+- `role`: The role that was revoked.
+- `account`: The address from which the role was revoked.
+
+### `RoleCreated`
+This event is emitted when a new role is created.
+Logs:
+- `role`: The newly created role.
+- `adminRole`: The admin role associated with the new role.
+
+### `GlobalReentrancyLockUpdate`
+This event is emitted when the pointer to the global reentrancy lock is updated.
+Logs:
+- `oldLock`: The address of the previous global reentrancy lock.
+- `newLock`: The address of the new global reentrancy lock.

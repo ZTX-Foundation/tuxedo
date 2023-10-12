@@ -57,3 +57,9 @@ sequenceDiagram
 - [EnumerableSet](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/structs/EnumerableSet.sol): Manages a set of unique addresses. It allows for the addition and removal of elements and ensures that each element is unique.
 ### Protocol Specific
 - [IWhitelistedAddresses](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/utils/extensions/IWhitelistedAddreses.sol): Interface for `WhitelistedAddreses`.
+
+## Features
+- Can be inherited by other contracts that need to implement whitelisting functionality for specific actions or access control.
+- Allows certain addresses to be added to and removed from the whitelist, and it provides functions to check whether an address is whitelisted.
+- Stores the whitelisted addresses in a set, ensuring uniqueness and efficient lookups.
+- Provides a convenient and reusable way to manage whitelists of addresses within the ZTX protocol.
