@@ -84,3 +84,28 @@ The constructor accepts three arguments:
 - `_core`: The address of the core contract that provides roles and access control.
 - `_token`: The address of the token to split.
 - `_deposits`: An array of deposit addresses to allocate tokens to.
+
+## Functions
+### `getNumberOfAllocations()`
+Returns the number of allocations defined in the splitter contract.
+
+### `getAllocationAt()`
+Returns the allocation details (deposit address and ratio) at the specified index in the allocations array.
+
+### `getAllocations()`
+Returns an array of all allocations defined in the splitter contract, including deposit addresses and their allocation ratios.
+
+### `checkAllocation()`
+Checks whether the allocation ratios in the provided list of deposits total 100% (`Constants.BASIS_POINTS_GRANULARITY`). This function is a pure function and does not modify the contract state.
+
+### `allocate()`
+Allocates all funds in the splitter contract to the defined deposits based on their allocation ratios. This function transfers the ERC-20 tokens to each deposit accordingly.
+
+### `allocate()`
+Allocates all funds in the splitter contract to the defined deposits based on their allocation ratios for a specified ERC-20 token (tokenToAllocate). This function transfers tokens to each deposit accordingly.
+
+### `setAllocation()`
+Allows `ADMIN` to set the allocation of deposits. It replaces the existing allocation with the new one provided.
+
+### `_setAllocation()`
+Sets a new allocation for the splitter contract. This internal function is used to update the allocation.

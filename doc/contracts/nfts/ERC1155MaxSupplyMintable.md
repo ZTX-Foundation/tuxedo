@@ -150,3 +150,34 @@ Upon deployment, The contract initializes several contract state variables, incl
 - `_symbol`: Stores the symbol of the NFT contract.
 
 and sets up the core functionality needed for minting and managing the supply cap of individual tokens within the contract.
+
+## Functions
+### `setSupplyCap()`
+Allows `ADMIN` to set the supply cap for a specific token. The new supply cap must be greater than or equal to the current supply.
+
+### `_setSupplyCap()`
+An internal function to set the supply cap for a given token. Emits a `SupplyCapUpdated` event.
+
+### `setURI()`
+Allows `ADMIN` to update the URI (metadata) for the token.
+
+### `mint()`
+Allows `MINTER` to mint tokens for a specific recipient. The number of tokens minted must not exceed the supply cap for the token. Emits a `TokenMinted` event.
+
+### `mintBatch()`
+Allows `MINTER` to mint a batch of tokens for a specific recipient. The total number of tokens minted across all IDs must not exceed the respective supply caps. Emits a `BatchMinted` event.
+
+### `getMintAmountLeft()`
+A view function that returns the amount of tokens that can still be minted before reaching the supply cap for a specific token.
+
+### `name()`
+View function that returns the name of the collection.
+
+### `symbol()`
+View function that returns the symbol of the collection.
+
+### `_beforeTokenTransfer()`
+An internal override function to disallow sending tokens to the token contract itself.
+
+### `uri()`
+A view function that generates the URI for a specific token ID, including its string representation.

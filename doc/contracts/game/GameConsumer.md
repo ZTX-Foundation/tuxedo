@@ -93,3 +93,31 @@ The constructor accepts four arguments:
 - `_token`: The address of the ZTX token contract.
 - `_proceedsRecipient`: The address where all proceeds will be sent.
 - `_weth`: The address of the Wrapped Ether (WETH) token.
+
+## Functions
+### `_verifySignerAndHash()`
+Verifies the signer and hash of a crafted message and checks for various conditions, including the timestamp, used hashes, and role permissions.
+
+### `takePayment()`
+Allows users to make a payment in a specified token for a given off-chain job. It verifies the signer and hash, transfers the payment token, and emits a `TakePayment` event.
+
+### `takePaymentWithEth()`
+Allows users to make a payment in Ether for a given off-chain job. It verifies the signer and hash, checks the ETH value sent, and emits a `TakePayment` event.
+
+### `getHash()`
+Computes and returns a hash based on various parameters, which is used for message verification.
+
+### `recoverSigner()`
+Returns the address that signed a given message hash.
+
+### `setProceedsCollector()`
+Allows the admin to set the proceeds recipient address and emits a `ProceedsRecipientUpdated` event.
+
+### `wrapEth()`
+Converts raw Ether into wrapped Ether (WETH).
+
+### `sweepUnclaimed()`
+Withdraws unclaimed tokens to the proceeds recipient address and emits a TokensSwept event.
+
+### `sweepUnclaimedWeth()`
+Withdraws unclaimed WETH tokens to the proceeds recipient address and emits a TokensSwept event.

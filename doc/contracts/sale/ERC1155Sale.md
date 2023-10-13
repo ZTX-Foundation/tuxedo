@@ -186,7 +186,7 @@ The constructor doesn't have any explicit modifiers, but it contains checks to e
 ### `buyTokenWithEth()`
 Allows a user to purchase ERC1155 tokens using raw Ethereum, ensures the sale has started and provided ETH matches the calculated total cost, mints the ERC1155 tokens to the recipient and emits a `TokensPurchased` event.
 
-###  `buyTokensWithEth()`
+### `buyTokensWithEth()`
 Allows a user to bulk purchase multiple ERC1155 tokens using raw Ethereum, validates provided ETH matches the bulk purchase total and mints the ERC1155 tokens in a batch to the recipient.
 
 ### `buyToken()`

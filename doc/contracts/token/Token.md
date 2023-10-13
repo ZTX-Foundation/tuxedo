@@ -72,19 +72,19 @@ Upon deployment, the contract mints the `MAX_SUPPLY` of tokens and assigns them 
 
 ## Functions
 ### `maxSupply()`
-A pure function that returns the `MAX_SUPPLY`.
+A public pure function that returns the maximum supply of tokens.
 
 ### `_beforeTokenTransfer()`
-This is an internal function required by the ERC20 standard, especially when extensions like `ERC20Snapshot` are used (although it's not directly used here). It's a hook that can be extended to customize behavior before any transfer, minting, or burning operation.
+An internal virtual function provided by `ERC20Votes` that is called before every token transfer. Ensures that the `_beforeTokenTransfer` function from the `ERC20` contract is called.
 
 ### `_afterTokenTransfer()`
-Another internal hook function that gets called after token transfer operations. It's crucial for the functioning of both `ERC20` and `ERC20Votes` to maintain vote counts.
+An internal virtual function provided by `ERC20Votes` that is called after every token transfer. Calls the `_delegate` function to update the voting delegation.
 
 ### `_burn()`
-An internal function to burn tokens. Even though the contract is labeled non-burnable, this function still exists in the base contract and is overridden here to ensure it aligns with both `ERC20` and `ERC20Votes`.
+An internal virtual function provided by `ERC20Votes` and `ERC20` that is used to burn tokens from an account. Calls the `_burn` functions of both parent contracts.
 
 ### `_mint()`
-An internal function to mint tokens. This is used in the constructor to mint the initial `MAX_SUPPLY` tokens.
+An internal virtual function provided by `ERC20Votes` and `ERC20` that is used to mint tokens and add them to an account. Calls the `_mint` functions of both parent contracts.
 
 ## Design Rationale
 The `ERC20Permit` extension is used to eliminate the need for two transactions when a user wants to spend another user's tokens. Traditionally, the token owner would first need to approve the spender, and then the spender would call transferFrom. With permit, the owner can sign a message off-chain that gives the spender permission, and the spender can then submit this permission on-chain in a single transaction.

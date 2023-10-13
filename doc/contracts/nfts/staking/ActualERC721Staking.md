@@ -77,3 +77,41 @@ The constructor accepts two arguments:
 
 - `_core`: The address of the core contract that provides roles and access control.
 - `_stakingToken`: The address of an ERC721 token contract. It is used to initialize the public variable `stakingToken`, which is an instance of the ERC721 token contract that users will be staking.
+
+## Functions
+### `epoch()`
+Returns the total number of epochs that have been created.
+
+### `getCurrentTimestampOrEpochEnd()`
+Returns the end time of the current epoch for rewards calculation.
+
+### `getClaimedRewardsAcrossAllEpochs()`
+Returns the total rewards claimed by a user across all epochs.
+
+### `getUserAmountStaked()`
+Returns the total amount of ERC721 tokens staked by a user.
+
+### `getStakedUserInfo()`
+Returns information about a user's staked assets and last staked time.
+
+### `getEpochInfo()`
+Returns information about a specific epoch, including its start time and duration.
+
+### `getTotalRewards()`
+Returns the total rewards for a user across all epochs, including claimed and unclaimed rewards.
+
+### `getElapsedTime()`
+Returns the elapsed time for a user during the current epoch.
+
+### `getUnclaimedRewardsCurrentEpoch()`
+Returns the unclaimed rewards for the current epoch for a user.
+
+### `getTotalUnclaimedRewards()`
+Returns the total unclaimed rewards for a user across all epochs.
+
+### `getCurrentEpoch()`
+Returns the current epoch number, or 0 if no active epoch exists.
+
+### `isActiveEpoch()`
+Checks if a specific epoch is currently active.
+

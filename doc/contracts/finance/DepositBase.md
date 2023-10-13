@@ -53,3 +53,13 @@ sequenceDiagram
 ## Features
 - Allows the `FINANCIAL_CONTROLLER` to withdraw a specified amount of any ERC20 token from the contract. This ensures that only authorized parties can move funds from the contract.
 - The withdrawal function can also only be called when the contract is not paused, which provides an extra layer of control.
+
+## Functions
+### `withdrawERC20()`
+Allows `FINANCIAL_CONTROLLER` to withdraw ERC-20 tokens from the contract and transfer them to a specified destination address.
+
+### `balance()`
+An abstract function that returns the balance of assets held in the contract. Subclasses must implement this function to specify how they calculate and report the balance.
+
+### `balanceReportedIn()`
+An abstract function that returns the address of the asset in which the balance is reported. Subclasses must implement this function to specify the asset used for reporting the balance.

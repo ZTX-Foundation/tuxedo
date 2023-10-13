@@ -89,3 +89,13 @@ Logs:
 
 ## Constructor
 The constructor accepts no arguments. The constructor sets the initial protocol roles and grants the `ADMIN` role to the account that deploys the contract.
+ 
+## Functions
+### `createRole()`
+Allows `ADMIN` to create a new role and specify its admin role. This function is used to create roles within the protocol.
+
+### `setGlobalLock()`
+Allows `ADMIN` or `TOKEN_GOVERNOR` to set the address of the global reentrancy lock. This lock helps prevent reentrancy attacks in the protocol.
+
+### `emergencyRevoke()`
+Allows `GUARDIAN` to revoke a specific role from an account. This function is used to remove a role in emergency situations.

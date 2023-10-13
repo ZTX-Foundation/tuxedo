@@ -253,3 +253,79 @@ The constructor checks that `_paymentRecipient` is not the zero address and that
 
 - `paymentRecipient`: Stores the payment recipient's address.
 - `expiryTokenHoursValid`: Sets the validity period for an expiry token.
+
+## Functions
+### `_verifyHashAndSignerRoleExpireHashAndDepleteBuffer()`
+Verifies input parameters, checks expiration, hash matching, and signer role. Marks the hash as expired and the job as completed, and depletes the rate limit buffer.
+
+### `_isExpiryTokenValid`
+Checks if an expiry token is still valid based on the provided hours.
+
+### `_mintChecksForPaymentTokenFee`
+Checks if the payment token address is not zero and the payment amount is greater than zero for payment with a token.
+
+### `_mintChecksForEthFee`
+Checks if the payment amount is greater than zero for payment with ETH.
+
+### `mintForFree`
+Mints NFTs to a given address with a provided signature for free.
+
+### `mintWithPaymentTokenAsFee`
+Mints NFTs to a given address with a provided signature, using a token as a fee for payment.
+
+### `mintWithEthAsFee`
+Mints NFTs to a given address with a provided signature, using ETH as a fee for payment.
+
+### `mintBatchForFree`
+Mints a batch of NFTs to a given address with provided signatures for free.
+
+### `mintBatchWithPaymentTokenAsFee`
+Mints a batch of NFTs to a given address with provided signatures, using a token as a fee for payment.
+
+### `mintBatchWithEthAsFee`
+Mints a batch of NFTs to a given address with provided signatures, using ETH as a fee for payment.
+
+### `getHash`
+Computes the hash of a message based on input parameters.
+
+### `recoverSigner`
+Recovers the address that signed a given message hash.
+
+### `addWhitelistedContract`
+Allows `ADMIN` or `TOKEN_GOVERNOR` to add a contract address to the whitelist.
+
+### `removeWhitelistedContract`
+Allows `ADMIN` or `TOKEN_GOVERNOR` to remove a contract address from the whitelist.
+
+### `addWhitelistedContracts`
+Allows `ADMIN` or `TOKEN_GOVERNOR` to add multiple contract addresses to the whitelist in a batch.
+
+### `removeWhitelistedContracts`
+Allows `ADMIN` or `TOKEN_GOVERNOR` to remove multiple contract addresses from the whitelist in a batch.
+
+### `updatePaymentRecipient`
+Allows `ADMIN` to update the payment recipient address.
+
+### `updateExpiryTokenHoursValid`
+Allows `ADMIN` to update the expiry token hours valid range.
+
+### `_calculateRewards()`
+Calculates rewards based on the time tokens are staked and the amount staked.
+
+### `_getAllUnclaimedRewardsPreviousEpochs()`
+Retrieves unclaimed rewards from previous epochs for a user.
+
+### `_updatePreviousEpochs()`
+Updates a user's rewards for previous epochs and returns the rewards claimed.
+
+### `updateUserReward()`
+Allows a user to claim their rewards and updates their reward points.
+
+### `stake()`
+Allows users to stake ERC721 tokens by providing an array of token IDs.
+
+### `unstake()`
+Allows users to withdraw previously staked ERC721 tokens by providing an array of token IDs.
+
+### `createNewEpoch()`
+Allows `ADMIN` to create a new epoch with a specified start time and duration.

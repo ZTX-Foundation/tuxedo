@@ -101,3 +101,43 @@ The constructor accepts eight arguments:
 - `initialQuorum`: An initial quorum value.
 
 The constructor ensures that the initial quorum value is greater than zero.
+
+## Functions
+### `quorum()`
+Returns the current quorum required for a proposal to pass.
+
+### `_setQuorum()`
+Sets the quorum to a new value and emits a `QuorumUpdated` event.
+
+### `setVotingDelay()`
+Allows changing the voting delay, rrestricted to `TOKEN_GOVERNOR`.
+
+### `setVotingPeriod()`
+Allows changing the voting period, restricted to `TOKEN_GOVERNOR`.
+
+### `setProposalThreshold()`
+Allows changing the proposal threshold, restricted to `TOKEN_GOVERNOR`.
+
+### `setQuorum()`
+Allows changing the quorum, restricted to `TOKEN_GOVERNOR`.
+
+### `cancel()`
+Allows `GUARDIAN` to cancel a proposal in progress by providing proposal details.
+
+### `_cancel()`
+Internal function to cancel a proposal.
+
+### `_execute()`
+Internal function to execute a proposal.
+
+### `_executor()`
+Internal function to get the executor address.
+
+### `proposalThreshold()`
+Returns the current proposal threshold.
+
+### `state()`
+Returns the current state of a proposal.
+
+### `supportsInterface()`:
+Checks if an interface is supported by the contract.

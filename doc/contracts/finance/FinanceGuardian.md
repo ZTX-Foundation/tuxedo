@@ -90,3 +90,31 @@ The constructor accepts three arguments:
 - `_core`: The address of the core contract that provides roles and access control.
 - `_safeAddress`: The address where funds can be withdrawn to.
 - `_whitelistAddresses`: An array of addresses that are initially whitelisted for fund withdrawals.
+
+## Functions
+### `setSafeAddress()`
+Allows `ADMIN` to change the safe withdrawal address.
+
+### `addWhitelistAddress()`
+Allows `ADMIN` or `TOKEN_GOVERNOR` to whitelist a deposit address for fund withdrawal.
+
+### `addWhitelistAddresses()`
+Allows `ADMIN` or `TOKEN_GOVERNOR` to whitelist multiple deposit addresses for fund withdrawal.
+
+### `removeWhitelistAddress()`
+Allows `ADMIN`, `TOKEN_GOVERNOR` or `GUARDIAN` to remove a deposit address from the whitelist.
+
+### `removeWhitelistAddresses()`
+Allows `ADMIN`, `TOKEN_GOVERNOR` or `GUARDIAN` to remove multiple deposit addresses from the whitelist.
+
+### `withdrawToSafeAddress()`
+Allows `ADMIN`, `TOKEN_GOVERNOR`, `GUARDIAN` or `FINANCIAL_GUARDIAN` to withdraw funds from a whitelisted deposit address to the safe withdrawal address.
+
+### `withdrawAllToSafeAddress()`
+Allows `ADMIN`, `TOKEN_GOVERNOR`, `GUARDIAN` or `FINANCIAL_GUARDIAN` to withdraw all funds from a whitelisted deposit address to the safe withdrawal address.
+
+### `withdrawERC20ToSafeAddress()`
+Allows `ADMIN`, `TOKEN_GOVERNOR`, `GUARDIAN` or `FINANCIAL_GUARDIAN` to withdraw ERC-20 tokens from a whitelisted deposit address to the safe withdrawal address.
+
+### `withdrawAllERC20ToSafeAddress()`
+Allows `ADMIN`, `TOKEN_GOVERNOR`, `GUARDIAN` or `FINANCIAL_GUARDIAN` to withdraw all ERC-20 tokens from a whitelisted deposit address to the safe withdrawal address.

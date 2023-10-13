@@ -59,3 +59,13 @@ The constructor accepts two arguments:
 
 - `_core`: The address of the core contract that provides roles and access control.
 - `_token`: The address of the ERC20 token that this contract is designed to hold and manage.
+
+## Functions
+### `balance()`
+Returns the total balance of the ERC-20 token held in the deposit contract. It overrides the abstract balance function defined in the `DepositBase` contract.
+
+### `balanceReportedIn()`
+Returns the address of the ERC-20 token in which the balance is reported. It overrides the abstract balanceReportedIn function defined in the `DepositBase` contract.
+
+### `withdraw()`
+Allows `FINANCIAL_CONTROLLER` to withdraw a specified amount of the underlying ERC-20 tokens from the deposit and transfer them to a specified destination address.

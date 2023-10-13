@@ -83,3 +83,22 @@ sequenceDiagram
 The constructor accepts a single argument:
 
 - `_core`: The address of the core contract that provides roles and access control.
+
+## Functions
+### `isUnlocked()`
+Checks if the contract is currently unlocked (not entered at level 1 or 2).
+
+### `isLocked()`
+Checks if the contract is currently locked (entered at level 1 or 2).
+
+### `lock()`
+Allows `LOCKER` to lock the contract at different levels. The contract can be locked from level 0 to level 1 or from level 1 to level 2.
+
+### `unlock()`
+Allows `LOCKER` to unlock the contract. The contract can be unlocked from level 1 to level 0 or from level 2 to level 1.
+
+### `adminEmergencyRecover()`
+Allows `ADMIN` to recover the system from an incorrect state in an emergency. This function sets the status to "not entered" (`_NOT_ENTERED`) and can only be called if the system was entered in a previous block.
+
+### `adminEmergencyPause()`
+Allows `ADMIN` to pause the entire system by setting the lock level to level 2 (`_ENTERED_LEVEL_TWO`).

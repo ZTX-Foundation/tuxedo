@@ -86,3 +86,25 @@ The constructor accepts two arguments:
 - `_bufferCap`: Sets the maximum size (cap) of the buffer that can be used at once.
 
 Upon deployment, the contract's replenish rate and buffer cap are set to the values provided.
+
+## Functions
+### `setReplenishRatePerSecond()`
+Allows an authorized user with specific roles (e.g., `TOKEN_GOVERNOR` or `ADMIN`) to update the rate at which the buffer replenishes per second. Calls `_updateBufferRemaining()` to refresh the buffer state.
+
+### `setBufferCap()`
+Allows an authorized user with specific roles (e.g., TOKEN_GOVERNOR or ADMIN) to update the buffer capacity. Calls `_updateBufferRemaining()` to refresh the buffer state.
+
+### `buffer()`
+A view function that calculates the current amount of action that can be performed before reaching the rate limit. It considers the time elapsed since the last buffer update and ensures that the buffer does not exceed the bufferCap.
+
+### `_depleteBuffer()`
+An internal function that enforces the rate limit by reducing the buffer by a specified amount. If the buffer is insufficient, it either partially performs the action or reverts, depending on the value of `doPartialAction`.
+
+### `_setReplenishRatePerSecond()`
+An internal function to update the replenishRatePerSecond state variable. Emits a `ReplenishRatePerSecondUpdate` event.
+
+### `_setBufferCap()`
+An internal function to update the bufferCap state variable. Emits a `BufferCapUpdate` event.
+
+### `_updateBufferRemaining()`
+An internal function that updates the `bufferRemaining` and `lastBufferUsedTime` based on the current timestamp and the calculated buffer value.
