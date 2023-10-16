@@ -114,4 +114,3 @@ Returns the current epoch number, or 0 if no active epoch exists.
 
 ### `isActiveEpoch()`
 Checks if a specific epoch is currently active.
-

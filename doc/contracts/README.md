@@ -11,13 +11,16 @@ The primary components are as follows:
 ### Core
 - [Core](core/Core.md)
 - [GlobalReentrancyLock](core/GlobalReentrancyLock.md)
+  - [IGlobalReentrancyLock](core/IGlobalReentrancyLock.md)
 - [Roles](core/Roles.md)
 - [CoreRef](refs/CoreRef.md)
 ### Finance
 - [DepositBase](finance/DepositBase.md)
+  - [IDepositBase](finance/IDepositBase.md)
 - [ERC20HoldingDeposit](finance/ERC20HoldingDeposit.md)
 - [ERC20Splitter](finance/ERC20Splitter.md)
 - [FinanceGuardian](finance/FinanceGuardian.md)
+  - [IFinanceGuardian](finance/IFinanceGuardian.md)
 ### Game
 - [GameConsumer](game/GameConsumer.md)
 ### Governance
@@ -26,6 +29,7 @@ The primary components are as follows:
 - [ERC1155AutoGraphMiner](nfts/ERC1155AutoGraphMiner.md)
 - [ERC1155MaxSupplyMintable](nfts/ERC1155MaxSupplyMintable.md)
 - [ActualERC721Staking](nfts/staking/ActualERC721Staking.md)
+  - [IActualERC721Staking](nfts/staking/IActualERC721Staking.md)
 ### Sale
 - [ERC1155Sale](sale/ERC1155Sale.md)
 ### Token
@@ -33,6 +37,7 @@ The primary components are as follows:
 ### Utils
 - [RateLimited](utils/extensions/RateLimited.md)
 - [WhitelistedAddresses](utils/extensions/WhitelistedAddresses.md)
+  - [IWhitelistedAddresses](utils/extensions/IWhitelistedAddresses.md)
 
 ## Known Issues
 - Governance is trusted. If `ADMIN` goes rogue it can brick the entire system and steal all funds. 
