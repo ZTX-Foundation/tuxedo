@@ -1,7 +1,7 @@
 # IERC1155Sale.sol
 
 ## Introduction
-An interface for defining how the `ERC1155Sale` functions. Please see [ERC1155Sale.sol](./ERC1155Sale.md) for more details.
+An interface for defining how `ERC1155Sale` functions. Please see [ERC1155Sale.sol](./ERC1155Sale.md) for more details.
 
 ## Events
 ### `TokensPurchased`

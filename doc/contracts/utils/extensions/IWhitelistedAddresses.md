@@ -1,7 +1,7 @@
 # IWhitelistedAddresses.sol
 
 ## Introduction
-An interface for defining how the `WhitelistedAddresses` functions. Please see [WhitelistedAddresses.sol](./WhitelistedAddresses.md) for more details.
+An interface for defining how `WhitelistedAddresses` functions. Please see [WhitelistedAddresses.sol](./WhitelistedAddresses.md) for more details.
 
 ## Events
 ### `WhitelistAddressAdded()`

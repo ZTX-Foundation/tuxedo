@@ -1,7 +1,7 @@
 # IDepositBase.sol
 
 ## Introduction
-An interface for defining how the `DepositBase` functions. Please see [DepositBase.sol](./DepositBase.md) for more details.
+An interface for defining how `DepositBase` functions. Please see [DepositBase.sol](./DepositBase.md) for more details.
 
 ## Events
 ### `Deposit()`

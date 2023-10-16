@@ -1,7 +1,7 @@
 # IActualERC721Staking.sol
 
 ## Introduction
-An interface for defining how the `ActualERC721Staking` functions. Please see [ActualERC721Staking.sol](./ActualERC721Staking.md) for more details.
+An interface for defining how `ActualERC721Staking` functions. Please see [ActualERC721Staking.sol](./ActualERC721Staking.md) for more details.
 
 ## Events
 ### `Staked`
