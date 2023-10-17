@@ -22,14 +22,14 @@ sequenceDiagram
     alt
         Client->>GameConsumer.sol: takePaymentWithETH()
         alt jobFee and hash are valid
-            GameConsumer.sol-->>Client: payment successful
+            GameConsumer.sol->>Client: payment successful
         else
             GameConsumer.sol-->>Client: revert
         end
     else
         Client->>GameConsumer.sol: takePayment()
         alt hash is valid
-            GameConsumer.sol-->>Client: payment successful
+            GameConsumer.sol->>Client: payment successful
         else
             GameConsumer.sol-->>Client: revert
         end 

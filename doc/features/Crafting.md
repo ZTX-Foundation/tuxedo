@@ -36,14 +36,14 @@ sequenceDiagram
     alt
         Client->>ERC1155AutoGraphMinter.sol: mintForFree()
         alt expiry, hash, jobId and signature are all valid
-            ERC1155AutoGraphMinter.sol-->>Client: NFT minted to recipient
+            ERC1155AutoGraphMinter.sol->>Client: NFT minted to recipient
         else
             ERC1155AutoGraphMinter.sol-->>Client: revert
         end
     else
         Client->>ERC1155AutoGraphMinter.sol: mintWithPaymentTokenAsFee() or mintWithETHAsFee()
         alt payment token and amount, expiry, hash, jobId and signature are all valid
-            ERC1155AutoGraphMinter.sol-->>Client: NFT minted to recipient
+            ERC1155AutoGraphMinter.sol->>Client: NFT minted to recipient
         else
             ERC1155AutoGraphMinter.sol-->>Client: revert
         end
