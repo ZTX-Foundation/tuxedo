@@ -20,6 +20,7 @@ program
     )
     .requiredOption("-n, --nft-contract-address <address>", "NFT contract")
     .requiredOption("-r, --recipient <address>", "Recipient address to mint to")
+    .requiredOption("-j, --job-id <job id>", "Job ID")
     .requiredOption("-t, --token-id <id>", "Token ID")
     .requiredOption("-a, --units <amount>", "Number of NFTs to mint")
     .requiredOption("-s, --salt <salt>", "Salt")
@@ -52,6 +53,7 @@ function getHash(input: any) {
             "uint256",
             "uint256",
             "uint256",
+            "uint256",
             "address",
             "address",
             "uint256",
@@ -59,6 +61,7 @@ function getHash(input: any) {
         ],
         [
             input.recipient,
+            input.jobId,
             input.tokenId,
             input.units,
             input.salt,
@@ -82,6 +85,7 @@ function getHash(input: any) {
 
 const params = {
     recipient: program.opts().recipient,
+    jobId: program.opts().jobId,
     tokenId: program.opts().tokenId,
     units: program.opts().units,
     salt: program.opts().salt,
@@ -119,6 +123,7 @@ console.log(
 await autoGraphMinterContract
     .mintForFree(
         program.opts().recipient,
+        program.opts().jobId,
         program.opts().tokenId,
         program.opts().units,
         hashMessage(hash),
