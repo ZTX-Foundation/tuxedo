@@ -26,39 +26,33 @@ sequenceDiagram
     participant Core as CoreRef
     participant ERC1155
 
-    User->>ERC1155MaxSupplyMintable: constructor(_core, _uri, name_, symbol_)
-    alt _core is valid
-        ERC1155MaxSupplyMintable->>Core: Initialize Core reference
-        ERC1155MaxSupplyMintable->>ERC1155: Set URI
-    else
-        ERC1155MaxSupplyMintable-->>User: Revert
-    end
-
-    User->>ERC1155MaxSupplyMintable: setSupplyCap(tokenId, maxSupply)
+    User->>+ERC1155MaxSupplyMintable: setSupplyCap(tokenId, maxSupply)
     alt has ADMIN role
         ERC1155MaxSupplyMintable->>ERC1155MaxSupplyMintable: _setSupplyCap(tokenId, maxSupply)
         ERC1155MaxSupplyMintable-->>ERC1155MaxSupplyMintable: Emit SupplyCapUpdated event
     else
-        ERC1155MaxSupplyMintable-->>User: Revert
+        ERC1155MaxSupplyMintable-->>-User: Revert
     end
 
-    User->>ERC1155MaxSupplyMintable: setURI(newuri)
+    User->>+ERC1155MaxSupplyMintable: setURI(newuri)
     alt has ADMIN role
-        ERC1155MaxSupplyMintable->>ERC1155: Update URI
+        ERC1155MaxSupplyMintable->>ERC1155: _setURI(newuri)
         ERC1155MaxSupplyMintable-->>ERC1155MaxSupplyMintable: Emit URIUpdated event
     else
-        ERC1155MaxSupplyMintable-->>User: Revert
+        ERC1155MaxSupplyMintable-->>-User: Revert
     end
 
-    User->>ERC1155MaxSupplyMintable: mint(recipient, tokenId, amount)
+    User->>+ERC1155MaxSupplyMintable: mint(recipient, tokenId, amount)
     alt has MINTER role and Contract is not paused
+        ERC1155MaxSupplyMintable->>ERC1155MaxSupplyMintable: Check totalSupply(tokenId) <= maxTokenSupply[tokenId]
         ERC1155MaxSupplyMintable->>ERC1155: _mint(recipient, tokenId, amount, "")
+        ERC1155MaxSupplyMintable->>ERC1155MaxSupplyMintable: Check totalSupply(tokenId) <= maxTokenSupply[tokenId]
         ERC1155MaxSupplyMintable-->>ERC1155MaxSupplyMintable: Emit TokenMinted event
     else
-        ERC1155MaxSupplyMintable-->>User: Revert
+        ERC1155MaxSupplyMintable-->>-User: Revert
     end
 
-    User->>ERC1155MaxSupplyMintable: mintBatch(recipient, tokenIds, amounts)
+    User->>+ERC1155MaxSupplyMintable: mintBatch(recipient, tokenIds, amounts)
     alt has MINTER role and Contract is not paused
         ERC1155MaxSupplyMintable->>ERC1155: _mintBatch(recipient, tokenIds, amounts, "")
         loop for each tokenId in tokenIds
@@ -66,21 +60,22 @@ sequenceDiagram
         end
         ERC1155MaxSupplyMintable-->>ERC1155MaxSupplyMintable: Emit BatchMinted event
     else
-        ERC1155MaxSupplyMintable-->>User: Revert
+        ERC1155MaxSupplyMintable-->>-User: Revert
     end
 
-    User->>ERC1155MaxSupplyMintable: getMintAmountLeft(tokenId)
-    ERC1155MaxSupplyMintable-->>User: Return mint amount left
+    User->>+ERC1155MaxSupplyMintable: getMintAmountLeft(tokenId)
+    ERC1155MaxSupplyMintable-->>-User: Return mint amount left
 
-    User->>ERC1155MaxSupplyMintable: name()
-    ERC1155MaxSupplyMintable-->>User: Return token name
+    User->>+ERC1155MaxSupplyMintable: name()
+    ERC1155MaxSupplyMintable-->>-User: Return token name
 
-    User->>ERC1155MaxSupplyMintable: symbol()
-    ERC1155MaxSupplyMintable-->>User: Return token symbol
+    User->>+ERC1155MaxSupplyMintable: symbol()
+    ERC1155MaxSupplyMintable-->>-User: Return token symbol
 
-    User->>ERC1155MaxSupplyMintable: uri(_id)
+    User->>+ERC1155MaxSupplyMintable: uri(_id)
     ERC1155MaxSupplyMintable->>ERC1155: Get base URI
-    ERC1155MaxSupplyMintable-->>User: Return combined URI
+    ERC1155->>ERC1155MaxSupplyMintable: Return base URI
+    ERC1155MaxSupplyMintable-->>-User: Return combined URI
 ```
 
 ## Base Contracts

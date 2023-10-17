@@ -24,58 +24,51 @@ sequenceDiagram
     participant Core
     participant Lock as IGlobalReentrancyLock
 
-    User->>CoreRef: constructor(coreAddress)
-    alt coreAddress is valid
-        CoreRef->>Core: Initialize Core reference
-    else
-        CoreRef-->>User: Revert
-    end
-
-    User->>CoreRef: Call function with globalLock modifier
+    User->>+CoreRef: Call function with globalLock modifier
     CoreRef->>Core: Get reference to global reentrancy lock
     Core->>Lock: Provide reference
     CoreRef->>Lock: Lock (level)
     CoreRef->>CoreRef: Execute function code
-    CoreRef->>Lock: Unlock (level - 1)
+    CoreRef->>-Lock: Unlock (level - 1)
 
-    User->>CoreRef: Call function with onlyRole modifier
+    User->>+CoreRef: Call function with onlyRole modifier
     alt has the required role
         CoreRef->>Core: hasRole(role, msg.sender)
         Core-->>CoreRef: True
         CoreRef->>CoreRef: Execute function code
     else
-        CoreRef-->>User: Revert
+        CoreRef-->>-User: Revert
     end
 
-    User->>CoreRef: pause()
+    User->>+CoreRef: pause()
     alt User has ADMIN, TOKEN_GOVERNOR, or GUARDIAN role
         CoreRef->>CoreRef: _pause()
     else
-        CoreRef-->>User: Revert
+        CoreRef-->>-User: Revert
     end
 
-    User->>CoreRef: unpause()
+    User->>+CoreRef: unpause()
     alt has ADMIN, TOKEN_GOVERNOR, or GUARDIAN role
         CoreRef->>CoreRef: _unpause()
     else
-        CoreRef-->>User: Revert
+        CoreRef-->>-User: Revert
     end
 
-    User->>CoreRef: setCore(newCore)
+    User->>+CoreRef: setCore(newCore)
     alt has ADMIN role and newCore is valid
         CoreRef->>Core: Update Core reference
         CoreRef-->>CoreRef: Emit CoreUpdate event
     else
-        CoreRef-->>User: Revert
+        CoreRef-->>-User: Revert
     end
 
-    User->>CoreRef: emergencyAction(calls)
+    User->>+CoreRef: emergencyAction(calls)
     alt has ADMIN role
         loop for each call in calls
             CoreRef->>CoreRef: Call target with provided callData and value
         end
     else
-        CoreRef-->>User: Revert
+        CoreRef-->>-User: Revert
     end
 ```
 

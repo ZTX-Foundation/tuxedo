@@ -23,30 +23,24 @@ sequenceDiagram
     participant ERC20Permit
     participant ERC20Votes
 
-    User->>Token: constructor(name, symbol)
-    Token->>ERC20: Initialize(name, symbol)
-    Token->>ERC20Permit: Initialize(name)
+    User->>+Token: constructor(name, symbol)
+    Token->>ERC20: Initialize (name, symbol)
+    Token->>ERC20Permit: Initialize (name)
     Token->>Token: _mint(msg.sender, MAX_SUPPLY)
-    activate Token
     Token->>ERC20Votes: _mint(account, amount)
-    Token->>ERC20: _mint(account, amount)
-    deactivate Token
+    Token->>-ERC20: _mint(account, amount)
 
-    User->>Token: Transfer (to, amount)
+    User->>+Token: transfer(to, amount)
     Token->>Token: _beforeTokenTransfer(from, to, amount)
-    Token->>ERC20: Transfer(from, to, amount)
+    Token->>ERC20: transfer(from, to, amount)
     Token->>Token: _afterTokenTransfer(from, to, amount)
-    activate Token
     Token->>ERC20Votes: _afterTokenTransfer(from, to, amount)
-    Token->>ERC20Votes: _delegate(to, to)
-    deactivate Token
+    Token->>-ERC20Votes: _delegate(to, to)
 
-    User->>Token: Burn (amount)
+    User->>+Token: burn(amount)
     Token->>Token: _burn(account, amount)
-    activate Token
     Token->>ERC20Votes: _burn(account, amount)
-    Token->>ERC20: _burn(account, amount)
-    deactivate Token
+    Token->>-ERC20: _burn(account, amount)
 ```
 
 ## Base Contracts

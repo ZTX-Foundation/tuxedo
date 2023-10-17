@@ -21,7 +21,7 @@ sequenceDiagram
     participant User as User/Caller
     participant RateLimited as RateLimited
 
-    User->>RateLimited: Call a rate-limited action
+    User->>+RateLimited: Call a rate-limited action
     RateLimited->>RateLimited: _updateBufferRemaining()
     RateLimited->>RateLimited: Calculate time elapsed since last action
     RateLimited->>RateLimited: Compute new buffer amount using replenishRatePerSecond
@@ -32,13 +32,14 @@ sequenceDiagram
     RateLimited->>RateLimited: Ensure action does not exceed buffer
     RateLimited->>RateLimited: Deduct action amount from buffer
 
-    RateLimited->>User: Action executed & buffer updated
-    User->>RateLimited: setBufferCap(newCap)
+    RateLimited->>-User: Action executed & buffer updated
+    
+    User->>+RateLimited: setBufferCap(newCap)
     alt has ADMIN or TOKEN_GOVERNOR role
         RateLimited->>RateLimited: _setBufferCap(newCap)
         RateLimited-->>RateLimited: Emit BufferCapUpdate event
     else
-        RateLimited-->>User: Revert
+        RateLimited-->>-User: Revert
     end
 ```
 

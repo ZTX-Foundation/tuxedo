@@ -22,48 +22,43 @@ sequenceDiagram
     participant ERC20Splitter
     participant IERC20
 
-    User->>ERC20Splitter: constructor(_core, _token, _deposits)
+    User->>+ERC20Splitter: getNumberOfAllocations()
+    ERC20Splitter-->>-User: Return allocations.length
     
-    User->>ERC20Splitter: getNumberOfAllocations()
-    ERC20Splitter-->>User: Return allocations.length
+    User->>+ERC20Splitter: getAllocationAt(index)
+    ERC20Splitter-->>-User: Return allocations[index]
     
-    User->>ERC20Splitter: getAllocationAt(index)
-    ERC20Splitter-->>User: Return allocations[index]
+    User->>+ERC20Splitter: getAllocations()
+    ERC20Splitter-->>-User: Return allocations[]
     
-    User->>ERC20Splitter: getAllocations()
-    ERC20Splitter-->>User: Return allocations[]
-    
-    User->>ERC20Splitter: checkAllocation(_allocations)
-    ERC20Splitter-->>User: Return true/false
+    User->>+ERC20Splitter: checkAllocation(_allocations)
+    ERC20Splitter-->>-User: Return true/false
 
-    User->>ERC20Splitter: allocate()
+    User->>+ERC20Splitter: allocate()
     loop for each allocation when not paused
         ERC20Splitter->>IERC20: balanceOf(ERC20Splitter)
         IERC20-->>ERC20Splitter: total balance
         ERC20Splitter->>IERC20: safeTransfer(deposit, amount)
         IERC20-->>ERC20Splitter: transfer confirmation
     end
-    ERC20Splitter-->>ERC20Splitter: Emit Allocate event
+    ERC20Splitter-->>-ERC20Splitter: Emit Allocate event
 
-    User->>ERC20Splitter: allocate(tokenToAllocate)
+    User->>+ERC20Splitter: allocate(tokenToAllocate)
     loop for each allocation when not paused
         ERC20Splitter->>IERC20: balanceOf(ERC20Splitter)
         IERC20-->>ERC20Splitter: total balance of tokenToAllocate
         ERC20Splitter->>IERC20: safeTransfer(deposit, amount)
         IERC20-->>ERC20Splitter: transfer confirmation
     end
-    ERC20Splitter-->>ERC20Splitter: Emit Allocate event
+    ERC20Splitter-->>-ERC20Splitter: Emit Allocate event
 
-    User->>ERC20Splitter: setAllocation(_allocations)
+    User->>+ERC20Splitter: setAllocation(_allocations)
     alt has ADMIN role
         ERC20Splitter->>ERC20Splitter: _setAllocation(_allocations)
         ERC20Splitter-->>ERC20Splitter: Emit AllocationUpdate event
     else
-        ERC20Splitter-->>User: Revert
+        ERC20Splitter-->>-User: Revert
     end
-
-    User->>ERC20Splitter: getAllocations()
-    ERC20Splitter-->>User: Return allocations[]
 ```
 
 ## Base Contracts

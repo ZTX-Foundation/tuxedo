@@ -19,42 +19,42 @@ graph TD
 sequenceDiagram
     participant User as User/Caller
     participant GlobalReentrancyLock
-    
-    User->>GlobalReentrancyLock: call isUnlocked()
+
+    User->>+GlobalReentrancyLock: isUnlocked()
     alt isUnlocked
         GlobalReentrancyLock-->>User: return true
     else
-        GlobalReentrancyLock-->>User: return false
+        GlobalReentrancyLock-->>-User: return false
     end
     
-    User->>GlobalReentrancyLock: call isLocked()
+    User->>+GlobalReentrancyLock: isLocked()
     alt isLocked
         GlobalReentrancyLock-->>User: return true
     else
-        GlobalReentrancyLock-->>User: return false
+        GlobalReentrancyLock-->>-User: return false
     end
     
-    User->>GlobalReentrancyLock: call lock(toLock)
-    alt Valid Lock Request & has LOCKER Role
+    User->>+GlobalReentrancyLock: lock(toLock)
+    alt valid unlock request and has LOCKER Role
         GlobalReentrancyLock->>GlobalReentrancyLock: fetch block.number
         GlobalReentrancyLock-->>User: Lock successful
     else
-        GlobalReentrancyLock-->>User: Revert
+        GlobalReentrancyLock-->>-User: Revert
     end
     
-    User->>GlobalReentrancyLock: call unlock(toUnlock)
-    alt Valid Unlock Request & has LOCKER Role
+    User->>+GlobalReentrancyLock: unlock(toUnlock)
+    alt valid unlock request and has LOCKER Role
         GlobalReentrancyLock->>GlobalReentrancyLock: fetch block.number
         GlobalReentrancyLock-->>User: Unlock successful
     else
-        GlobalReentrancyLock-->>User: Revert
+        GlobalReentrancyLock-->>-User: Revert
     end
     
-    User->>GlobalReentrancyLock: call adminEmergencyRecover() / adminEmergencyPause()
+    User->>+GlobalReentrancyLock: adminEmergencyRecover() or adminEmergencyPause()
     alt has ADMIN Role
         GlobalReentrancyLock-->>User: Recovery/Pause successful
     else
-        GlobalReentrancyLock-->>User: Revert
+        GlobalReentrancyLock-->>-User: Revert
     end
 ```
 

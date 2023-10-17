@@ -25,61 +25,120 @@ graph TD
 ```mermaid
 sequenceDiagram
     participant User as User/Caller
-    participant ERC1155Sale as ERC1155Sale
-    participant ERC1155NFT as ERC1155
-    participant ERC20 as ERC20
-    participant WETH as WETH
+    participant ERC1155Sale
+    participant ERC1155MaxSupplyMintable
+    participant ERC20
+    participant IWETH
 
-    User->>ERC1155Sale: constructor(_core, _nft, _weth)
-    ERC1155Sale->>ERC1155NFT: Initialize ERC1155 reference
-    ERC1155Sale->>WETH: Initialize WETH reference
+    User->>+ERC1155Sale: getTokenRecipientsAndUnclaimed()
+    ERC1155Sale->>-User: Return tokenRecipients and unclaimed amounts
 
-    User->>ERC1155Sale: buyTokenWithEth(erc1155TokenId, amountToPurchase, approvedAmount, merkleProof, recipient)
-    alt require ERC1155Sale is not paused, merkleProof is valid, etc.
-        ERC1155Sale->>ERC1155Sale: Calculate total cost
-        ERC1155Sale->>WETH: Deposit ETH
-        ERC1155Sale->>ERC1155NFT: mint(recipient, erc1155TokenId, amountToPurchase)
+    User->>+ERC1155Sale: getPurchasePrice(...)
+    ERC1155Sale->>-User: Return purchase price
+
+    User->>+ERC1155Sale: getBulkPurchaseTotal(...)
+    loop over erc1155TokenIds
+        ERC1155Sale->>ERC1155Sale: getPurchasePrice(...)
+    end
+    ERC1155Sale->>-User: Return total purchase price
+
+    User->>+ERC1155Sale: getMaxMintAmountOut(...)
+    ERC1155Sale->>-User: Return max number of tokens left for purchase
+
+    User->>+ERC1155Sale: buyTokenWithEth(...)
+    alt require ERC1155Sale is not paused
+        ERC1155Sale->>ERC1155Sale: getPurchasePrice(...)
+        alt msg.value == totalCost
+            ERC1155Sale->>ERC1155Sale: _helperBuyWithEth(...)
+            ERC1155Sale->>ERC1155MaxSupplyMintable: mint(...)
+            ERC1155Sale->>ERC1155Sale: emit TokensPurchased event
+        else
+            ERC1155Sale-->>User: Revert
+        end
     else
-        ERC1155Sale-->>User: Revert transaction
+        ERC1155Sale-->>-User: Revert
+    end
+    
+    User->>+ERC1155Sale: buyTokensWithEth(...)
+    alt require ERC1155Sale is not paused
+        ERC1155Sale->>ERC1155Sale: getPurchasePrice(...)
+        ERC1155Sale->>ERC1155Sale: _arityCheck(...)
+        ERC1155Sale->>ERC1155Sale: getBulkPurchaseTotal(...)
+        alt msg.value == total
+            loop erc1155TokenIds
+                ERC1155Sale->>ERC1155Sale: _helperBuyWithEth(...)
+            end
+            ERC1155Sale->>ERC1155MaxSupplyMintable: mintBatch(...)
+        end
+    else
+        ERC1155Sale-->>-User: Revert
     end
 
-    User->>ERC1155Sale: buyTokensWithEth(erc1155TokenIds[], amountsToPurchase[], approvedAmounts[], merkleProofs[], recipient)
-    alt all conditions are met (e.g., merkleProofs are valid)
-        ERC1155Sale->>ERC1155Sale: Calculate total cost
-        ERC1155Sale->>WETH: Deposit ETH
-        ERC1155Sale->>ERC1155NFT: mintBatch(recipient, erc1155TokenIds[], amountsToPurchase[])
+    User->>+ERC1155Sale: buyToken(...)
+    alt require ERC1155Sale is not paused
+        ERC1155Sale->>ERC1155Sale: _buyTokenChecks(...)
+        ERC1155Sale->>ERC20: safeTransferFrom(...)
+        ERC1155Sale->>ERC1155MaxSupplyMintable: mint(...)
+        ERC1155Sale->>ERC1155Sale: emit TokensPurchased event
     else
-        ERC1155Sale-->>User: Revert transaction
+        ERC1155Sale-->>-User: Revert
     end
 
-    User->>ERC1155Sale: buyToken(erc1155TokenId, amountToPurchase, approvedAmount, merkleProof, recipient)
-    alt all conditions are met (e.g., merkleProof is valid)
-        ERC1155Sale->>ERC1155Sale: Calculate total cost
-        ERC1155Sale->>ERC20: TransferFrom (msg.sender, Sale, totalCost)
-        ERC1155Sale->>ERC1155NFT: mint(recipient, erc1155TokenId, amountToPurchase)
+    User->>+ERC1155Sale: buyTokens(...)
+    alt require ERC1155Sale is not paused
+        ERC1155Sale->>ERC1155Sale: _arityCheck(...)
+        loop erc1155TokenIds
+            ERC1155Sale->>ERC1155Sale: _buyTokenChecks(...)
+            ERC1155Sale->>ERC20: safeTransferFrom(...)
+            ERC1155Sale->>ERC1155Sale: emit TokensPurchased event
+        end
+        ERC1155Sale->>ERC1155MaxSupplyMintable: mintBatch(...)
     else
-        ERC1155Sale-->>User: Revert transaction
+        ERC1155Sale-->>-User: Revert
     end
+    
+    User->>+ERC1155Sale: sweepUnclaimed(...)
+    ERC1155Sale->>ERC20: safeTransfer(...) (fees)
+    ERC1155Sale->>ERC20: safeTransfer(...) (proceeds)
+    ERC1155Sale->>ERC1155Sale: emit TokensSwept event (fees)
+    ERC1155Sale->>-ERC1155Sale: emit TokensSwept event (proceeds)
 
+    User->>+ERC1155Sale: wrapEth()
     alt has ADMIN role
-        User->>ERC1155Sale: setTokenRecipients(purchaseToken, proceedsRecipient, feeRecipient)
+        ERC1155Sale->>IWETH: deposit(...)
+    else
+        ERC1155Sale-->>-User: Revert
+    end
+
+    User->>+ERC1155Sale: setTokenRecipients(...)
+    alt has ADMIN role
         ERC1155Sale->>ERC1155Sale: Update tokenRecipients mapping
+        ERC1155Sale->>ERC1155Sale: emit TokenRecipientsUpdated event
     else
-        ERC1155Sale-->>User: Revert transaction
+        ERC1155Sale-->>-User: Revert
     end
 
+    User->>+ERC1155Sale: setTokenConfig(...)
     alt has ADMIN role
-        User->>ERC1155Sale: setTokenConfig(...)
         ERC1155Sale->>ERC1155Sale: Update tokenInfo mapping
+        ERC1155Sale->>ERC1155Sale: emit TokenConfigUpdated event
     else
-        ERC1155Sale-->>User: Revert transaction
+        ERC1155Sale-->>-User: Revert
+    end
+    
+    User->>+ERC1155Sale: setFee(...)
+    alt has TOKEN_GOVERNOR or ADMIN role
+        ERC1155Sale->>ERC1155Sale: Update tokenInfo mapping
+        ERC1155Sale->>ERC1155Sale: emit FeeUpdated event
+    else
+        ERC1155Sale-->>-User: Revert 
     end
 
+    User->>+ERC1155Sale: withdrawERC20(...)
     alt has FINANCIAL_CONTROLLER role
-        User->>ERC1155Sale: withdrawERC20(token, to, amount)
-        ERC1155Sale->>ERC20: safeTransfer(to, amount)
+        ERC1155Sale->>ERC20: safeTransfer(...)
     else
-        ERC1155Sale-->>User: Revert transaction
+        ERC1155Sale-->>-User: Revert
     end
 ```
 
