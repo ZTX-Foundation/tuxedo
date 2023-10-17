@@ -11,8 +11,8 @@ In addition to expediting a crafting job (reducing the amount of time the user h
 
 The two functions for instant crafting are:
 
-- `mintWithPaymentTokenAsFee()` (see [here](../contracts/nfts/ERC1155AutoGraphMinter.md#mintWithPaymentTokenAsFee)
-- `mintWithETHAsFee()` (see [here](../contracts/nfts/ERC1155AutoGraphMinter.md#mintWithETHAsFee)
+- `mintWithPaymentTokenAsFee()` (see [here](../contracts/nfts/ERC1155AutoGraphMinter.md#mintWithPaymentTokenAsFee))
+- `mintWithETHAsFee()` (see [here](../contracts/nfts/ERC1155AutoGraphMinter.md#mintWithETHAsFee))
 
 ## Free Crafting
 The function `mintForFree()` would be used to mint an NFT after the crafting time has lapsed (irrespective of whether the job was expedited or not). See [here](../contracts/nfts/ERC1155AutoGraphMinter.md#mintForFree) for more details.
@@ -32,10 +32,20 @@ sequenceDiagram
     Client->>ERC1155AutoGraphMinter.sol: getHash()
     ERC1155AutoGraphMinter.sol-->>Client: return hash
     Client->>Client: sign hash
-    Client->>ERC1155AutoGraphMinter.sol: mintWithPaymentTokenAsFee(), mintWithETHAsFee() or mintForFree()
-    alt hash is valid
-        ERC1155AutoGraphMinter.sol-->>Client: NFT minted to recipient
-    else
-        ERC1155AutoGraphMinter.sol-->>Client: revert
+    
+    alt mintForFree()
+        Client->>ERC1155AutoGraphMinter.sol: mintForFree()
+        alt expiry, hash, jobId and signature are all valid
+            ERC1155AutoGraphMinter.sol-->>Client: NFT minted to recipient
+        else
+            ERC1155AutoGraphMinter.sol-->>Client: revert
+        end
+    else mintWithPaymentTokenAsFee() or mintWithETHAsFee()
+        Client->>ERC1155AutoGraphMinter.sol: mintWithPaymentTokenAsFee() or mintWithETHAsFee()
+        alt payment token and amount, expiry, hash, jobId and signature are all valid
+            ERC1155AutoGraphMinter.sol-->>Client: NFT minted to recipient
+        else
+            ERC1155AutoGraphMinter.sol-->>Client: revert
+        end
     end
 ```

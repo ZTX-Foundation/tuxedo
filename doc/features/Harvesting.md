@@ -19,10 +19,19 @@ sequenceDiagram
     Client->>GameConsumer.sol: getHash()
     GameConsumer.sol-->>Client: return hash
     Client->>Client: sign hash
-    Client->>GameConsumer.sol: takePayment() or takePaymentWithETH()
-    alt hash is valid
-        GameConsumer.sol-->>Client: payment successful
-    else
-        GameConsumer.sol-->>Client: revert
+    alt takePaymentWithETH()
+        Client->>GameConsumer.sol: takePaymentWithETH()
+        alt jobFee and hash are valid
+            GameConsumer.sol-->>Client: payment successful
+        else
+            GameConsumer.sol-->>Client: revert
+        end
+    else takePayment()
+        Client->>GameConsumer.sol: takePayment()
+        alt hash is valid
+            GameConsumer.sol-->>Client: payment successful
+        else
+            GameConsumer.sol-->>Client: revert
+        end 
     end
 ```
