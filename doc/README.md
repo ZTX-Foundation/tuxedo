@@ -26,7 +26,7 @@ The primary components are as follows:
 ### Governance
 - [GovernorDAO](contracts/governance/GovernorDAO.md)
 ### NFTs
-- [ERC1155AutoGraphMiner](contracts/nfts/ERC1155AutoGraphMiner.md)
+- [ERC1155AutoGraphMinter](contracts/nfts/ERC1155AutoGraphMinter.md)
 - [ERC1155MaxSupplyMintable](contracts/nfts/ERC1155MaxSupplyMintable.md)
 - [ActualERC721Staking](contracts/nfts/staking/ActualERC721Staking.md)
   - [IActualERC721Staking](contracts/nfts/staking/IActualERC721Staking.md)
