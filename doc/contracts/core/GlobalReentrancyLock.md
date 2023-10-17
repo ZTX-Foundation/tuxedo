@@ -19,7 +19,6 @@ graph TD
 sequenceDiagram
     participant User as User/Caller
     participant GlobalReentrancyLock
-    participant Block as EVM
     
     User->>GlobalReentrancyLock: call isUnlocked()
     alt isUnlocked
@@ -37,8 +36,7 @@ sequenceDiagram
     
     User->>GlobalReentrancyLock: call lock(toLock)
     alt Valid Lock Request & has LOCKER Role
-        GlobalReentrancyLock->>Block: fetch block.number
-        Block-->>GlobalReentrancyLock: return block number
+        GlobalReentrancyLock->>GlobalReentrancyLock: fetch block.number
         GlobalReentrancyLock-->>User: Lock successful
     else
         GlobalReentrancyLock-->>User: Revert
@@ -46,8 +44,7 @@ sequenceDiagram
     
     User->>GlobalReentrancyLock: call unlock(toUnlock)
     alt Valid Unlock Request & has LOCKER Role
-        GlobalReentrancyLock->>Block: fetch block.number
-        Block-->>GlobalReentrancyLock: return block number
+        GlobalReentrancyLock->>GlobalReentrancyLock: fetch block.number
         GlobalReentrancyLock-->>User: Unlock successful
     else
         GlobalReentrancyLock-->>User: Revert

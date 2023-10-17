@@ -3,24 +3,6 @@
 ## Introduction
 Roles used by the ZTX protocol.
 
-### Overview
-The diagram below provides a visual representation of `Roles.sol`.
-
-#### Top-down
-```mermaid
-graph TD;
-  A[Roles] -->|ADMIN| B(Admin Role)
-  A -->|TOKEN_GOVERNOR| C(Token Governor Role)
-  A -->|GUARDIAN| D(Guardian Role)
-  A -->|MINTER| E(Minter Role)
-  A -->|REGISTRY_OPERATOR| F(Registry Operator Role)
-  A -->|MINTER_NOTARY| G(Minter Notary Role)
-  A -->|FINANCIAL_CONTROLLER| H(Financial Controller Role)
-  A -->|FINANCIAL_GUARDIAN| I(Financial Guardian Role)
-  A -->|LOCKER| J(Locker Role)
-  A -->|GAME_CONSUMER_NOTARY| K(Game Consumer Notary Role)
-```
-
 ## Roles
 ### Major
 - `GUARDIAN`: The protector role that has administrative powers over critical functionality such as pause, veto, revoke, and minor roles. This role should only be owned by a multisig, providing an additional layer of security and oversight.

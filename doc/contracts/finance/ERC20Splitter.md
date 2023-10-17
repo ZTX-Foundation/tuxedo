@@ -23,6 +23,18 @@ sequenceDiagram
     participant IERC20
 
     User->>ERC20Splitter: constructor(_core, _token, _deposits)
+    
+    User->>ERC20Splitter: getNumberOfAllocations()
+    ERC20Splitter-->>User: Return allocations.length
+    
+    User->>ERC20Splitter: getAllocationAt(index)
+    ERC20Splitter-->>User: Return allocations[index]
+    
+    User->>ERC20Splitter: getAllocations()
+    ERC20Splitter-->>User: Return allocations[]
+    
+    User->>ERC20Splitter: checkAllocation(_allocations)
+    ERC20Splitter-->>User: Return true/false
 
     User->>ERC20Splitter: allocate()
     loop for each allocation when not paused

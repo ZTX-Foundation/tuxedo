@@ -8,9 +8,9 @@ An interface for defining how `GlobalReentrancyLock` functions. Please see [Glob
 Emitted when the contract is unlocked in an emergency.
 Logs:
 - `sender`: Address of the user who unlocked the contract.
-- `timestamp`: Timestamp of the unlock.
+- `timestamp`: Timestamp.
 ### `EmergencyLock()`
 Emitted when the contract is locked in an emergency.
 Logs:
 - `sender`: Address of the user who locked the contract.
-- `timestamp`: Timestamp of the lock.
+- `timestamp`: Timestamp.

@@ -21,49 +21,96 @@ graph TD
 ```mermaid
 sequenceDiagram
     participant User as User/Caller
-    participant FinanceGuardian
-    participant IDepositBase
-    participant Token as IERC20
- 
+    participant FinanceGuardian as FinanceGuardian
+    participant IDepositBase as IDepositBase
+    participant CoreRef as CoreRef
+    participant IERC20 as IERC20
+
     User->>FinanceGuardian: setSafeAddress(newSafeAddress)
-    alt has ADMIN role
-        FinanceGuardian-->>User: Address updated
+    alt onlyRole(Roles.ADMIN)
+        FinanceGuardian->>FinanceGuardian: Update safeAddress
     else
-        FinanceGuardian-->>User: Revert
+        FinanceGuardian-->>User: revert
     end
 
     User->>FinanceGuardian: addWhitelistAddress(deposit)
-    alt has TOKEN_GOVERNOR or ADMIN role
+    alt hasAnyOfTwoRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN)
         FinanceGuardian->>FinanceGuardian: _addWhitelistAddress(deposit)
-        FinanceGuardian-->>User: Address whitelisted
     else
-        FinanceGuardian-->>User: Revert
+        FinanceGuardian-->>User: revert
+    end
+
+    User->>FinanceGuardian: addWhitelistAddresses(_whitelistAddresses[])
+    alt hasAnyOfTwoRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN)
+        FinanceGuardian->>FinanceGuardian: _addWhitelistAddresses(_whitelistAddresses[])
+    else
+        FinanceGuardian-->>User: revert
     end
 
     User->>FinanceGuardian: removeWhitelistAddress(deposit)
-    alt has TOKEN_GOVERNOR, ADMIN or GUARDIAN role
+    alt hasAnyOfThreeRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN, Roles.GUARDIAN)
         FinanceGuardian->>FinanceGuardian: _removeWhitelistAddress(deposit)
-        FinanceGuardian-->>User: Address removed
     else
-        FinanceGuardian-->>User: Revert
-    end 
+        FinanceGuardian-->>User: revert
+    end
+
+    User->>FinanceGuardian: removeWhitelistAddresses(_whitelistAddresses[])
+    alt hasAnyOfThreeRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN, Roles.GUARDIAN)
+        FinanceGuardian->>FinanceGuardian: _removeWhitelistAddresses(_whitelistAddresses[])
+    else
+        FinanceGuardian-->>User: revert
+    end
 
     User->>FinanceGuardian: withdrawToSafeAddress(deposit, amount)
-    alt has TOKEN_GOVERNOR, GUARDIAN, FINANCIAL_GUARDIAN or ADMIN role
-        FinanceGuardian->>IDepositBase: withdraw(safeAddress, amount)
-        IDepositBase->>Token: transfer(safeAddress, amount)
-        FinanceGuardian-->>User: Funds withdrawn
+    alt hasAnyOfFourRoles and onlyWhitelist(deposit)
+        FinanceGuardian->>CoreRef: paused()
+        alt CoreRef.paused() is true
+            FinanceGuardian->>CoreRef: unpause()
+            FinanceGuardian->>IDepositBase: withdraw(safeAddress, amount)
+            FinanceGuardian->>CoreRef: pause()
+        else
+            FinanceGuardian->>IDepositBase: withdraw(safeAddress, amount)
+        end
+        FinanceGuardian->>FinanceGuardian: emit FinanceGuardianWithdrawal
     else
-        FinanceGuardian-->>User: Revert
+        FinanceGuardian-->>User: revert
+    end
+
+    User->>FinanceGuardian: withdrawAllToSafeAddress(deposit)
+    alt hasAnyOfFourRoles and onlyWhitelist(deposit)
+        FinanceGuardian->>IERC20: balanceOf(deposit)
+        IERC20->>FinanceGuardian: return balance
+        FinanceGuardian->>CoreRef: paused()
+        alt CoreRef.paused() is true
+            FinanceGuardian->>CoreRef: unpause()
+            FinanceGuardian->>IDepositBase: withdraw(safeAddress, amount)
+            FinanceGuardian->>CoreRef: pause()
+        else
+            FinanceGuardian->>IDepositBase: withdraw(safeAddress, amount)
+        end
+        FinanceGuardian->>FinanceGuardian: _withdrawToSafeAddress(deposit, balance)
+    else
+        FinanceGuardian-->>User: revert
     end
 
     User->>FinanceGuardian: withdrawERC20ToSafeAddress(deposit, token, amount)
-    alt has TOKEN_GOVERNOR, GUARDIAN, FINANCIAL_GUARDIAN or ADMIN role
+    alt hasAnyOfFourRoles and onlyWhitelist(deposit)
+        FinanceGuardian->>FinanceGuardian: _withdrawERC20ToSafeAddress(deposit, token, amount)
         FinanceGuardian->>IDepositBase: withdrawERC20(token, safeAddress, amount)
-        IDepositBase->>Token: transfer(safeAddress, amount)
-        FinanceGuardian-->>User: ERC20 tokens withdrawn
+        FinanceGuardian->>FinanceGuardian: emit FinanceGuardianERC20Withdrawal
     else
-        FinanceGuardian-->>User: Revert
+        FinanceGuardian-->>User: revert
+    end
+
+    User->>FinanceGuardian: withdrawAllERC20ToSafeAddress(deposit, token)
+    alt hasAnyOfFourRoles and onlyWhitelist(deposit)
+        FinanceGuardian->>IERC20: balanceOf(deposit)
+        IERC20->>FinanceGuardian: return balance
+        FinanceGuardian->>FinanceGuardian: _withdrawERC20ToSafeAddress(deposit, token, balance)
+        FinanceGuardian->>IDepositBase: withdrawERC20(token, safeAddress, balance)
+        FinanceGuardian->>FinanceGuardian: emit FinanceGuardianERC20Withdrawal
+    else
+        FinanceGuardian-->>User: revert
     end
 ```
 
