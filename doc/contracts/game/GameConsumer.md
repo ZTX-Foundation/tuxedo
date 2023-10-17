@@ -49,7 +49,7 @@ sequenceDiagram
 - [Roles](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/core/Roles.sol): Defines the various roles utilized within the system.
 - [CoreRef](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/refs/CoreRef.sol): Provides a reference to the protocol's core contract.
 - [ERC20HoldingDeposit](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/finance/ERC20HoldingDeposit.sol): Hold and manage deposits of ERC20 tokens.
-- [WhitelistedAddreses](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/utils/extensions/WhitelistedAddreses.sol): Manages a list of approved addresses that are permitted to interact with specific functionalities of the contract.
+- [WhitelistedAddresses](https://github.com/ZTX-Foundation/tuxedo/blob/develop/src/utils/extensions/WhitelistedAddresses.sol): Manages a list of approved addresses that are permitted to interact with specific functionalities of the contract.
 
 ## Features
 - Maintains a reference to a WETH token through `weth`.
