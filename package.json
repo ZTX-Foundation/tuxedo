@@ -78,7 +78,7 @@
         "@moralisweb3/common-evm-utils": "^2.23.1",
         "@openzeppelin/merkle-tree": "^1.0.5",
         "axios": "^1.5.1",
-        "commander": "^11.0.0",
+        "commander": "^11.1.0",
         "ethers": "^5.7.0",
         "husky": "^8.0.3",
         "jose": "^4.15.4",
