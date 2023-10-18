@@ -454,6 +454,11 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "payer",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "jobId",
         "type": "uint256"
