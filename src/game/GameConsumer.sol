@@ -82,6 +82,7 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
     }
 
     /// @notice generic take payment function
+    /// @param payer Address to take payment from
     /// @param jobId ID of the offchain job
     /// @param jobFee Amount of the job fee
     /// @param paymentToken Address of the token to pay in
@@ -90,6 +91,7 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
     /// @param salt A random number to prevent collisions
     /// @param signature Signature of the message
     function takePayment(
+        address payer,
         uint256 jobId,
         uint256 jobFee,
         address paymentToken,
@@ -106,7 +108,7 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
             signature
         );
 
-        IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), jobFee);
+        IERC20(paymentToken).safeTransferFrom(payer, address(this), jobFee);
 
         emit TakePayment(jobId, jobFee);
     }
