@@ -134,7 +134,7 @@ npm run deploy:mainnet
 | `0xEC08dBc2c4C42De5A77111831e8872723e356843` | [WETH_TREASURY_WALLET](./src/finance/ERC20HoldingDeposit.sol)                                                                                      |
 | `0x5E91b94089dcaCB4C14346Ac2736B9ba4B8eEe8b` | [CONSUMABLE_SPLITTER](./src/finance/ERC20Splitter.sol)                                                                                             |
 | `0xFecC1EA89705247A5B104c55cc85F2071E7C1bD3` | [ERC1155_SALE_SPLITTER](./src/finance/ERC20Splitter.sol)                                                                                           |
-| `0xdde8cF29ee078B5a82C88d6Cf7CBF9600c4Cf81e` | [GAME_CONSUMABLE](./src/game/GameConsumer.sol)                                                                                                     |
+| `0x853e2e1fFF72a7B2350dEa202A0fa7C42AA4b42D` | [GAME_CONSUMABLE](./src/game/GameConsumer.sol)                                                                                                     |
 
 ### Arbitrum Sepolia (testnet)
 

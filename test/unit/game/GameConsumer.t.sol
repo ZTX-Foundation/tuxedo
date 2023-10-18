@@ -37,6 +37,7 @@ contract GameConsumerUnitTest is BaseTest {
     }
 
     struct CraftTxBuilder {
+        address payer;
         uint256 jobFee;
         uint256 tokenAmount;
         address paymentToken;
@@ -44,15 +45,16 @@ contract GameConsumerUnitTest is BaseTest {
 
     function setupTakePaymentTx(
         address paymentToken
-    ) public view returns (uint256, uint256, uint256, bytes32, bytes memory) {
-        CraftTxBuilder memory builder = CraftTxBuilder({jobFee: 1e18, tokenAmount: 100, paymentToken: paymentToken});
+    ) public view returns (address, uint256, uint256, uint256, bytes32, bytes memory) {
+        CraftTxBuilder memory builder = CraftTxBuilder({payer: address(this), jobFee: 1e18, tokenAmount: 100, paymentToken: paymentToken});
 
         return setupTakePaymentTx(builder);
     }
 
     function setupTakePaymentTx(
         CraftTxBuilder memory builder
-    ) public view returns (uint256 jobId, uint256 quoteExpiry, uint256 salt, bytes32 hash, bytes memory sig) {
+    ) public view returns (address payer, uint256 jobId, uint256 quoteExpiry, uint256 salt, bytes32 hash, bytes memory sig) {
+        payer = address(this);
         quoteExpiry = block.timestamp + 5 minutes;
         salt = uint256(keccak256(abi.encode(block.timestamp)));
         jobId = uint256(keccak256(abi.encode(keccak256(abi.encode(salt)))));
@@ -64,7 +66,7 @@ contract GameConsumerUnitTest is BaseTest {
     }
 
     function testTakePayment() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
         );
         token.mint(address(this), 1e18);
@@ -73,7 +75,7 @@ contract GameConsumerUnitTest is BaseTest {
         vm.expectEmit(true, true, false, true, address(gameConsumer));
         emit TakePayment(jobId, 1e18);
 
-        gameConsumer.takePayment(jobId, 1e18, address(token), expiryTimestamp, hash, salt, sig);
+        gameConsumer.takePayment(payer, jobId, 1e18, address(token), expiryTimestamp, hash, salt, sig);
 
         assertEq(token.balanceOf(address(this)), 0);
         assertEq(token.balanceOf(address(gameConsumer)), 1e18);
@@ -81,7 +83,7 @@ contract GameConsumerUnitTest is BaseTest {
     }
 
     function testTakePaymentFailsHashReplay() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
         );
         token.mint(address(this), 1e18);
@@ -90,94 +92,94 @@ contract GameConsumerUnitTest is BaseTest {
         vm.expectEmit(true, true, false, true, address(gameConsumer));
         emit TakePayment(jobId, 1e18);
 
-        gameConsumer.takePayment(jobId, 1e18, address(token), expiryTimestamp, hash, salt, sig);
+        gameConsumer.takePayment(payer, jobId, 1e18, address(token), expiryTimestamp, hash, salt, sig);
 
         assertEq(token.balanceOf(address(this)), 0);
         assertEq(token.balanceOf(address(gameConsumer)), 1e18);
 
         vm.expectRevert("GameConsumer: hash already used");
-        gameConsumer.takePayment(jobId, 1e18, address(token), expiryTimestamp, hash, salt, sig);
+        gameConsumer.takePayment(payer, jobId, 1e18, address(token), expiryTimestamp, hash, salt, sig);
     }
 
     function testTakePaymentFailsInvalidInputs0() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
         );
 
         vm.expectRevert("GameConsumer: hash mismatch");
-        gameConsumer.takePayment(jobId + 1, 1e18, address(token), expiryTimestamp, hash, salt, sig);
+        gameConsumer.takePayment(payer, jobId + 1, 1e18, address(token), expiryTimestamp, hash, salt, sig);
     }
 
     function testTakePaymentFailsInvalidInputs1() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
         );
 
         vm.expectRevert("GameConsumer: hash mismatch");
-        gameConsumer.takePayment(jobId, 2e18, address(token), expiryTimestamp, hash, salt, sig);
+        gameConsumer.takePayment(payer, jobId, 2e18, address(token), expiryTimestamp, hash, salt, sig);
     }
 
     function testTakePaymentFailsInvalidInputs2() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
         );
 
         vm.expectRevert("GameConsumer: hash mismatch");
-        gameConsumer.takePayment(jobId, 1e18, address(weth), expiryTimestamp, hash, salt, sig);
+        gameConsumer.takePayment(payer, jobId, 1e18, address(weth), expiryTimestamp, hash, salt, sig);
     }
 
     function testTakePaymentFailsInvalidInputs3() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
         );
 
         vm.expectRevert("GameConsumer: hash mismatch");
-        gameConsumer.takePayment(jobId, 1e18, address(token), expiryTimestamp + 1 hours, hash, salt, sig);
+        gameConsumer.takePayment(payer, jobId, 1e18, address(token), expiryTimestamp + 1 hours, hash, salt, sig);
     }
 
     function testTakePaymentFailsInvalidInputs4() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
         );
 
         vm.expectRevert("GameConsumer: hash mismatch");
-        gameConsumer.takePayment(jobId, 1e18, address(token), expiryTimestamp, keccak256(abi.encode(hash)), salt, sig);
+        gameConsumer.takePayment(payer, jobId, 1e18, address(token), expiryTimestamp, keccak256(abi.encode(hash)), salt, sig);
     }
 
     function testTakePaymentFailsInvalidInputs5() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
         );
 
         vm.expectRevert("GameConsumer: hash mismatch");
-        gameConsumer.takePayment(jobId, 1e18, address(token), expiryTimestamp, hash, salt + 1, sig);
+        gameConsumer.takePayment(payer, jobId, 1e18, address(token), expiryTimestamp, hash, salt + 1, sig);
     }
 
     function testTakePaymentFailsQuoteExpired() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
         );
 
         vm.warp(expiryTimestamp + 1);
         vm.expectRevert("GameConsumer: timestamp expired");
-        gameConsumer.takePayment(jobId, 1e18, address(token), expiryTimestamp, hash, salt, sig);
+        gameConsumer.takePayment(payer, jobId, 1e18, address(token), expiryTimestamp, hash, salt, sig);
     }
 
     function testTakePaymentFailsSignerNotOracle() public {
         vm.prank(addresses.adminAddress);
         core.revokeRole(Roles.GAME_CONSUMER_NOTARY, notary);
 
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
         );
 
         vm.expectRevert("GameConsumer: Missing GAME_CONSUMER_NOTARY Role");
-        gameConsumer.takePayment(jobId, 1e18, address(token), expiryTimestamp, hash, salt, sig);
+        gameConsumer.takePayment(payer, jobId, 1e18, address(token), expiryTimestamp, hash, salt, sig);
     }
 
     function testTakePaymentWithEth() public {
         vm.deal(address(this), 1e18);
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)
         );
 
@@ -191,7 +193,7 @@ contract GameConsumerUnitTest is BaseTest {
     }
 
     function testTakePaymentWithEthFailsHashReplay() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)
         );
 
@@ -210,7 +212,7 @@ contract GameConsumerUnitTest is BaseTest {
     }
 
     function testTakePaymentWithEthFailsInvalidInputs0() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)
         );
 
@@ -219,7 +221,7 @@ contract GameConsumerUnitTest is BaseTest {
     }
 
     function testTakePaymentWithEthFailsInvalidInputs1() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)
         );
 
@@ -228,7 +230,7 @@ contract GameConsumerUnitTest is BaseTest {
     }
 
     function testTakePaymentWithEthFailsInvalidInputs2() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)
         );
 
@@ -237,7 +239,7 @@ contract GameConsumerUnitTest is BaseTest {
     }
 
     function testTakePaymentWithEthFailsInvalidInputs3() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)
         );
 
@@ -246,7 +248,7 @@ contract GameConsumerUnitTest is BaseTest {
     }
 
     function testTakePaymentWithEthFailsInvalidInputs4() public {
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)
         );
 
@@ -256,7 +258,7 @@ contract GameConsumerUnitTest is BaseTest {
 
     function testTakePaymentWithEthFailsQuoteExpired() public {
         vm.deal(address(this), 1e18);
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)
         );
 
@@ -270,7 +272,7 @@ contract GameConsumerUnitTest is BaseTest {
         vm.prank(addresses.adminAddress);
         core.revokeRole(Roles.GAME_CONSUMER_NOTARY, notary);
 
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)
         );
 
@@ -281,7 +283,7 @@ contract GameConsumerUnitTest is BaseTest {
     function testTakePaymentWithEthFailsIncorrectEthAmount() public {
         vm.deal(address(this), 1e18);
 
-        (uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
+        (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)
         );
 
