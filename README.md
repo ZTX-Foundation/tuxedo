@@ -167,3 +167,4 @@ npm run deploy:mainnet
 | Address                                      | Contract                                    |
 |----------------------------------------------|---------------------------------------------|
 | `0x2Fd9c72Ea5763340e96e9369226032C38CF7a1da` | [ZTX HOODIE](./src/nfts/ERC721ZepetoUA.sol) |
+| `0x1C43D05be7E5b54D506e3DdB6f0305e8A66CD04e` | [TOKEN](./src/token/Token.sol)              |
