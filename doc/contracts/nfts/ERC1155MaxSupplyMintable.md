@@ -26,37 +26,37 @@ sequenceDiagram
     participant Core as CoreRef
     participant ERC1155
 
-    User->>+ERC1155MaxSupplyMintable: setSupplyCap(tokenId, maxSupply)
-    alt has ADMIN role
-        ERC1155MaxSupplyMintable->>ERC1155MaxSupplyMintable: _setSupplyCap(tokenId, maxSupply)
+    User->>+ERC1155MaxSupplyMintable: setSupplyCap(...)
+    alt ADMIN role
+        ERC1155MaxSupplyMintable->>ERC1155MaxSupplyMintable: _setSupplyCap(...)
         ERC1155MaxSupplyMintable-->>ERC1155MaxSupplyMintable: Emit SupplyCapUpdated event
     else
         ERC1155MaxSupplyMintable-->>-User: Revert
     end
 
-    User->>+ERC1155MaxSupplyMintable: setURI(newuri)
-    alt has ADMIN role
-        ERC1155MaxSupplyMintable->>ERC1155: _setURI(newuri)
+    User->>+ERC1155MaxSupplyMintable: setURI(...)
+    alt ADMIN role
+        ERC1155MaxSupplyMintable->>ERC1155: _setURI(...)
         ERC1155MaxSupplyMintable-->>ERC1155MaxSupplyMintable: Emit URIUpdated event
     else
         ERC1155MaxSupplyMintable-->>-User: Revert
     end
 
-    User->>+ERC1155MaxSupplyMintable: mint(recipient, tokenId, amount)
-    alt has MINTER role and Contract is not paused
-        ERC1155MaxSupplyMintable->>ERC1155MaxSupplyMintable: Check totalSupply(tokenId) <= maxTokenSupply[tokenId]
-        ERC1155MaxSupplyMintable->>ERC1155: _mint(recipient, tokenId, amount, "")
-        ERC1155MaxSupplyMintable->>ERC1155MaxSupplyMintable: Check totalSupply(tokenId) <= maxTokenSupply[tokenId]
+    User->>+ERC1155MaxSupplyMintable: mint(...)
+    alt MINTER role and Contract is not paused
+        ERC1155MaxSupplyMintable->>ERC1155MaxSupplyMintable: Check totalSupply(...) <= maxTokenSupply[...]
+        ERC1155MaxSupplyMintable->>ERC1155: _mint(...)
+        ERC1155MaxSupplyMintable->>ERC1155MaxSupplyMintable: Check totalSupply(...) <= maxTokenSupply[...]
         ERC1155MaxSupplyMintable-->>ERC1155MaxSupplyMintable: Emit TokenMinted event
     else
         ERC1155MaxSupplyMintable-->>-User: Revert
     end
 
-    User->>+ERC1155MaxSupplyMintable: mintBatch(recipient, tokenIds, amounts)
-    alt has MINTER role and Contract is not paused
-        ERC1155MaxSupplyMintable->>ERC1155: _mintBatch(recipient, tokenIds, amounts, "")
-        loop for each tokenId in tokenIds
-            ERC1155MaxSupplyMintable-->>ERC1155MaxSupplyMintable: Check totalSupply(tokenId) <= maxTokenSupply[tokenId]
+    User->>+ERC1155MaxSupplyMintable: mintBatch(...)
+    alt MINTER role and contract is not paused
+        ERC1155MaxSupplyMintable->>ERC1155: _mintBatch(...)
+        loop For each tokenId
+            ERC1155MaxSupplyMintable-->>ERC1155MaxSupplyMintable: Check totalSupply(...) <= maxTokenSupply[...]
         end
         ERC1155MaxSupplyMintable-->>ERC1155MaxSupplyMintable: Emit BatchMinted event
     else

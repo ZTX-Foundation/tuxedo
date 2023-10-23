@@ -29,25 +29,25 @@ Please also refer to the [example scripts](../../script/utils/nfts) for more det
 sequenceDiagram
     participant Client
     participant ERC1155AutoGraphMinter.sol
-    Client->>ERC1155AutoGraphMinter.sol: getHash()
-    ERC1155AutoGraphMinter.sol-->>Client: return hash
+    Client->>+ERC1155AutoGraphMinter.sol: getHash()
+    ERC1155AutoGraphMinter.sol->>-Client: return hash
     Client->>Client: sign hash
     
     alt
-        Client->>ERC1155AutoGraphMinter.sol: mintForFree()
+        Client->>+ERC1155AutoGraphMinter.sol: mintForFree()
         alt expiry, hash, jobId and signature are all valid
             ERC1155AutoGraphMinter.sol->>Client: NFT minted to recipient
-            ERC1155AutoGraphMinter.sol-->>ERC1155AutoGraphMinter.sol: emit ERC1155Minted event
+            ERC1155AutoGraphMinter.sol->>ERC1155AutoGraphMinter.sol: emit ERC1155Minted event
         else
-            ERC1155AutoGraphMinter.sol-->>Client: revert
+            ERC1155AutoGraphMinter.sol->>-Client: revert
         end
     else
-        Client->>ERC1155AutoGraphMinter.sol: mintWithPaymentTokenAsFee() or mintWithETHAsFee()
+        Client->>+ERC1155AutoGraphMinter.sol: mintWithPaymentTokenAsFee() or mintWithETHAsFee()
         alt payment token and amount, expiry, hash, jobId and signature are all valid
             ERC1155AutoGraphMinter.sol->>Client: NFT minted to recipient
-            ERC1155AutoGraphMinter.sol-->>ERC1155AutoGraphMinter.sol: emit ERC1155Minted event
+            ERC1155AutoGraphMinter.sol->>ERC1155AutoGraphMinter.sol: emit ERC1155Minted event
         else
-            ERC1155AutoGraphMinter.sol-->>Client: revert
+            ERC1155AutoGraphMinter.sol->>-Client: revert
         end
     end
 ```

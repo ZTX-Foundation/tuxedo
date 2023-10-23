@@ -24,20 +24,19 @@ sequenceDiagram
     participant IDepositBase
     participant IERC20
 
-    User->>+IDepositBase: Call withdrawERC20(token, to, amount)
-    alt has FINANCIAL_CONTROLLER Role
-        IDepositBase->>IERC20: Invoke safeTransfer(to, amount)
-        IERC20-->>User: Transfer ERC20 tokens
-        IDepositBase-->>IDepositBase: Emit WithdrawERC20 Event
+    User->>+IDepositBase: Call withdrawERC20(...)
+    alt FINANCIAL_CONTROLLER Role
+        IDepositBase->>IERC20: safeTransfer(...)
+        IDepositBase->>IDepositBase: Emit WithdrawERC20 Event
     else
-        IDepositBase-->>-User: Revert
+        IDepositBase->>-User: Revert
     end
 
-    User->>+IDepositBase: Query balance()
-    IDepositBase-->>-User: Return balance value
+    User->>+IDepositBase: balance()
+    IDepositBase->>-User: Return balance
 
-    User->>+IDepositBase: Query balanceReportedIn()
-    IDepositBase-->>-User: Return address for which balance is reported
+    User->>+IDepositBase: balanceReportedIn()
+    IDepositBase->>-User: Return address for which balance is reported
 ```
 
 ## Base Contracts

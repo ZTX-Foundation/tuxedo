@@ -26,20 +26,19 @@ sequenceDiagram
     User->>ERC20HoldingDeposit: Deposit tokens (external transfer)
 
     User->>+ERC20HoldingDeposit: balance()
-    ERC20HoldingDeposit->>IERC20: balanceOf(this address)
-    IERC20-->>ERC20HoldingDeposit: Return token balance
-    ERC20HoldingDeposit-->>-User: Return token balance
+    ERC20HoldingDeposit->>IERC20: balanceOf(...)
+    IERC20->>ERC20HoldingDeposit: Return balance
+    ERC20HoldingDeposit->>-User: Return balance
     
     User->>+ERC20HoldingDeposit: balanceReportedIn()
     ERC20HoldingDeposit->>-User: Return token address
 
-    User->>+ERC20HoldingDeposit: Invoke withdraw(to, amountUnderlying)
-    alt has FINANCIAL_CONTROLLER Role
-        ERC20HoldingDeposit->>IERC20: safeTransfer(to, amountUnderlying)
-        IERC20-->>ERC20HoldingDeposit: Transfer tokens to 'to'
-        ERC20HoldingDeposit-->>ERC20HoldingDeposit: Emit Withdrawal event
+    User->>+ERC20HoldingDeposit: withdraw(...)
+    alt FINANCIAL_CONTROLLER Role
+        ERC20HoldingDeposit->>IERC20: safeTransfer(...)
+        ERC20HoldingDeposit->>ERC20HoldingDeposit: Emit Withdrawal event
     else
-        ERC20HoldingDeposit-->>-User: Revert
+        ERC20HoldingDeposit->>-User: Revert
     end 
 ```
 

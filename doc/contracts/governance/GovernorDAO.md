@@ -30,27 +30,27 @@ sequenceDiagram
     participant Governor
     participant TimelockController
 
-    User->>+GovernorDAO: setVotingDelay(newVotingDelay)
-    GovernorDAO->>-Governor: _setVotingDelay(newVotingDelay)
+    User->>+GovernorDAO: setVotingDelay(...)
+    GovernorDAO->>-Governor: _setVotingDelay(...)
 
-    User->>+GovernorDAO: setVotingPeriod(newVotingPeriod)
-    GovernorDAO->>-Governor: _setVotingPeriod(newVotingPeriod)
+    User->>+GovernorDAO: setVotingPeriod(...)
+    GovernorDAO->>-Governor: _setVotingPeriod(...)
 
-    User->>+GovernorDAO: setProposalThreshold(newProposalThreshold)
-    GovernorDAO->>-Governor: _setProposalThreshold(newProposalThreshold)
+    User->>+GovernorDAO: setProposalThreshold(...)
+    GovernorDAO->>-Governor: _setProposalThreshold(...)
 
-    User->>+GovernorDAO: setQuorum(newQuorum)
+    User->>+GovernorDAO: setQuorum(...)
     GovernorDAO-->>-GovernorDAO: Emit QuorumUpdated event
 
-    User->>+GovernorDAO: cancel(targets, values, calldatas, descriptionHash)
+    User->>+GovernorDAO: cancel(...)
     GovernorDAO->>Governor: Cancel proposal in Governor
     GovernorDAO->>-TimelockController: Cancel proposal in TimelockController
 
-    User->>+GovernorDAO: execute(proposalId, targets, values, calldatas, descriptionHash)
+    User->>+GovernorDAO: execute(...)
     GovernorDAO->>Governor: Execute proposal in Governor
     GovernorDAO->>-TimelockController: Execute proposal in TimelockController
 
-    User->>+GovernorDAO: state(proposalId)
+    User->>+GovernorDAO: state(...)
     GovernorDAO->>Governor: Check proposal state
     GovernorDAO->>-TimelockController: Check state in TimelockController
 ```

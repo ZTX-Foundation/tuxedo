@@ -35,11 +35,11 @@ sequenceDiagram
     RateLimited->>-User: Action executed & buffer updated
     
     User->>+RateLimited: setBufferCap(newCap)
-    alt has ADMIN or TOKEN_GOVERNOR role
+    alt ADMIN or TOKEN_GOVERNOR role
         RateLimited->>RateLimited: _setBufferCap(newCap)
         RateLimited-->>RateLimited: Emit BufferCapUpdate event
     else
-        RateLimited-->>-User: Revert
+        RateLimited->>-User: Revert
     end
 ```
 

@@ -24,105 +24,131 @@ graph TD
 sequenceDiagram
     participant User as User/Caller
     participant ERC1155AutoGraphMinter
-    participant ERC20Token as IERC20
+    participant IERC20
     participant ERC1155MaxSupplyMintable
+    participant WhitelistedAddresses
 
-    User->>ERC1155AutoGraphMinter: constructor(_core, _nftContracts, ...)
-    ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Initialize variables
-    
-    User->>ERC1155AutoGraphMinter: mintForFree(recipient, jobId, tokenId, ...)
-    alt isExpiryTokenValid
+    User->>+ERC1155AutoGraphMinter: mintForFree(...)
+    alt Valid expiry token
         ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: _verifyHashAndSignerRoleExpireHashAndDepleteBuffer()
-        alt Hash and Signature are Valid
-            ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mint(recipient, tokenId, units)
-            ERC1155MaxSupplyMintable-->>ERC1155AutoGraphMinter: Mint Successful
-            ERC1155AutoGraphMinter-->>ERC1155AutoGraphMinter: Emit ERC1155Minted event
+        alt Hash and signature are valid
+            ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mint(...)
+            ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Emit ERC1155Minted event
         else
-            ERC1155AutoGraphMinter-->>User: Error
+            ERC1155AutoGraphMinter->>User: Revert
         end
     else
-        ERC1155AutoGraphMinter-->>User: Error
+        ERC1155AutoGraphMinter->>-User: Revert
     end
 
-    User->>ERC1155AutoGraphMinter: mintWithPaymentTokenAsFee(params)
-    alt isExpiryTokenValid
-        ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: _mintChecksForPaymentTokenFee(paymentToken, paymentAmount)
+    User->>+ERC1155AutoGraphMinter: mintWithPaymentTokenAsFee(...)
+    alt Valid expiry token
+        ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: _mintChecksForPaymentTokenFee(...)
         ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: _verifyHashAndSignerRoleExpireHashAndDepleteBuffer()
-        alt Hash and Signature are Valid
-            User->>ERC20Token: safeTransferFrom(msg.sender, paymentRecipient, paymentAmount)
-            ERC20Token-->>ERC1155AutoGraphMinter: Transfer Successful
-            ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mint(recipient, tokenId, units)
-            ERC1155MaxSupplyMintable-->>ERC1155AutoGraphMinter: Mint Successful
-            ERC1155AutoGraphMinter-->>ERC1155AutoGraphMinter: Emit ERC1155Minted event
+        alt Hash and signature are valid
+            ERC1155AutoGraphMinter->>IERC20: safeTransferFrom(...)
+            IERC20-->>ERC1155AutoGraphMinter: Transfer successful
+            ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mint(...)
+            ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Emit ERC1155Minted event
         else
-            ERC1155AutoGraphMinter-->>User: Error
+            ERC1155AutoGraphMinter->>User: Revert
         end
     else
-        ERC1155AutoGraphMinter-->>User: Error
+        ERC1155AutoGraphMinter->>-User: Revert
     end
 
-    User->>ERC1155AutoGraphMinter: mintWithEthAsFee(params)
-    alt isExpiryTokenValid and msg.value == paymentAmount
+    User->>+ERC1155AutoGraphMinter: mintWithEthAsFee(...)
+    alt Valid expiry token and has correct paymentAmount
         ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: _verifyHashAndSignerRoleExpireHashAndDepleteBuffer()
         alt Hash and Signature are Valid
-            User->>ERC1155AutoGraphMinter: Send Ether
-            ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Transfer Ether to paymentRecipient
-            ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mint(recipient, tokenId, units)
-            ERC1155MaxSupplyMintable-->>ERC1155AutoGraphMinter: Mint Successful
-            ERC1155AutoGraphMinter-->>ERC1155AutoGraphMinter: Emit ERC1155Minted event
+            ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Transfer ETH to paymentRecipient
+            ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mint(...)
+            ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Emit ERC1155Minted event
         else
-            ERC1155AutoGraphMinter-->>User: Error
+            ERC1155AutoGraphMinter->>User: Revert
         end
     else
-        ERC1155AutoGraphMinter-->>User: Error
+        ERC1155AutoGraphMinter->>-User: Revert
     end
 
-    User->>ERC1155AutoGraphMinter: mintBatchForFree(nftContract, recipient, inputs)
+    User->>+ERC1155AutoGraphMinter: mintBatchForFree(...)
     ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: _mintBatch(...)
-    ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mintBatch(recipient, tokenIds, units)
-    ERC1155MaxSupplyMintable-->>ERC1155AutoGraphMinter: Batch Mint Successful
-    ERC1155AutoGraphMinter-->>ERC1155AutoGraphMinter: Emit ERC1155BatchMinted event
+    ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mintBatch(...)
+    ERC1155AutoGraphMinter-->>-ERC1155AutoGraphMinter: Emit ERC1155BatchMinted event
     
-    User->>ERC1155AutoGraphMinter: mintBatchWithPaymentTokenAsFee(...)
+    User->>+ERC1155AutoGraphMinter: mintBatchWithPaymentTokenAsFee(...)
     ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: _mintBatch(...)
-    User->>ERC20Token: safeTransferFrom(msg.sender, paymentRecipient, totalPayment)
-    ERC20Token-->>ERC1155AutoGraphMinter: Transfer Successful
-    ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mintBatch(recipient, tokenIds, units)
-    ERC1155MaxSupplyMintable-->>ERC1155AutoGraphMinter: Batch Mint Successful
-    ERC1155AutoGraphMinter-->>ERC1155AutoGraphMinter: Emit ERC1155BatchMinted event
+    ERC1155AutoGraphMinter->>IERC20: safeTransferFrom(...)
+    IERC20->>ERC1155AutoGraphMinter: Transfer Successful
+    ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mintBatch(...)
+    ERC1155AutoGraphMinter->>-ERC1155AutoGraphMinter: Emit ERC1155BatchMinted event
     
-    User->>ERC1155AutoGraphMinter: mintBatchWithEthAsFee(...)
+    User->>+ERC1155AutoGraphMinter: mintBatchWithEthAsFee(...)
     ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: _mintBatch(...)
-    User->>ERC1155AutoGraphMinter: Send Ether (msg.value)
-    ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Transfer Ether to paymentRecipient
-    ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mintBatch(recipient, tokenIds, units)
-    ERC1155MaxSupplyMintable-->>ERC1155AutoGraphMinter: Batch Mint Successful
-    ERC1155AutoGraphMinter-->>ERC1155AutoGraphMinter: Emit ERC1155BatchMinted event
+    ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Transfer ETH to paymentRecipient
+    ERC1155AutoGraphMinter->>ERC1155MaxSupplyMintable: mintBatch(...)
+    ERC1155AutoGraphMinter->>-ERC1155AutoGraphMinter: Emit ERC1155BatchMinted event
     
-    User->>ERC1155AutoGraphMinter: getHash(input)
-    ERC1155AutoGraphMinter-->>User: returns bytes32 hash
+    User->>+ERC1155AutoGraphMinter: getHash(...)
+    ERC1155AutoGraphMinter->>-User: return hash
     
-    User->>ERC1155AutoGraphMinter: recoverSigner(hash, signature)
-    ERC1155AutoGraphMinter-->>User: returns address signer
+    User->>+ERC1155AutoGraphMinter: recoverSigner(...)
+    ERC1155AutoGraphMinter->>-User: return signer
     
-    User->>ERC1155AutoGraphMinter: addWhitelistedContract(nftContractAddress)
-    ERC1155AutoGraphMinter-->>User: WhitelistedContractAdded Event
+    User->>+ERC1155AutoGraphMinter: addWhitelistedContract(...)
+    alt TOKEN_GOVERNOR or ADMIN role
+        ERC1155AutoGraphMinter->>WhitelistedAddresses: _addWhitelistedContract(...)
+        ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Emit WhitelistedContractAdded Event
+    else
+        ERC1155AutoGraphMinter->>-User: Revert
+    end
     
-    User->>ERC1155AutoGraphMinter: removeWhitelistedContract(nftContractAddress)
-    ERC1155AutoGraphMinter-->>User: WhitelistedContractRemoved Event
+    User->>+ERC1155AutoGraphMinter: removeWhitelistedContract(...)
+    alt TOKEN_GOVERNOR or ADMIN role
+        ERC1155AutoGraphMinter->>WhitelistedAddresses: _removeWhitelistedContract(...)
+        ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Emit WhitelistedContractRemoved Event
+    else
+        ERC1155AutoGraphMinter->>-User: Revert
+    end  
+
+    User->>+ERC1155AutoGraphMinter: addWhitelistedContracts(...)
+    alt TOKEN_GOVERNOR or ADMIN role
+        ERC1155AutoGraphMinter->>WhitelistedAddresses: _addWhitelistAddresses(...)
+        WhitelistedAddresses->>WhitelistedAddresses: Emit WhitelistAddressAdded event
+    else
+        ERC1155AutoGraphMinter->>-User: Revert
+    end
     
-    User->>ERC1155AutoGraphMinter: addWhitelistedContracts(whitelistAddresses)
-    ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: _addWhitelistAddresses(...)
+    User->>+ERC1155AutoGraphMinter: removeWhitelistedContracts(...)
+    alt TOKEN_GOVERNOR or ADMIN role
+        ERC1155AutoGraphMinter->>WhitelistedAddresses: _removeWhitelistAddresses(...)
+        WhitelistedAddresses->>WhitelistedAddresses: Emit WhitelistAddressRemoved event
+    else
+        ERC1155AutoGraphMinter->>-User: Revert
+    end
     
-    User->>ERC1155AutoGraphMinter: removeWhitelistedContracts(whitelistAddresses)
-    ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: _removeWhitelistAddresses(...)
+    User->>+ERC1155AutoGraphMinter: updatePaymentRecipient(...)
+    alt ADMIN role
+        alt Valid address
+            ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Update paymentRecipient
+            ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Emit PaymentRecipientUpdated Event
+        else
+            ERC1155AutoGraphMinter->>User: Revert
+        end
+    else
+        ERC1155AutoGraphMinter->>-User: Revert
+    end
     
-    User->>ERC1155AutoGraphMinter: updatePaymentRecipient(_paymentRecipient)
-    ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Update paymentRecipient
-    ERC1155AutoGraphMinter-->>User: PaymentRecipientUpdated Event
-    
-    User->>ERC1155AutoGraphMinter: updateExpiryTokenHoursValid(_expiryTokenHoursValid)
-    ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Update expiryTokenHoursValid
+    User->>+ERC1155AutoGraphMinter: updateExpiryTokenHoursValid(...)
+    alt ADMIN role
+        alt Valid expiry
+            ERC1155AutoGraphMinter->>ERC1155AutoGraphMinter: Update expiryTokenHoursValid
+        else
+            ERC1155AutoGraphMinter->>User: Revert
+        end
+    else
+        ERC1155AutoGraphMinter->>-User: Revert
+    end
 ```
 
 ## Base Contracts

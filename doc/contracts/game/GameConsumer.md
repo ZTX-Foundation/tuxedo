@@ -24,19 +24,49 @@ sequenceDiagram
     participant GameConsumer
     participant IERC20
     participant IWETH
-    participant ECDSA
+    
+    User->>+GameConsumer: getHash(...)
+    GameConsumer->>-User: return hash
+    
+    User->>+GameConsumer: recoverSigner(...)
+    GameConsumer->>-User: return signer
+    
+    User->>+GameConsumer: takePayment(...) or takePaymentWithEth(...)
+    alt Verify
+        GameConsumer->>GameConsumer: Verify the signer and hash using _verifySignerAndHash(...)
+    else
+        GameConsumer->>User: Revert
+    end
 
-    User->>GameConsumer: takePayment(...) or takePaymentWithEth(...)
-    GameConsumer->>GameConsumer: Verify the signer and hash using _verifySignerAndHash(...)
-    GameConsumer->>ECDSA: verify the signature using recoverSigner(...)
-    ECDSA-->>GameConsumer: Returns the signer address
-    GameConsumer->>IERC20: Transfer tokens from user to GameConsumer using safeTransferFrom(...)
-    GameConsumer-->>GameConsumer: Emit TakePayment event
-
-    User->>GameConsumer: sweepUnclaimed() or sweepUnclaimedWeth()
-    GameConsumer->>IERC20: Transfer tokens to proceedsRecipient
-    GameConsumer->>IWETH: If ETH, convert to WETH
-    GameConsumer-->>GameConsumer: Emit TokensSwept event
+    alt Paying with ETH
+        GameConsumer->>IWETH: Convert ETH to WETH
+        GameConsumer->>IWETH: Transfer WETH to proceedsRecipient
+    else
+        GameConsumer->>IERC20: Transfer tokens to proceedsRecipient
+    end
+    GameConsumer->>-GameConsumer: Emit TokensSwept event
+    
+    alt ADMIN role
+        User->>+GameConsumer: setProceedsRecipient(...)
+        GameConsumer->>GameConsumer: emit ProceedsRecipientUpdated event
+    else
+        GameConsumer->>-User: Revert
+    end
+    
+    User->>+GameConsumer: wrapEth()
+    GameConsumer->>-IWETH: Deposit ETH to WETH
+ 
+    User->>+GameConsumer: sweepUnclaimed()
+    GameConsumer->>IERC20: get balance of token
+    IERC20->>GameConsumer: return balance
+    GameConsumer->>IERC20: transfer balance to proceedsRecipient
+    GameConsumer->>-GameConsumer: emit TokensSwept event
+    
+    User->>+GameConsumer: sweepUnclaimedEth()
+    GameConsumer->>IWETH: get balance of WETH
+    IWETH->>GameConsumer: return balance
+    GameConsumer->>IERC20: transfer balance to proceedsRecipient
+    GameConsumer->>-GameConsumer: emit TokensSwept event
 ```
 
 ## Base Contracts

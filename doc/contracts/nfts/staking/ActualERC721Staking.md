@@ -24,36 +24,33 @@ graph TD
 sequenceDiagram
     participant User as User/Caller
     participant ActualERC721Staking
-    participant ERC721Token
-    participant Epochs as EVM
+    participant ERC721
 
-    User->>ActualERC721Staking: updateUserReward()
+    User->>+ActualERC721Staking: updateUserReward()
     ActualERC721Staking->>ActualERC721Staking: _updatePreviousEpochs()
-    ActualERC721Staking->>Epochs: get current epoch
-    Epochs-->>ActualERC721Staking: current epoch
-    ActualERC721Staking-->>User: Rewards updated
+    ActualERC721Staking->>ActualERC721Staking: get current epoch
+    ActualERC721Staking->>-User: Rewards updated
 
-    User->>ActualERC721Staking: stake(tokenIds[])
+    User->>+ActualERC721Staking: stake(...)
     ActualERC721Staking->>ActualERC721Staking: updateUserReward()
-    ActualERC721Staking->>ERC721Token: safeTransferFrom(User, Contract, tokenId)
-    ActualERC721Staking-->>User: Tokens staked
+    ActualERC721Staking->>ERC721: safeTransferFrom(...)
+    ActualERC721Staking->>-User: Tokens staked
 
-    User->>ActualERC721Staking: unstake(tokenIds[])
+    User->>+ActualERC721Staking: unstake(...)
     ActualERC721Staking->>ActualERC721Staking: updateUserReward()
-    ActualERC721Staking->>ERC721Token: safeTransferFrom(Contract, User, tokenId)
-    ActualERC721Staking-->>User: Tokens unstaked
+    ActualERC721Staking->>ERC721: safeTransferFrom(...)
+    ActualERC721Staking->>-User: Tokens unstaked
 
-    User->>ActualERC721Staking: getTotalRewards()
+    User->>+ActualERC721Staking: getTotalRewards()
     ActualERC721Staking->>ActualERC721Staking: _getAllUnclaimedRewardsPreviousEpochs()
-    ActualERC721Staking-->>User: Total rewards data
+    ActualERC721Staking->>-User: Total rewards data
 
-    User->>ActualERC721Staking: createNewEpoch(epochStart, epochDuration)
-    alt has ADMIN Role
-        ActualERC721Staking->>Epochs: Add new epoch
-        Epochs-->>ActualERC721Staking: Epoch added
-        ActualERC721Staking-->>User: New epoch created
+    User->>+ActualERC721Staking: createNewEpoch(...)
+    alt ADMIN Role
+        ActualERC721Staking->>ActualERC721Staking: Add new epoch
+        ActualERC721Staking->>User: New epoch created
     else
-        ActualERC721Staking-->>User: Revert
+        ActualERC721Staking->>-User: Revert
     end
 ```
 

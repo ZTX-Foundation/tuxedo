@@ -22,28 +22,27 @@ sequenceDiagram
     participant AccessControlEnumerable
     participant IGlobalReentrancyLock
 
-    User->>+Core: createRole(role, adminRole)
-    alt has ADMIN role
-        Core->>AccessControlEnumerable: _setRoleAdmin(role, adminRole)
-        Core-->>User: Role created
+    User->>+Core: createRole(...)
+    alt ADMIN role
+        Core->>AccessControlEnumerable: _setRoleAdmin(...)
     else
-        Core-->>-User: Revert
+        Core->>-User: Revert
     end
     
-    User->>+Core: setGlobalLock(_lock)
-    alt has ADMIN or TOKEN_GOVERNOR role
+    User->>+Core: setGlobalLock(...)
+    alt ADMIN or TOKEN_GOVERNOR role
         Core->>IGlobalReentrancyLock: set new lock address
-        Core-->>User: Lock updated
+        Core->>Core: Emit GlobalReentrancyLockUpdate event
     else
-        Core-->>-User: Revert
+        Core->>-User: Revert
     end
     
-    User->>+Core: emergencyRevoke(role, account)
-    alt has GUARDIAN role and role isn't ADMIN
-        Core->>AccessControlEnumerable: _revokeRole(role, account)
-        Core-->>User: Role revoked
+    User->>+Core: emergencyRevoke(...)
+    alt GUARDIAN role and not ADMIN
+        Core->>AccessControlEnumerable: _revokeRole(...)
+        Core->>Core: Emit EmergencyRevoke event
     else
-        Core-->>-User: Revert
+        Core->>-User: Revert
     end
 ```
 

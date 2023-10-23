@@ -20,36 +20,29 @@ sequenceDiagram
     participant WhitelistedAddresses
     participant EnumerableSet
 
-    User->>+WhitelistedAddresses: constructor(_addresses)
-    loop for each address in _addresses
-        WhitelistedAddresses->>WhitelistedAddresses: _addWhitelistAddress(address)
-        WhitelistedAddresses->>EnumerableSet: add(address)
-        WhitelistedAddresses-->>-WhitelistedAddresses: emit WhitelistAddressAdded event
-    end
-
-    User->>+WhitelistedAddresses: _addWhitelistAddresses(_addresses)
-    loop for each address in _addresses
-        WhitelistedAddresses->>WhitelistedAddresses: _addWhitelistAddress(address)
-        WhitelistedAddresses->>EnumerableSet: add(address)
-        WhitelistedAddresses-->>-WhitelistedAddresses: emit WhitelistAddressAdded event
+    User->>+WhitelistedAddresses: _addWhitelistAddresses(...)
+    loop For each address
+        WhitelistedAddresses->>WhitelistedAddresses: _addWhitelistAddress(...)
+        WhitelistedAddresses->>EnumerableSet: add(...)
+        WhitelistedAddresses-->>-WhitelistedAddresses: Emit WhitelistAddressAdded event
     end
     
-    User->>+WhitelistedAddresses: _removeWhitelistAddresses(_addresses)
-    loop for each address in _addresses
-        WhitelistedAddresses->>WhitelistedAddresses: _removeWhitelistAddress(address)
-        WhitelistedAddresses->>EnumerableSet: remove(address)
-        WhitelistedAddresses-->>-WhitelistedAddresses: emit WhitelistAddressRemoved event
+    User->>+WhitelistedAddresses: _removeWhitelistAddresses(...)
+    loop For each address
+        WhitelistedAddresses->>WhitelistedAddresses: _removeWhitelistAddress(...)
+        WhitelistedAddresses->>EnumerableSet: remove(...)
+        WhitelistedAddresses->>-WhitelistedAddresses: emit WhitelistAddressRemoved event
     end
 
-    User->>+WhitelistedAddresses: isWhitelistedAddress(address)
-    WhitelistedAddresses->>EnumerableSet: contains(address)
+    User->>+WhitelistedAddresses: isWhitelistedAddress(...)
+    WhitelistedAddresses->>EnumerableSet: contains(...)
     EnumerableSet-->>WhitelistedAddresses: true/false
-    WhitelistedAddresses-->>-User: true/false
+    WhitelistedAddresses->>-User: true/false
 
     User->>+WhitelistedAddresses: getWhitelistedAddresses()
     WhitelistedAddresses->>EnumerableSet: values()
     EnumerableSet-->>WhitelistedAddresses: address[]
-    WhitelistedAddresses-->>-User: address[]
+    WhitelistedAddresses->>-User: address[]
 ```
 
 ## Base Contracts

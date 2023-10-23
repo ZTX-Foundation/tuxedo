@@ -22,39 +22,58 @@ sequenceDiagram
 
     User->>+GlobalReentrancyLock: isUnlocked()
     alt isUnlocked
-        GlobalReentrancyLock-->>User: return true
+        GlobalReentrancyLock->>User: Return true
     else
-        GlobalReentrancyLock-->>-User: return false
+        GlobalReentrancyLock->>-User: Return false
     end
     
     User->>+GlobalReentrancyLock: isLocked()
     alt isLocked
-        GlobalReentrancyLock-->>User: return true
+        GlobalReentrancyLock->>User: Return true
     else
-        GlobalReentrancyLock-->>-User: return false
+        GlobalReentrancyLock->>-User: Return false
     end
     
     User->>+GlobalReentrancyLock: lock(toLock)
-    alt valid unlock request and has LOCKER Role
-        GlobalReentrancyLock->>GlobalReentrancyLock: fetch block.number
-        GlobalReentrancyLock-->>User: Lock successful
+    alt LOCKER Role
+        alt Check current lock level and block.number
+            GlobalReentrancyLock->>GlobalReentrancyLock: Set lockLevel
+        else
+            GlobalReentrancyLock->>User: Revert
+        end
     else
-        GlobalReentrancyLock-->>-User: Revert
+        GlobalReentrancyLock->>-User: Revert
     end
-    
+
     User->>+GlobalReentrancyLock: unlock(toUnlock)
-    alt valid unlock request and has LOCKER Role
-        GlobalReentrancyLock->>GlobalReentrancyLock: fetch block.number
-        GlobalReentrancyLock-->>User: Unlock successful
+    alt LOCKER Role
+        alt Check current lock level and block.number
+            GlobalReentrancyLock->>GlobalReentrancyLock: Set lockLevel
+        else
+            GlobalReentrancyLock->>User: Revert
+        end
     else
-        GlobalReentrancyLock-->>-User: Revert
+        GlobalReentrancyLock->>-User: Revert
     end
     
-    User->>+GlobalReentrancyLock: adminEmergencyRecover() or adminEmergencyPause()
-    alt has ADMIN Role
-        GlobalReentrancyLock-->>User: Recovery/Pause successful
+    User->>+GlobalReentrancyLock: adminEmergencyRecover()
+    alt ADMIN Role
+        alt Check current lock level and block.number
+            GlobalReentrancyLock->>GlobalReentrancyLock: Set lockLevel
+            GlobalReentrancyLock->>GlobalReentrancyLock: Emit EmergencyUnlock event
+        else
+            GlobalReentrancyLock->>User: Revert
+        end
     else
-        GlobalReentrancyLock-->>-User: Revert
+        GlobalReentrancyLock->>-User: Revert
+    end
+    
+    User->>+GlobalReentrancyLock: adminEmergencyPause()
+    alt ADMIN Role
+        GlobalReentrancyLock->>GlobalReentrancyLock: Set lockLevel
+        GlobalReentrancyLock->>GlobalReentrancyLock: Emit EmergencyLock event
+    else
+        GlobalReentrancyLock->>-User: Revert
     end
 ```
 

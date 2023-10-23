@@ -37,7 +37,7 @@ sequenceDiagram
     ERC1155Sale->>-User: Return purchase price
 
     User->>+ERC1155Sale: getBulkPurchaseTotal(...)
-    loop over erc1155TokenIds
+    loop For each erc1155TokenId
         ERC1155Sale->>ERC1155Sale: getPurchasePrice(...)
     end
     ERC1155Sale->>-User: Return total purchase price
@@ -51,7 +51,7 @@ sequenceDiagram
         alt msg.value == totalCost
             ERC1155Sale->>ERC1155Sale: _helperBuyWithEth(...)
             ERC1155Sale->>ERC1155MaxSupplyMintable: mint(...)
-            ERC1155Sale->>ERC1155Sale: emit TokensPurchased event
+            ERC1155Sale->>ERC1155Sale: Emit TokensPurchased event
         else
             ERC1155Sale-->>User: Revert
         end
@@ -65,7 +65,7 @@ sequenceDiagram
         ERC1155Sale->>ERC1155Sale: _arityCheck(...)
         ERC1155Sale->>ERC1155Sale: getBulkPurchaseTotal(...)
         alt msg.value == total
-            loop erc1155TokenIds
+            loop For each erc1155TokenId
                 ERC1155Sale->>ERC1155Sale: _helperBuyWithEth(...)
             end
             ERC1155Sale->>ERC1155MaxSupplyMintable: mintBatch(...)
@@ -79,7 +79,7 @@ sequenceDiagram
         ERC1155Sale->>ERC1155Sale: _buyTokenChecks(...)
         ERC1155Sale->>ERC20: safeTransferFrom(...)
         ERC1155Sale->>ERC1155MaxSupplyMintable: mint(...)
-        ERC1155Sale->>ERC1155Sale: emit TokensPurchased event
+        ERC1155Sale->>ERC1155Sale: Emit TokensPurchased event
     else
         ERC1155Sale-->>-User: Revert
     end
@@ -87,10 +87,10 @@ sequenceDiagram
     User->>+ERC1155Sale: buyTokens(...)
     alt require ERC1155Sale is not paused
         ERC1155Sale->>ERC1155Sale: _arityCheck(...)
-        loop erc1155TokenIds
+        loop For each erc1155TokenId
             ERC1155Sale->>ERC1155Sale: _buyTokenChecks(...)
             ERC1155Sale->>ERC20: safeTransferFrom(...)
-            ERC1155Sale->>ERC1155Sale: emit TokensPurchased event
+            ERC1155Sale->>ERC1155Sale: Emit TokensPurchased event
         end
         ERC1155Sale->>ERC1155MaxSupplyMintable: mintBatch(...)
     else
@@ -100,42 +100,42 @@ sequenceDiagram
     User->>+ERC1155Sale: sweepUnclaimed(...)
     ERC1155Sale->>ERC20: safeTransfer(...) (fees)
     ERC1155Sale->>ERC20: safeTransfer(...) (proceeds)
-    ERC1155Sale->>ERC1155Sale: emit TokensSwept event (fees)
-    ERC1155Sale->>-ERC1155Sale: emit TokensSwept event (proceeds)
+    ERC1155Sale->>ERC1155Sale: Emit TokensSwept event (fees)
+    ERC1155Sale->>-ERC1155Sale: Emit TokensSwept event (proceeds)
 
     User->>+ERC1155Sale: wrapEth()
-    alt has ADMIN role
+    alt ADMIN role
         ERC1155Sale->>IWETH: deposit(...)
     else
         ERC1155Sale-->>-User: Revert
     end
 
     User->>+ERC1155Sale: setTokenRecipients(...)
-    alt has ADMIN role
+    alt ADMIN role
         ERC1155Sale->>ERC1155Sale: Update tokenRecipients mapping
-        ERC1155Sale->>ERC1155Sale: emit TokenRecipientsUpdated event
+        ERC1155Sale->>ERC1155Sale: Emit TokenRecipientsUpdated event
     else
         ERC1155Sale-->>-User: Revert
     end
 
     User->>+ERC1155Sale: setTokenConfig(...)
-    alt has ADMIN role
+    alt ADMIN role
         ERC1155Sale->>ERC1155Sale: Update tokenInfo mapping
-        ERC1155Sale->>ERC1155Sale: emit TokenConfigUpdated event
+        ERC1155Sale->>ERC1155Sale: Emit TokenConfigUpdated event
     else
         ERC1155Sale-->>-User: Revert
     end
     
     User->>+ERC1155Sale: setFee(...)
-    alt has TOKEN_GOVERNOR or ADMIN role
+    alt TOKEN_GOVERNOR or ADMIN role
         ERC1155Sale->>ERC1155Sale: Update tokenInfo mapping
-        ERC1155Sale->>ERC1155Sale: emit FeeUpdated event
+        ERC1155Sale->>ERC1155Sale: Emit FeeUpdated event
     else
         ERC1155Sale-->>-User: Revert 
     end
 
     User->>+ERC1155Sale: withdrawERC20(...)
-    alt has FINANCIAL_CONTROLLER role
+    alt FINANCIAL_CONTROLLER role
         ERC1155Sale->>ERC20: safeTransfer(...)
     else
         ERC1155Sale-->>-User: Revert

@@ -27,48 +27,48 @@ sequenceDiagram
     User->>+CoreRef: Call function with globalLock modifier
     CoreRef->>Core: Get reference to global reentrancy lock
     Core->>Lock: Provide reference
-    CoreRef->>Lock: Lock (level)
+    CoreRef->>Lock: lock(...)
     CoreRef->>CoreRef: Execute function code
-    CoreRef->>-Lock: Unlock (level - 1)
+    CoreRef->>-Lock: unlock(...)
 
     User->>+CoreRef: Call function with onlyRole modifier
-    alt has the required role
-        CoreRef->>Core: hasRole(role, msg.sender)
-        Core-->>CoreRef: True
+    alt Has the required role
+        CoreRef->>Core: hasRole(...)
+        Core->>CoreRef: True
         CoreRef->>CoreRef: Execute function code
     else
-        CoreRef-->>-User: Revert
+        CoreRef->>-User: Revert
     end
 
     User->>+CoreRef: pause()
-    alt User has ADMIN, TOKEN_GOVERNOR, or GUARDIAN role
+    alt ADMIN, TOKEN_GOVERNOR, or GUARDIAN role
         CoreRef->>CoreRef: _pause()
     else
-        CoreRef-->>-User: Revert
+        CoreRef->>-User: Revert
     end
 
     User->>+CoreRef: unpause()
-    alt has ADMIN, TOKEN_GOVERNOR, or GUARDIAN role
+    alt ADMIN, TOKEN_GOVERNOR, or GUARDIAN role
         CoreRef->>CoreRef: _unpause()
     else
-        CoreRef-->>-User: Revert
+        CoreRef->>-User: Revert
     end
 
     User->>+CoreRef: setCore(newCore)
-    alt has ADMIN role and newCore is valid
+    alt ADMIN role and newCore is valid
         CoreRef->>Core: Update Core reference
-        CoreRef-->>CoreRef: Emit CoreUpdate event
+        CoreRef->>CoreRef: Emit CoreUpdate event
     else
-        CoreRef-->>-User: Revert
+        CoreRef->>-User: Revert
     end
 
     User->>+CoreRef: emergencyAction(calls)
-    alt has ADMIN role
-        loop for each call in calls
+    alt ADMIN role
+        loop For each call
             CoreRef->>CoreRef: Call target with provided callData and value
         end
     else
-        CoreRef-->>-User: Revert
+        CoreRef->>-User: Revert
     end
 ```
 

@@ -16,24 +16,24 @@ Refer to the [example scripts](../../script/utils/game) for more details on how 
 sequenceDiagram
     participant Client
     participant GameConsumer.sol
-    Client->>GameConsumer.sol: getHash()
-    GameConsumer.sol-->>Client: return hash
+    Client->>+GameConsumer.sol: getHash()
+    GameConsumer.sol->>-Client: return hash
     Client->>Client: sign hash
     alt
-        Client->>GameConsumer.sol: takePaymentWithETH()
+        Client->>+GameConsumer.sol: takePaymentWithETH()
         alt jobFee and hash are valid
             GameConsumer.sol->>Client: payment successful
-            GameConsumer.sol-->>GameConsumer.sol: emit TakePayment event
+            GameConsumer.sol->>GameConsumer.sol: emit TakePayment event
         else
-            GameConsumer.sol-->>Client: revert
+            GameConsumer.sol->>-Client: revert
         end
     else
-        Client->>GameConsumer.sol: takePayment()
+        Client->>+GameConsumer.sol: takePayment()
         alt hash is valid
             GameConsumer.sol->>Client: payment successful
-            GameConsumer.sol-->>GameConsumer.sol: emit TakePayment event
+            GameConsumer.sol->>GameConsumer.sol: emit TakePayment event
         else
-            GameConsumer.sol-->>Client: revert
+            GameConsumer.sol->>-Client: revert
         end 
     end
 ```
