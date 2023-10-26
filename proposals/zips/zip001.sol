@@ -19,7 +19,7 @@ import {CoreRef} from "@protocol/refs/CoreRef.sol";
 
 contract zip001 is Proposal, TimelockProposal {
     string public name = "ZIP001";
-    string public description = "The ZTX Base System proposal for the wearable drop";
+    string public description = "The ZTX wearable, Core & GlobalReentrancyLock contract proposal";
 
     function _beforeDeploy(Addresses addresses, address deployer) internal override {}
 
@@ -79,6 +79,14 @@ contract zip001 is Proposal, TimelockProposal {
             address(_core)
         );
 
+        /// Verifiy CoreRef
+        assertEq(address(CoreRef(addresses.getAddress("GLOBAL_REENTRANCY_LOCK")).core()), address(_core));
+
+        assertEq(
+            address(CoreRef(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")).core()),
+            address(_core)
+        );
+
         /// Verfiy globlal lock has been set correctly
         assertEq(address(_core.lock()), addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
 
@@ -97,6 +105,9 @@ contract zip001 is Proposal, TimelockProposal {
     function _validateOnChain(Addresses, address deployer) internal override {
         /// Verify ADMIN role has been revoked from deployer
         assertEq(_core.hasRole(Roles.ADMIN, deployer), false);
+
+        /// Verify only ADMIN_MULTISIG has ADMIN role
+        assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1);
     }
 
     function _validateForTestingOnly(Addresses, address deployer) internal override {}
