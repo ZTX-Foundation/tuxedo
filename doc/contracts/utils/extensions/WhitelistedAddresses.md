@@ -24,7 +24,7 @@ sequenceDiagram
     loop For each address
         WhitelistedAddresses->>WhitelistedAddresses: _addWhitelistAddress(...)
         WhitelistedAddresses->>EnumerableSet: add(...)
-        WhitelistedAddresses-->>-WhitelistedAddresses: Emit WhitelistAddressAdded event
+        WhitelistedAddresses->>-WhitelistedAddresses: Emit WhitelistAddressAdded event
     end
     
     User->>+WhitelistedAddresses: _removeWhitelistAddresses(...)
@@ -36,12 +36,12 @@ sequenceDiagram
 
     User->>+WhitelistedAddresses: isWhitelistedAddress(...)
     WhitelistedAddresses->>EnumerableSet: contains(...)
-    EnumerableSet-->>WhitelistedAddresses: true/false
+    EnumerableSet->>WhitelistedAddresses: true/false
     WhitelistedAddresses->>-User: true/false
 
     User->>+WhitelistedAddresses: getWhitelistedAddresses()
     WhitelistedAddresses->>EnumerableSet: values()
-    EnumerableSet-->>WhitelistedAddresses: address[]
+    EnumerableSet->>WhitelistedAddresses: address[]
     WhitelistedAddresses->>-User: address[]
 ```
 
