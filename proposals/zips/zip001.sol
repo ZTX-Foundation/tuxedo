@@ -19,12 +19,12 @@ import {CoreRef} from "@protocol/refs/CoreRef.sol";
 
 contract zip001 is Proposal, TimelockProposal {
     string public name = "ZIP001";
-    string public description = "The ZTX Base System proposal";
+    string public description = "The ZTX Base System proposal for the wearable drop";
 
     function _beforeDeploy(Addresses addresses, address deployer) internal override {}
 
     function _deploy(Addresses addresses, address) internal override {
-        /// Core
+        /// Deploy Core
         _core = new Core();
         addresses.addAddress("CORE", address(_core));
 
@@ -38,24 +38,6 @@ contract zip001 is Proposal, TimelockProposal {
             abi.encodePacked("https://meta.", vm.envString("ENVIRONMENT"), ".", vm.envString("DOMAIN"), "/")
         );
 
-        /// Consumables NFT contract
-        ERC1155MaxSupplyMintable erc1155Consumables = new ERC1155MaxSupplyMintable(
-            address(_core),
-            string(abi.encodePacked(_metadataBaseUri, "consumables/metadata/")),
-            "ZTX Consumables",
-            "ZTXC"
-        );
-        addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES", address(erc1155Consumables));
-
-        /// Placeables NFT contract
-        ERC1155MaxSupplyMintable erc1155Placeables = new ERC1155MaxSupplyMintable(
-            address(_core),
-            string(abi.encodePacked(_metadataBaseUri, "placeables/metadata/")),
-            "ZTX Placeables",
-            "ZTXP"
-        );
-        addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES", address(erc1155Placeables));
-
         /// Wearables NFT contract
         ERC1155MaxSupplyMintable erc1155Wearables = new ERC1155MaxSupplyMintable(
             address(_core),
@@ -64,31 +46,6 @@ contract zip001 is Proposal, TimelockProposal {
             "ZTXW"
         );
         addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", address(erc1155Wearables));
-
-        /// AutoGraphMinter contract
-        address[] memory nftContractAddresses = new address[](3);
-        nftContractAddresses[0] = address(erc1155Consumables);
-        nftContractAddresses[1] = address(erc1155Placeables);
-        nftContractAddresses[2] = address(erc1155Wearables);
-
-        ERC1155AutoGraphMinter erc1155AutoGraphMinter = new ERC1155AutoGraphMinter(
-            address(_core),
-            nftContractAddresses,
-            10_000e18, // TODO get offical values from the HQ
-            10_000_000e18,
-            addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"),
-            1 // 1 hour for valid expiryToken
-        );
-        addresses.addAddress("ERC1155_AUTO_GRAPH_MINTER", address(erc1155AutoGraphMinter));
-
-        /// Game consumer
-        GameConsumer gameConsumer = new GameConsumer(
-            address(_core),
-            addresses.getAddress("TOKEN"),
-            addresses.getAddress("GAME_CONSUMER_PAYMENT_RECIPIENT"),
-            addresses.getAddress("WETH")
-        );
-        addresses.addAddress("GAME_CONSUMABLE", address(gameConsumer));
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {
@@ -99,88 +56,48 @@ contract zip001 is Proposal, TimelockProposal {
         _core.setGlobalLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
 
         // Set LOCKER role for all NFT minting contracts
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
         _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
 
         /// MINTER role for all NFT minting contracts
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
         _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
     }
 
-    function _afterDeployOnChain(Addresses, address deployer) internal override {}
+    function _afterDeployOnChain(Addresses, address deployer) internal override {
+        // Revoke ADMIN role from deployer
+        _core.revokeRole(Roles.ADMIN, deployer);
+    }
 
     function _validate(Addresses addresses, address) internal override {
         /// Check Roles
         assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true);
 
         /// Verfiy all contracts are pointing to the correct core address
-        {
-            assertEq(
-                address(GlobalReentrancyLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK")).core()),
-                address(_core)
-            );
+        assertEq(address(GlobalReentrancyLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK")).core()), address(_core));
 
-            assertEq(
-                address(
-                    ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")).core()
-                ),
-                address(_core)
-            );
-            assertEq(
-                address(
-                    ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).core()
-                ),
-                address(_core)
-            );
-            assertEq(
-                address(ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")).core()),
-                address(_core)
-            );
-            assertEq(
-                address(ERC1155AutoGraphMinter(addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")).core()),
-                address(_core)
-            );
-            assertEq(address(CoreRef(addresses.getAddress("GAME_CONSUMABLE")).core()), address(_core));
-        }
+        assertEq(
+            address(ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")).core()),
+            address(_core)
+        );
 
         /// Verfiy globlal lock has been set correctly
-        {
-            assertEq(address(_core.lock()), addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
-        }
+        assertEq(address(_core.lock()), addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
 
         /// Verfiy all roles have been assigned correcly
-        {
-            /// Verfiy LOCKER role
-            assertEq(
-                _core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
-                true
-            );
-            assertEq(_core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")), true);
-            assertEq(_core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")), true);
-            assertEq(_core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")), true);
+        /// Verfiy LOCKER role
+        assertEq(_core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")), true);
 
-            /// Verfiy MINTER role
-            assertEq(
-                _core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
-                true
-            );
-            assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")), true);
-            assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")), true);
-            assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")), true);
-        }
+        /// Verfiy MINTER role
+        assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")), true);
 
         // Sum of Role counts to date
-        {
-            assertEq(_core.getRoleMemberCount(Roles.LOCKER), 4);
-            assertEq(_core.getRoleMemberCount(Roles.MINTER), 4);
-        }
+        assertEq(_core.getRoleMemberCount(Roles.LOCKER), 1);
+        assertEq(_core.getRoleMemberCount(Roles.MINTER), 1);
     }
 
-    function _validateOnChain(Addresses, address deployer) internal override {}
+    function _validateOnChain(Addresses, address deployer) internal override {
+        /// Verify ADMIN role has been revoked from deployer
+        assertEq(_core.hasRole(Roles.ADMIN, deployer), false);
+    }
 
     function _validateForTestingOnly(Addresses, address deployer) internal override {}
 
