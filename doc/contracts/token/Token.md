@@ -45,6 +45,7 @@ sequenceDiagram
 ## Features
 - Non-Burnable: The contract does not allow burning tokens, meaning tokens once minted cannot be destroyed.
 - Fixed Supply: The contract has a fixed maximum supply of 10 billion tokens (10^10) with 18 decimals. This means no new tokens can be minted beyond this limit.
+- Delegation: Automatically delegate to self, and anyone can cause you to delegate to self. This is an intentional design decision.
 
 ## Constants
 - `MAX_SUPPLY`: Represents the maximum supply of the token, which is 10 billion tokens with 18 decimals.
