@@ -1,23 +1,16 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
-import {Addresses} from "@proposals/Addresses.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
-
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
-import {Token} from "@protocol/token/Token.sol";
-import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
-import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
-import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
-import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
-import {GameConsumer} from "@protocol/game/GameConsumer.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
+import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
+import {Addresses} from "@proposals/Addresses.sol";
+import {ERC1155AdminMinter} from "@protocol/nfts/ERC1155AdminMinter.sol";
+import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
+import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-contract zip001 is Proposal, TimelockProposal {
+contract zip001 is Proposal {
     string public name = "ZIP001";
     string public description = "The ZTX wearable, Core & GlobalReentrancyLock contract proposal";
 
@@ -46,6 +39,9 @@ contract zip001 is Proposal, TimelockProposal {
             "ZTXW"
         );
         addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", address(erc1155Wearables));
+
+        ERC1155AdminMinter minter = new ERC1155AdminMinter(address(_core));
+        addresses.addAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER", address(minter));
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {
@@ -55,11 +51,13 @@ contract zip001 is Proposal, TimelockProposal {
         /// Set global lock
         _core.setGlobalLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
 
-        // Set LOCKER role for all NFT minting contracts
+        /// Set LOCKER role for all NFT minting contracts
         _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
+        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
 
-        /// MINTER role for all NFT minting contracts
+        /// Set MINTER role for all NFT minting contracts
         _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
+        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
     }
 
     function _afterDeployOnChain(Addresses, address deployer) internal override {
@@ -69,10 +67,19 @@ contract zip001 is Proposal, TimelockProposal {
 
     function _validate(Addresses addresses, address) internal override {
         /// Check Roles
-        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true);
+        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true, "incorrect admin role");
 
         /// Verfiy all contracts are pointing to the correct core address
-        assertEq(address(GlobalReentrancyLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK")).core()), address(_core));
+        assertEq(
+            address(GlobalReentrancyLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK")).core()),
+            address(_core),
+            "incorrect core address global reentrancy lock"
+        );
+        assertEq(
+            address(ERC1155AdminMinter(addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")).core()),
+            address(_core),
+            "incorrect core address admin minter"
+        );
 
         assertEq(
             address(ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")).core()),
@@ -93,13 +100,15 @@ contract zip001 is Proposal, TimelockProposal {
         /// Verfiy all roles have been assigned correcly
         /// Verfiy LOCKER role
         assertEq(_core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")), true);
+        assertEq(_core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")), true);
 
         /// Verfiy MINTER role
         assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")), true);
+        assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")), true);
 
         // Sum of Role counts to date
-        assertEq(_core.getRoleMemberCount(Roles.LOCKER), 1);
-        assertEq(_core.getRoleMemberCount(Roles.MINTER), 1);
+        assertEq(_core.getRoleMemberCount(Roles.LOCKER), 2, "incorrect locker count");
+        assertEq(_core.getRoleMemberCount(Roles.MINTER), 2, "incorrect minter count");
     }
 
     function _validateOnChain(Addresses, address deployer) internal override {
