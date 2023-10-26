@@ -98,6 +98,22 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef, Se
         emit TokenMinted(recipient, tokenId, amount);
     }
 
+    function airDropMint(
+        address recipient,
+        uint256 tokenId,
+        uint256 amount
+    ) external onlyRole(Roles.ADMIN) whenNotPaused {
+        require(totalSupply(tokenId) + amount <= maxTokenSupply[tokenId], "BaseERC1155NFT: supply exceeded");
+
+        /// no bytes passed on mint
+        _mint(recipient, tokenId, amount, "");
+
+        /// check for SMT solver and echidna
+        assert(totalSupply(tokenId) <= maxTokenSupply[tokenId]);
+
+        emit TokenMinted(recipient, tokenId, amount);
+    }
+
     /// @notice mint tokens in a batch, can only mint as many exist left to be minted from the max token supply
     /// @param recipient the address to mint to
     /// @param tokenIds the ids of the tokens to mint
