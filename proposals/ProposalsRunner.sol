@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 import {console} from "@forge-std/console.sol";
 import {Test} from "@forge-std/Test.sol";
 
-import {Addresses} from "@proposals/Addresses.sol";
+import {Addresses, EnvVar} from "@proposals/Addresses.sol";
 import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 
 import {zip000} from "@proposals/zips/zip000.sol";
@@ -12,33 +12,26 @@ import {zip001} from "@proposals/zips/zip001.sol";
 import {zipTest} from "@proposals/zips/zipTest.sol";
 
 /*
-How to use:
-forge test --fork-url $ETH_RPC_URL --match-contract TestProposals -vvv
-
-Or, from another Solidity file (for post-proposal integration testing):
-    TestProposals proposals = new TestProposals();
-    proposals.setUp();
+    From another Solidity file (for post-proposal integration testing):
+    TestProposals proposals = new TestProposals(EnvVar.TestNet);
     proposals.setDebug(false); // don't console.log
     proposals.testProposals();
     Addresses addresses = proposals.addresses();
 */
 
-contract TestProposals is Test {
+contract ProposalsRunner is Test {
     Addresses public addresses;
     Proposal[] public proposals;
     uint256 public nProposals;
     bool public debug;
-    bool public doDeploy;
-    bool public doAfterDeploy;
-    bool public doBuild;
-    bool public doRun;
-    bool public doTeardown;
-    bool public doValidate;
+
+    EnvVar private env;
 
     address public deployer = address(0x00000108);
 
-    function setUp() public {
-        addresses = new Addresses();
+    constructor(EnvVar _env) {
+        env = _env;
+        addresses = new Addresses(env);
 
         // Load proposals
         proposals.push(Proposal(address(new zip000())));

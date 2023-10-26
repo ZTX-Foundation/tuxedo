@@ -4,6 +4,7 @@
 @protocol=src/
 @test=test/
 @proposals=proposals/
+@script=script/
 openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/
 operator-filter-registry/=lib/seadrop/lib/operator-filter-registry/src/
 utility-contracts/=lib/seadrop/lib/utility-contracts/src/

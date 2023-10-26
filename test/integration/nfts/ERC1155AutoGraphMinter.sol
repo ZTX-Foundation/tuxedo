@@ -52,12 +52,6 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         /// @dev main contract under test
         autoGraphMinter = ERC1155AutoGraphMinter(addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
 
-        /// @dev Set up contracts required roles
-        vm.startPrank(addresses.getAddress("ADMIN_MULTISIG"));
-        Core(addresses.getAddress("CORE")).grantRole(Roles.MINTER, address(autoGraphMinter));
-        Core(addresses.getAddress("CORE")).grantRole(Roles.LOCKER, address(autoGraphMinter));
-        vm.stopPrank();
-
         /// @dev Set up notary signing role
         vm.startPrank(addresses.getAddress("ADMIN_MULTISIG"));
         Core(addresses.getAddress("CORE")).grantRole(Roles.MINTER_NOTARY, _notary);
