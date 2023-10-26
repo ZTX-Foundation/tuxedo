@@ -24,7 +24,7 @@ sequenceDiagram
     participant IDepositBase
     participant IERC20
 
-    User->>+IDepositBase: Call withdrawERC20(...)
+    User->>+IDepositBase: withdrawERC20(...)
     alt FINANCIAL_CONTROLLER Role
         IDepositBase->>IERC20: safeTransfer(...)
         IDepositBase->>IDepositBase: Emit WithdrawERC20 Event
