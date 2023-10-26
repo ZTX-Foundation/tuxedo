@@ -83,28 +83,40 @@ contract zip001 is Proposal {
 
         assertEq(
             address(ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")).core()),
-            address(_core)
+            address(_core),
+            "incorrect core address erc1155 max supply mintable wearables"
         );
 
         /// Verifiy CoreRef
-        assertEq(address(CoreRef(addresses.getAddress("GLOBAL_REENTRANCY_LOCK")).core()), address(_core));
+        assertEq(
+            address(CoreRef(addresses.getAddress("GLOBAL_REENTRANCY_LOCK")).core()),
+            address(_core),
+            "incorrect core address global reentrancy lock"
+        );
 
         assertEq(
             address(CoreRef(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")).core()),
-            address(_core)
+            address(_core),
+            "incorrect core address erc1155 max supply mintable wearables"
         );
 
         /// Verfiy globlal lock has been set correctly
-        assertEq(address(_core.lock()), addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
+        assertEq(address(_core.lock()), addresses.getAddress("GLOBAL_REENTRANCY_LOCK"), "incorrect global lock");
 
         /// Verfiy all roles have been assigned correcly
         /// Verfiy LOCKER role
-        assertEq(_core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")), true);
-        assertEq(_core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")), true);
+        assertTrue(
+            _core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
+            "incorrect locker wearables"
+        );
+        assertTrue(
+            _core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")),
+            "incorrect locker admin minter"
+        );
 
         /// Verfiy MINTER role
-        assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")), true);
-        assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")), true);
+        assertTrue(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")), "incorrect minter wearables");
+        assertTrue(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")), "incorrect minter admin minter");
 
         // Sum of Role counts to date
         assertEq(_core.getRoleMemberCount(Roles.LOCKER), 2, "incorrect locker count");
@@ -113,10 +125,10 @@ contract zip001 is Proposal {
 
     function _validateOnChain(Addresses, address deployer) internal override {
         /// Verify ADMIN role has been revoked from deployer
-        assertEq(_core.hasRole(Roles.ADMIN, deployer), false);
+        assertEq(_core.hasRole(Roles.ADMIN, deployer), false, "deployer should not have admin role");
 
         /// Verify only ADMIN_MULTISIG has ADMIN role
-        assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1);
+        assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1, "incorrect admin count");
     }
 
     function _validateForTestingOnly(Addresses, address deployer) internal override {}
