@@ -137,8 +137,8 @@ contract zip002 is Proposal, TimelockProposal {
 
         // Sum of Role counts to date
         {
-            assertEq(_core.getRoleMemberCount(Roles.LOCKER), 4);
-            assertEq(_core.getRoleMemberCount(Roles.MINTER), 4);
+            assertEq(_core.getRoleMemberCount(Roles.LOCKER), 5);
+            assertEq(_core.getRoleMemberCount(Roles.MINTER), 5);
         }
     }
 
