@@ -33,13 +33,13 @@ contract ERC1155AdminMinter is CoreRef {
         address recipient,
         uint256 tokenId,
         uint256 amount
-    ) external onlyRole(Roles.ADMIN) globalLock(1) {
+    ) external onlyRole(Roles.ADMIN) whenNotPaused globalLock(1) {
         _mintTokens(nftContract, tokenId, amount, recipient);
     }
 
     /// @notice mint ERC1155 tokens as admin
     /// @param toMint the tokens, amounts and token ids to mint
-    function bulkMintTokens(BulkMint[] calldata toMint) external onlyRole(Roles.ADMIN) globalLock(1) {
+    function bulkMintTokens(BulkMint[] calldata toMint) external onlyRole(Roles.ADMIN) whenNotPaused globalLock(1) {
         for (uint256 i = 0; i < toMint.length; i++) {
             _mintTokens(toMint[i].nftContract, toMint[i].tokenId, toMint[i].amount, toMint[i].recipient);
         }
