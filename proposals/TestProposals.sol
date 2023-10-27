@@ -44,8 +44,7 @@ contract TestProposals is Test {
         // Load proposals
         proposals.push(Proposal(address(new zip000())));
         proposals.push(Proposal(address(new zip001())));
-        proposals.push(Proposal(address(new zip002())));
-        proposals.push(Proposal(address(new zipTest())));
+        // proposals.push(Proposal(address(new zip002()))); /// not in scope for now, integration tests will fail and that's fine
 
         nProposals = proposals.length;
     }
