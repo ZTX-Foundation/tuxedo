@@ -22,7 +22,7 @@ Before minting an NFT, you'll need to generate a signed hash. The hash must be s
 
 To generate the hash on-chain, you need to call `getHash()`. See [ERC1155AutoGraphMinter](../contracts/nfts/ERC1155AutoGraphMinter.md#getHash) for more details.
 
-Please also refer to the [example scripts](../../script/utils/nfts) for more details on how to generate a hash (`getHash.ts`) (either on-chain or off-chain), and sign said hash (`signHash.ts`).
+Please also refer to the [example scripts](../../script/utils/nfts) for more details on how to generate and sign a hash (`getAndSignHash.ts`).
 
 ## Sequence
 ```mermaid

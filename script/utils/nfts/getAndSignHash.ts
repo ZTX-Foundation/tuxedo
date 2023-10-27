@@ -80,13 +80,13 @@ const params = {
     expiryToken: program.opts().expiryToken,
 };
 
+const abi = JSON.parse(fs.readFileSync(program.opts().abiPath, "utf-8"));
+const provider = new ethers.providers.JsonRpcProvider(program.opts().rpcUrl);
+const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || "", provider);
+
 if (program.opts().mode === "offchain") {
     console.log(`Hash: ${hashMessage(getHash(params))}`);
 } else {
-    const abi = JSON.parse(fs.readFileSync(program.opts().abiPath, "utf-8"));
-    const provider = new ethers.providers.JsonRpcProvider(program.opts().rpcUrl);
-
-    const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || "", provider);
     const contract = new ethers.Contract(
         program.opts().contractAddress,
         abi,
@@ -103,3 +103,4 @@ if (program.opts().mode === "offchain") {
     });
 }
 
+console.log(`Signature: ${await wallet.signMessage(getHash(params))}`);
