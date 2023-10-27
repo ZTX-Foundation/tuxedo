@@ -18,12 +18,7 @@ contract ERC1155AdminMinter is CoreRef {
     /// --------- Events ---------- ///
 
     /// @notice - Event emitted when the admin mint is successful
-    event TokensMinted(
-        address indexed nftContract,
-        address indexed recipient,
-        uint256 amount,
-        uint256 tokenId
-    );
+    event TokensMinted(address indexed nftContract, address indexed recipient, uint256 amount, uint256 tokenId);
 
     constructor(address _core) CoreRef(_core) {}
 
@@ -38,7 +33,7 @@ contract ERC1155AdminMinter is CoreRef {
         address recipient,
         uint256 tokenId,
         uint256 amount
-    ) external onlyRole(Roles.ADMIN) globalLock(1) {
+    ) external onlyRole(Roles.ADMIN) whenNotPaused globalLock(1) {
         _mintTokens(nftContract, tokenId, amount, recipient);
     }
 
