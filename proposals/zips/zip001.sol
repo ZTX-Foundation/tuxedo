@@ -103,6 +103,21 @@ contract zip001 is Proposal {
         /// Verfiy globlal lock has been set correctly
         assertEq(address(_core.lock()), addresses.getAddress("GLOBAL_REENTRANCY_LOCK"), "incorrect global lock");
 
+        /// Verify metadata URI
+        assertEq(
+            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")).uri(0),
+            string(
+                abi.encodePacked(
+                    "https://meta.",
+                    vm.envString("ENVIRONMENT"),
+                    ".",
+                    vm.envString("DOMAIN"),
+                    "/wearables/metadata/0"
+                )
+            ),
+            "incorrect metadata URI"
+        );
+
         /// Verfiy all roles have been assigned correcly
         /// Verfiy LOCKER role
         assertTrue(
@@ -115,8 +130,14 @@ contract zip001 is Proposal {
         );
 
         /// Verfiy MINTER role
-        assertTrue(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")), "incorrect minter wearables");
-        assertTrue(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")), "incorrect minter admin minter");
+        assertTrue(
+            _core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
+            "incorrect minter wearables"
+        );
+        assertTrue(
+            _core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")),
+            "incorrect minter admin minter"
+        );
 
         // Sum of Role counts to date
         assertEq(_core.getRoleMemberCount(Roles.LOCKER), 2, "incorrect locker count");
