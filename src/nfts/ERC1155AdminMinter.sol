@@ -33,7 +33,7 @@ contract ERC1155AdminMinter is CoreRef {
         address recipient,
         uint256 tokenId,
         uint256 amount
-    ) external onlyRole(Roles.ADMIN) whenNotPaused globalLock(1) {
+    ) external onlyRole(Roles.ADMIN) globalLock(1) {
         _mintTokens(nftContract, tokenId, amount, recipient);
     }
 
