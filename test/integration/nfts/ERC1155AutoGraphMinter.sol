@@ -1,6 +1,5 @@
 pragma solidity 0.8.18;
 
-import {MockERC20} from "@test/mock/MockERC20.sol";
 import {ERC1155AutoGraphMinterHelperLib as Helper} from "@test/helpers/ERC1155AutoGraphMinterHelper.sol";
 
 import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
@@ -9,9 +8,11 @@ import {Roles} from "@protocol/core/Roles.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {BaseTest} from "@test/integration/BaseTest.sol";
 
+import {Token} from "@protocol/token/Token.sol";
+
 contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
-    /// @notice Mock ERC20
-    MockERC20 token;
+    /// @notice ZTX ERC20
+    Token token;
 
     /// @notice NFT contract addresses
     address erc1155Consumables;
@@ -37,7 +38,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
     function setUp() public override {
         super.setUp();
 
-        token = new MockERC20();
+        token = Token(addresses.getAddress("TOKEN")); /// use actual ZTX token
 
         erc1155Consumables = addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES");
         erc1155Placeables = addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES");
@@ -51,12 +52,6 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
 
         /// @dev main contract under test
         autoGraphMinter = ERC1155AutoGraphMinter(addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
-
-        /// @dev Set up contracts required roles
-        vm.startPrank(addresses.getAddress("ADMIN_MULTISIG"));
-        Core(addresses.getAddress("CORE")).grantRole(Roles.MINTER, address(autoGraphMinter));
-        Core(addresses.getAddress("CORE")).grantRole(Roles.LOCKER, address(autoGraphMinter));
-        vm.stopPrank();
 
         /// @dev Set up notary signing role
         vm.startPrank(addresses.getAddress("ADMIN_MULTISIG"));
@@ -288,7 +283,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        token.mint(address(this), paymentAmount);
+        deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
         ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
@@ -334,7 +329,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             )
         );
 
-        token.mint(address(this), paymentAmount);
+        deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
         inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
@@ -378,7 +373,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             )
         );
 
-        token.mint(address(this), paymentAmount);
+        deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
         inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
@@ -415,7 +410,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        token.mint(address(this), paymentAmount);
+        deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
         ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
@@ -488,7 +483,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             )
         );
 
-        token.mint(address(this), paymentAmount);
+        deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
         inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
@@ -559,7 +554,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             )
         );
 
-        token.mint(address(this), paymentAmount);
+        deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
         inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
@@ -1126,7 +1121,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        token.mint(address(this), totalCost);
+        deal(address(token), address(this), totalCost, true);
         token.approve(address(autoGraphMinter), totalCost);
 
         // mint
@@ -1164,7 +1159,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        token.mint(address(this), totalCost);
+        deal(address(token), address(this), totalCost, true);
         token.approve(address(autoGraphMinter), totalCost);
 
         // mint
@@ -1200,7 +1195,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        token.mint(address(this), totalCost);
+        deal(address(token), address(this), totalCost, true);
         token.approve(address(autoGraphMinter), totalCost);
 
         // mint
@@ -1234,7 +1229,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        token.mint(address(this), totalCost);
+        deal(address(token), address(this), totalCost, true);
         token.approve(address(autoGraphMinter), totalCost);
 
         // mint
@@ -1283,7 +1278,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        token.mint(address(this), totalCost);
+        deal(address(token), address(this), totalCost, true);
         token.approve(address(autoGraphMinter), totalCost);
 
         // mint
@@ -1330,7 +1325,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        token.mint(address(this), totalCost);
+        deal(address(token), address(this), totalCost, true);
         token.approve(address(autoGraphMinter), totalCost);
 
         // mint
