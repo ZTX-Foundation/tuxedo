@@ -7,11 +7,10 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 import {Roles} from "@protocol/core/Roles.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
-import {Sealable} from "@protocol/utils/extensions/Sealable.sol";
 
 /// Base ERC 1155 NFT with total supply
 /// Inherits CoreRef for roles and access
-contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef, Sealable {
+contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef {
     /// @notice contract name
     string private _name;
 
