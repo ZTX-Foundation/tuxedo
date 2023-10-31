@@ -164,7 +164,11 @@ npm run deploy:mainnet
 
 ### Arbitrum
 
-| Address                                      | Contract                                    |
-|----------------------------------------------|---------------------------------------------|
-| `0x2Fd9c72Ea5763340e96e9369226032C38CF7a1da` | [ZTX HOODIE](./src/nfts/ERC721ZepetoUA.sol) |
-| `0x1C43D05be7E5b54D506e3DdB6f0305e8A66CD04e` | [TOKEN](./src/token/Token.sol)              |
+| Address                                      | Contract                                                                         |
+|----------------------------------------------|----------------------------------------------------------------------------------|
+| `0xb2F009749260ddbEFe5E1687895f0A0E411613EA` | [CORE](./src/core/Core.sol)                                                      |
+| `0x90eAa68fAe4703ff5328f2E86982e77EBc10539a` | [GLOBAL_REENTRANCY_LOCK](./src/utils/GlobalReentrancyLock.sol)                   |
+| `0x792E36c772f6dA6280fa43159792F89e7444CF18` | [ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES](./src/nfts/ERC1155MaxSupplyMintable.sol) |
+| `0xd778a415A3AB81eF27da61218c71a5F31A4D10BE` | [ERC1155_MAX_SUPPLY_ADMIN_MINTABLE](./src/nfts/ERC1155AdminMinter.sol)           |
+| `0x2Fd9c72Ea5763340e96e9369226032C38CF7a1da` | [ZTX HOODIE](./src/nfts/ERC721ZepetoUA.sol)                                      |
+| `0x1C43D05be7E5b54D506e3DdB6f0305e8A66CD04e` | [TOKEN](./src/token/Token.sol)                                                   |

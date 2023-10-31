@@ -318,8 +318,8 @@ contract zipTest is Proposal, TimelockProposal {
         assertEq(_core.getRoleMemberCount(Roles.FINANCIAL_CONTROLLER), 4);
         assertEq(_core.getRoleMemberCount(Roles.GUARDIAN), 2);
         assertEq(_core.getRoleMemberCount(Roles.FINANCIAL_GUARDIAN), 1);
-        assertEq(_core.getRoleMemberCount(Roles.LOCKER), 7);
-        assertEq(_core.getRoleMemberCount(Roles.MINTER), 7);
+        assertEq(_core.getRoleMemberCount(Roles.LOCKER), 8);
+        assertEq(_core.getRoleMemberCount(Roles.MINTER), 8);
 
         /// ADMIN role
         // assertEq(_core.getRoleMember(Roles.ADMIN, 1), addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));

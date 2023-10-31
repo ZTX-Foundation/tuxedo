@@ -38,6 +38,33 @@ contract UnitTestToken is Test {
         assertEq(token.getVotes(address(this)), MAX_SUPPLY);
     }
 
+    function testDelegateVotesUndelegatesAfterReceiving() public {
+        address to = address(2);
+        uint256 transferAmount = 1000;
+
+        assertEq(token.getVotes(address(this)), MAX_SUPPLY);
+        token.transfer(to, transferAmount);
+
+        assertEq(token.getVotes(address(this)), MAX_SUPPLY - transferAmount);
+        assertEq(token.getVotes(to), transferAmount);
+
+        vm.prank(to);
+        token.delegate(address(this));
+
+        assertEq(token.getVotes(address(this)), MAX_SUPPLY, "this should still have votes");
+        assertEq(token.getVotes(to), 0, "to should not have votes");
+
+        assertEq(token.delegates(to), address(this), "to delegate incorrect"); /// to delegates to this
+
+        // this transfers to to from this, which undelegates to from this, and makes to delegate to itself
+        token.transfer(to, 0); /// undelegate user
+
+        assertEq(token.delegates(to), to); /// to delegates to itself
+
+        assertEq(token.getVotes(address(this)), MAX_SUPPLY - transferAmount, "this vote incorrect");
+        assertEq(token.getVotes(to), transferAmount, "to vote incorrect");
+    }
+
     function testTransferVotes() public {
         token.approve(address(1), 1);
         token.transfer(address(1), 1);
