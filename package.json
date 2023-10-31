@@ -84,7 +84,7 @@
         "jose": "^5.0.1",
         "keccak256": "^1.0.6",
         "lint-staged": "^15.0.2",
-        "merkletreejs": "^0.3.10",
+        "merkletreejs": "^0.3.11",
         "moralis": "^2.23.1",
         "soltypes": "^2.0.0"
     },
