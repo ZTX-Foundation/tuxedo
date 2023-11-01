@@ -7,7 +7,7 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
-import {WhitelistedAddresses} from "@protocol/utils/extensions/WhitelistedAddreses.sol";
+import {WhitelistedAddresses} from "@protocol/utils/extensions/WhitelistedAddresses.sol";
 import {RateLimited} from "@protocol/utils/extensions/RateLimited.sol";
 
 contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
