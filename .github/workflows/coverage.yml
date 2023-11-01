@@ -23,7 +23,7 @@ jobs:
 
       - run: |
           forge coverage --report lcov
-          lcov --remove lcov.info -o lcov.info 'test/*' 'script/*'
+          lcov --rc lcov_branch_coverage=1 --remove lcov.info -o lcov.info 'test/*' 'script/*'
 
       - uses: zgosalvez/github-actions-report-lcov@v3
         with:
