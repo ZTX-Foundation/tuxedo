@@ -1,0 +1,26 @@
+name: Coverage
+on: pull_request
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - uses: hrishikesh-kadam/setup-lcov@v1
+
+      - run: |
+          forge coverage --report lcov
+          lcov --remove lcov.info  -o lcov.info 'test/*' 'script/*'
+
+      - uses: zgosalvez/github-actions-report-lcov@v3
+        with:
+          coverage-files: lcov.*.info
+          minimum-coverage: 80
+          artifact-name: tuxedo-coverage-report
+          github-token: ${{ secrets.GITHUB_TOKEN }}
