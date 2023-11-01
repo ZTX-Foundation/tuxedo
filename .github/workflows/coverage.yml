@@ -31,3 +31,4 @@ jobs:
           minimum-coverage: 80
           artifact-name: tuxedo-coverage-report
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: src/
