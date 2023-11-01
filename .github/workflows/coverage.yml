@@ -4,6 +4,13 @@ on: pull_request
 jobs:
   coverage:
     runs-on: ubuntu-latest
+    environment: devnet
+    env:
+      ENVIRONMENT: devnet
+      DOMAIN: example.com
+      TOKEN_NAME: "TKN Token"
+      TOKEN_SYMBOL: TKN
+      ARBITRUM_TESTNET_SEPOLIA_RPC_URL: ${{ vars.ARBITRUM_TESTNET_SEPOLIA_RPC_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -16,7 +23,7 @@ jobs:
 
       - run: |
           forge coverage --report lcov
-          lcov --remove lcov.info  -o lcov.info 'test/*' 'script/*'
+          lcov --remove lcov.info -o lcov.info 'test/*' 'script/*'
 
       - uses: zgosalvez/github-actions-report-lcov@v3
         with:
