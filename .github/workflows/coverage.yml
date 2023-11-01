@@ -24,7 +24,6 @@ jobs:
       - run: |
           forge coverage --report lcov
           lcov --remove lcov.info -o lcov.info 'test/*' 'script/*'
-          sed -i '' "s;$PWD/;;g" lcov.info
 
       - uses: zgosalvez/github-actions-report-lcov@v3
         with:
