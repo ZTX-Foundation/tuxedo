@@ -7,9 +7,9 @@ jobs:
     environment: devnet
     env:
       ENVIRONMENT: devnet
-      DOMAIN: example.com
-      TOKEN_NAME: "TKN Token"
-      TOKEN_SYMBOL: TKN
+      DOMAIN: ztx.io
+      TOKEN_NAME: "XTZ Token"
+      TOKEN_SYMBOL: XTZ
       ARBITRUM_TESTNET_SEPOLIA_RPC_URL: ${{ vars.ARBITRUM_TESTNET_SEPOLIA_RPC_URL }}
     steps:
       - name: Checkout code
@@ -17,7 +17,7 @@ jobs:
 
       - uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly
+          version: nightly-94ae8974c1ac479f8d6c8ba5832b852afccfd0c5
 
       - uses: hrishikesh-kadam/setup-lcov@v1
 
@@ -27,7 +27,7 @@ jobs:
 
       - uses: zgosalvez/github-actions-report-lcov@v3
         with:
-          coverage-files: lcov.*.info
+          coverage-files: lcov.info
           minimum-coverage: 80
           artifact-name: tuxedo-coverage-report
           github-token: ${{ secrets.GITHUB_TOKEN }}
