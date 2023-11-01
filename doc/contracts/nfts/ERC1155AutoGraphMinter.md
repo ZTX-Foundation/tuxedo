@@ -249,8 +249,8 @@ Emitted when an ERC1155 token is minted.
 Logs:
 - `nftContract`: The address of the contract that was minted.
 - `recipient`: The address of the recipient of the minted token.
+- `jobId`: The ID of the job.
 - `tokenId`: The ID of the token that was minted.
-- `units`: The number of tokens that were minted.
 
 ### `ERC1155BatchMinted`
 Emitted when a batch of ERC1155 tokens are minted.
