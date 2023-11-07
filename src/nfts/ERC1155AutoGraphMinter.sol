@@ -21,7 +21,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @notice - Event emitted when a contract is removed from the whitelist
     event WhitelistedContractRemoved(address indexed nftContract);
     /// @notice - Event emitted when the mint is successful
-    event ERC1155Minted(address indexed nftContract, address indexed recipient, uint256 indexed tokenId, uint256 units);
+    event ERC1155Minted(address indexed nftContract, address indexed recipient, uint256 indexed jobId, uint256 tokenId);
 
     /// @notice - Event emitted when the batch mint is successful
     event ERC1155BatchMinted(
@@ -319,7 +319,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
         _verifyHashAndSignerRoleExpireHashAndDepleteBuffer(params);
 
         ERC1155MaxSupplyMintable(nftContract).mint(recipient, tokenId, units);
-        emit ERC1155Minted(nftContract, recipient, tokenId, units);
+        emit ERC1155Minted(nftContract, recipient, jobId, tokenId);
     }
 
     /// @notice - Mint NFTs to a given address with a given signature
@@ -355,7 +355,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
         IERC20(params.paymentToken).safeTransferFrom(msg.sender, paymentRecipient, params.paymentAmount);
 
         ERC1155MaxSupplyMintable(params.nftContract).mint(params.recipient, params.tokenId, params.units);
-        emit ERC1155Minted(params.nftContract, params.recipient, params.tokenId, params.units);
+        emit ERC1155Minted(params.nftContract, params.recipient, params.jobId, params.tokenId);
     }
 
     /// @notice - Mint NFTs to a given address with a given signature with Eth as a fee used for Instant Craft ingame
@@ -391,7 +391,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
         require(sent, "ERC1155AutoGraphMinter: Failed to send Ether");
 
         ERC1155MaxSupplyMintable(params.nftContract).mint(params.recipient, params.tokenId, params.units);
-        emit ERC1155Minted(params.nftContract, params.recipient, params.tokenId, params.units);
+        emit ERC1155Minted(params.nftContract, params.recipient, params.jobId, params.tokenId);
     }
 
     // ----------------------- Mint Batch functions ----------------------- //
