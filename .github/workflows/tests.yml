@@ -26,7 +26,7 @@ jobs:
 
             - uses: foundry-rs/foundry-toolchain@v1
               with:
-                  version: nightly-94ae8974c1ac479f8d6c8ba5832b852afccfd0c5
+                  version: nightly
 
             - name: Run Forge build
               run: |
