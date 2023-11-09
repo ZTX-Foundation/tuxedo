@@ -14,9 +14,14 @@ import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.
 contract ERC1155SeasonOne is SeasonsBase {
     using SafeERC20 for IERC20;
 
+    /// @notice Rewards per tokenId
     mapping(uint256 tokenId => uint256 rewardAmount) public tokenIdRewardAmount;
+
+    /// @notice Amount of reward tokens used per tokenId
     mapping(uint256 tokenId => uint256 usedAmount) public tokenIdUsedAmount;
 
+    /// @notice tokenIds that are registered for this season
+    /// @dev also used as an index for tokenIdRewardAmount and tokenIdUsedAmount mappings
     uint256[] public tokenIds;
 
     constructor(
