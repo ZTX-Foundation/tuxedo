@@ -58,6 +58,27 @@ library ERC1155AutoGraphMinterHelperLib {
         Vm vm,
         uint256 privateKey,
         address nftContract,
+        uint tokenId,
+        uint units
+    ) public view returns (TxParts memory parts) {
+        SetupTxParams memory txx = SetupTxParams(
+            vm,
+            privateKey,
+            nftContract,
+            99,
+            tokenId,
+            units,
+            address(0),
+            0,
+            block.timestamp
+        );
+        return setupTx(txx);
+    }
+
+    function setupTx(
+        Vm vm,
+        uint256 privateKey,
+        address nftContract,
         address paymentToken,
         uint256 paymentAmount,
         uint256 expiryToken
@@ -169,5 +190,29 @@ library ERC1155AutoGraphMinterHelperLib {
         }
 
         return params;
+    }
+
+    /// @dev helper to mint a tokens via the autoGraphMinter in an intrgration test
+    function mintForFree(
+        Vm _vm,
+        uint256 _privateKey,
+        address _autoGraphMinterContract,
+        address _nftContract,
+        uint tokenId,
+        uint units
+    ) public {
+        TxParts memory parts = setupTx(_vm, _privateKey, _nftContract, tokenId, units);
+
+        ERC1155AutoGraphMinter(_autoGraphMinterContract).mintForFree(
+            parts.recipient,
+            parts.jobId,
+            parts.tokenId,
+            parts.units,
+            parts.hash,
+            parts.salt,
+            parts.signature,
+            _nftContract,
+            parts.expiryToken
+        );
     }
 }

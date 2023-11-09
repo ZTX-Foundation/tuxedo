@@ -17,6 +17,8 @@ contract ERC1155SeasonOne is SeasonsBase {
     mapping(uint256 tokenId => uint256 rewardAmount) public tokenIdRewardAmount;
     mapping(uint256 tokenId => uint256 usedAmount) public tokenIdUsedAmount;
 
+    uint256[] public tokenIds;
+
     constructor(
         address _core,
         address _nftContract,
@@ -24,9 +26,9 @@ contract ERC1155SeasonOne is SeasonsBase {
         address _seasonsTokenIdRegistryContract
     ) SeasonsBase(_core, _nftContract, _rewardToken, _seasonsTokenIdRegistryContract) {}
 
-    /// @notice config the season distribution
+    /// @notice initalize the season distribution at the start of the season
     /// @dev _nftContract much have setSupplyCap() set or this tx will revert.
-    function configSeasonDistribution(
+    function initalizeSeasonDistribution(
         TokenIdRewardAmount[] memory tokenIdRewardAmounts
     ) external override onlyRole(Roles.ADMIN) returns (uint256) {
         uint256 _totalRewardTokens = 0;
@@ -34,6 +36,7 @@ contract ERC1155SeasonOne is SeasonsBase {
         for (uint256 i = 0; i < tokenIdRewardAmounts.length; i++) {
             require(tokenIdRewardAmounts[i].rewardAmount > 0, "ERC1155SeasonOne: rewardAmount cannot be 0");
             tokenIdRewardAmount[tokenIdRewardAmounts[i].tokenId] = tokenIdRewardAmounts[i].rewardAmount;
+            tokenIds.push(tokenIdRewardAmounts[i].tokenId);
 
             uint _maxTokenSupply = ERC1155MaxSupplyMintable(nftContract).maxTokenSupply(
                 tokenIdRewardAmounts[i].tokenId
@@ -44,9 +47,25 @@ contract ERC1155SeasonOne is SeasonsBase {
             _totalRewardTokens += (tokenIdRewardAmounts[i].rewardAmount * _maxTokenSupply);
         }
 
+        /// Register tokenIds with the tokenIdRegistryContract
         registerTokenIds(tokenIdRewardAmounts);
 
-        totalRewardTokens = _totalRewardTokens;
+        totalRewardTokens = (_totalRewardTokens - totalRewardTokensUsed);
+        return totalRewardTokens;
+    }
+
+    /// @notice reconfig the season distribution during the the season after maxSupply has been increased on registored tokenId
+    /// @dev we keep track of the totalRewardTokensUsed and totalRewardTokens to make sure the contract is solvent after a supply cap increase
+    function reconfigSeasonDistribution() public override onlyRole(Roles.ADMIN) returns (uint256) {
+        uint256 _totalRewardTokens = 0;
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            uint _maxTokenSupply = ERC1155MaxSupplyMintable(nftContract).maxTokenSupply(tokenIds[i]);
+            require(_maxTokenSupply != 0, "ERC1155SeasonOne: maxTokenSupply cannot be 0");
+
+            // Running total of totalPaymentToken amount needed by the contract to be solvent
+            _totalRewardTokens += (tokenIdRewardAmount[tokenIds[i]] * _maxTokenSupply);
+        }
+        totalRewardTokens = (_totalRewardTokens - totalRewardTokensUsed);
         return totalRewardTokens;
     }
 
@@ -66,6 +85,9 @@ contract ERC1155SeasonOne is SeasonsBase {
 
         // Update total reward tokens needed in contract
         totalRewardTokens -= _rewardAmount;
+
+        // Update total reward tokens used
+        totalRewardTokensUsed += _rewardAmount;
 
         /// ---- interaction ---- ///
         // Transfer

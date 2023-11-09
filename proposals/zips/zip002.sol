@@ -16,10 +16,12 @@ import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol"
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {GameConsumer} from "@protocol/game/GameConsumer.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
+import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
+import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 
 contract zip002 is Proposal, TimelockProposal {
     string public name = "ZIP002";
-    string public description = "The Next draft ZTX proposal";
+    string public description = "CGV1 draft ZTX proposal";
 
     function _beforeDeploy(Addresses addresses, address deployer) internal override {
         /// Get Core Address
@@ -78,6 +80,19 @@ contract zip002 is Proposal, TimelockProposal {
             addresses.getAddress("WETH")
         );
         addresses.addAddress("GAME_CONSUMABLE", address(gameConsumer));
+
+        /// SeasonsTokenIdRegistry contract
+        SeasonsTokenIdRegistry seasonsTokenIdRegistry = new SeasonsTokenIdRegistry(address(_core));
+        addresses.addAddress("SEASONS_TOKEN_ID_REGISTRY", address(seasonsTokenIdRegistry));
+
+        /// Season contracts (Season 1)
+        ERC1155SeasonOne erc1155SeasonOne = new ERC1155SeasonOne(
+            address(_core),
+            address(erc1155Consumables),
+            address(addresses.getAddress("TOKEN")),
+            address(seasonsTokenIdRegistry)
+        );
+        addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne));
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {
@@ -90,6 +105,11 @@ contract zip002 is Proposal, TimelockProposal {
         _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
         _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
         _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
+
+        /// REGISTRY_OPERATOR role on the seasonOne contract
+        _core.grantRole(Roles.REGISTRY_OPERATOR, addresses.getAddress("ERC1155_SEASON_ONE"));
+
+        // TODO should we config the seasonOne contract here?
     }
 
     function _afterDeployOnChain(Addresses, address deployer) internal override {}
@@ -133,6 +153,11 @@ contract zip002 is Proposal, TimelockProposal {
             );
             assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")), true);
             assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")), true);
+        }
+
+        /// Verfiy REGISTRY_OPERATOR role
+        {
+            assertEq(_core.hasRole(Roles.REGISTRY_OPERATOR, addresses.getAddress("ERC1155_SEASON_ONE")), true);
         }
 
         // Sum of Role counts to date

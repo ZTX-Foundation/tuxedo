@@ -28,6 +28,9 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
     /// @notice Total amount of reward tokens needed by the contract to be solvent
     uint256 public totalRewardTokens;
 
+    /// @notice Total amount of reward tokens used for the whole season
+    uint256 public totalRewardTokensUsed;
+
     /// @notice Total amount of reward tokens clawedback. Kept for record keeping.
     uint256 public totalClawedBack;
 
@@ -47,15 +50,15 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
 
     constructor(
         address _core,
-        address _nftSeasonContract,
+        address _nftContract,
         address _rewardToken,
         address _tokenIdRegistryContract
     ) CoreRef(_core) {
-        require(_nftSeasonContract != address(0), "SeasonsBase: _nftSeasonContract cannot be 0");
-        require(_rewardToken != address(0), "SeasonsBase: _rewardToken cannot be 0");
-        require(_tokenIdRegistryContract != address(0), "SeasonsBase: tokenIdRegistryContract cannot be 0");
+        require(_nftContract != address(0), "SeasonsBase: _nftContract cannot be 0 address");
+        require(_rewardToken != address(0), "SeasonsBase: _rewardToken cannot be 0 address");
+        require(_tokenIdRegistryContract != address(0), "SeasonsBase: tokenIdRegistryContract cannot be 0 address");
 
-        nftContract = ERC1155MaxSupplyMintable(_nftSeasonContract);
+        nftContract = ERC1155MaxSupplyMintable(_nftContract);
         rewardToken = IERC20(_rewardToken);
         tokenIdRegistryContract = SeasonsTokenIdRegistry(_tokenIdRegistryContract);
     }
@@ -75,7 +78,7 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
         return IERC20(rewardToken).balanceOf(address(this));
     }
 
-    function configSeasonDistribution(
+    function initalizeSeasonDistribution(
         TokenIdRewardAmount[] memory tokenIdRewardAmounts
     ) external virtual returns (uint256);
 
@@ -90,6 +93,9 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
         }
         tokenIdRegistryContract.registerBatch(tokenIds, address(this));
     }
+
+    /// @notice Reconfig the season distribution when a supply change increased
+    function reconfigSeasonDistribution() external virtual returns (uint256) {}
 
     // TODO confirm roles?
     function clawback(address to) public hasAnyOfTwoRoles(Roles.ADMIN, Roles.FINANCIAL_CONTROLLER) {
