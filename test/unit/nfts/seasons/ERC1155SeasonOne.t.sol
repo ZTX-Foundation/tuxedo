@@ -16,6 +16,13 @@ import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegis
 import {ERC1155SeaonsHelperLib as Helper} from "@test/helpers/ERC1155SeasonsHelper.sol";
 
 contract UnitTestERC1155SeasonOne is SeasonBase {
+    /// ----------------------------------- Events ----------------------------------------------/
+
+    /// @dev emitted when totalRewardTokens is set
+    event TotalRewardTokensSet(uint256 oldtotalRewardTokens, uint256 newtotalRewardTokens);
+
+    /// ------------------------------------------------------------------------------------------/
+
     SeasonsTokenIdRegistry private _registry;
     ERC1155SeasonOne private _seasonOne;
     ERC1155MaxSupplyMintable private _capsuleNFT;
@@ -79,7 +86,11 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
     /// ------------------------------------------------------------------------------------------/
 
     function testInitalizeSeasonDistribution() public returns (uint256) {
+        uint _totalRewardTokens = Helper.calulateTotalRewardAmount(SeasonDistributionStruct(), _capsuleNFT);
+
         vm.startPrank(addresses.adminAddress);
+        vm.expectEmit(true, true, true, true);
+        emit TotalRewardTokensSet(0, _totalRewardTokens);
         _seasonOne.initalizeSeasonDistribution(SeasonDistributionStruct());
         vm.stopPrank();
 
@@ -143,8 +154,11 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
 
     function testInitalizeCalledTwice() public {
         testInitalizeSeasonDistribution();
+
         vm.expectRevert("SeasonsTokenIdRegistry: tokenId already registered to a Season Contract");
-        testInitalizeSeasonDistribution();
+        vm.startPrank(addresses.adminAddress);
+        _seasonOne.initalizeSeasonDistribution(SeasonDistributionStruct());
+        vm.stopPrank();
     }
 
     function testInitalizeAndMakeSolventAndReconfigSeasonDistributionMakeSolvent() public {
@@ -163,8 +177,12 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         assertEq(_capsuleNFT.maxTokenSupply(2), 3000);
         assertEq(_capsuleNFT.maxTokenSupply(3), 3000);
 
+        uint _newTotalRewardTokens = Helper.calulateTotalRewardAmount(SeasonDistributionStruct(), _capsuleNFT);
+
         // Reconfig distribution
         vm.prank(addresses.adminAddress);
+        vm.expectEmit(true, true, true, true);
+        emit TotalRewardTokensSet(_totalNeeded, _newTotalRewardTokens);
         uint256 _newTotalNeeded = _seasonOne.reconfigSeasonDistribution();
 
         assertTrue(_newTotalNeeded > _totalNeeded);

@@ -19,6 +19,10 @@ struct TokenIdRewardAmount {
 abstract contract SeasonsBase is CoreRef, ERC1155Holder {
     using SafeERC20 for IERC20;
 
+    /// --------------- Events -----------------///
+
+    event TotalRewardTokensSet(uint256 oldtotalRewardTokens, uint256 newtotalRewardTokens);
+
     /// --------------- Storage -----------------///
 
     ERC1155MaxSupplyMintable public immutable nftContract;

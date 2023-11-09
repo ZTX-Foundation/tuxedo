@@ -56,6 +56,7 @@ contract ERC1155SeasonOne is SeasonsBase {
         registerTokenIds(tokenIdRewardAmounts);
 
         totalRewardTokens = (_totalRewardTokens - totalRewardTokensUsed);
+        emit TotalRewardTokensSet(0, totalRewardTokens);
         return totalRewardTokens;
     }
 
@@ -63,6 +64,7 @@ contract ERC1155SeasonOne is SeasonsBase {
     /// @dev we keep track of the totalRewardTokensUsed and totalRewardTokens to make sure the contract is solvent after a supply cap increase
     function reconfigSeasonDistribution() public override onlyRole(Roles.ADMIN) returns (uint256) {
         uint256 _totalRewardTokens = 0;
+        uint256 _oldTotalRewardTokens = totalRewardTokens;
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint _maxTokenSupply = ERC1155MaxSupplyMintable(nftContract).maxTokenSupply(tokenIds[i]);
             require(_maxTokenSupply != 0, "ERC1155SeasonOne: maxTokenSupply cannot be 0");
@@ -71,6 +73,7 @@ contract ERC1155SeasonOne is SeasonsBase {
             _totalRewardTokens += (tokenIdRewardAmount[tokenIds[i]] * _maxTokenSupply);
         }
         totalRewardTokens = (_totalRewardTokens - totalRewardTokensUsed);
+        emit TotalRewardTokensSet(_oldTotalRewardTokens, totalRewardTokens);
         return totalRewardTokens;
     }
 
