@@ -214,21 +214,21 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
     function testRedeemNotSolvent() public {
         testInitalizeNotSolvent();
         vm.expectRevert("SeasonsBase: Contract Not solvent");
-        _seasonOne.redeem(1);
+        _seasonOne.redeem(address(this), 1);
     }
 
     function testRedeemInvalidTokenId() public {
         testInitalizeAndMakeSolvent(); // config and fund contract
 
         vm.expectRevert("ERC1155SeasonOne: No redeemable tokens for given tokenId");
-        _seasonOne.redeem(0);
+        _seasonOne.redeem(address(this), 0);
     }
 
     function testRedeemNoCapsulesInWallet() public {
         testInitalizeAndMakeSolvent(); // config and fund contract
 
         vm.expectRevert("ERC1155SeasonOne: No capsule available in users wallet");
-        _seasonOne.redeem(1);
+        _seasonOne.redeem(address(this), 1);
     }
 
     function testRedeem() public {
@@ -239,7 +239,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         uint _tokenId = 1;
         mint(_tokenId, 1); // mint 1 capsule of tokenId 1
         _capsuleNFT.setApprovalForAll(address(_seasonOne), true);
-        _seasonOne.redeem(_tokenId);
+        _seasonOne.redeem(address(this), _tokenId);
 
         assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 400);
         assertEq(_seasonOne.totalRewardTokens(), beforeTotalRewardTokens - 400);
@@ -258,7 +258,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         uint _tokenId = 1;
         mint(_tokenId, 1); // mint 1 capsule of tokenId 1
         _capsuleNFT.setApprovalForAll(address(_seasonOne), true);
-        _seasonOne.redeem(_tokenId);
+        _seasonOne.redeem(address(this), _tokenId);
 
         assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 400);
         assertEq(_seasonOne.totalRewardTokens(), beforeTotalRewardTokens - 400);
@@ -270,7 +270,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         _tokenId = 2;
         mint(_tokenId, 1); // mint 1 capsule of tokenId 2
         _capsuleNFT.setApprovalForAll(address(_seasonOne), true);
-        _seasonOne.redeem(_tokenId);
+        _seasonOne.redeem(address(this), _tokenId);
 
         assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 1000);
         assertEq(_seasonOne.totalRewardTokens(), beforeTotalRewardTokens - 400 - 1000);
@@ -314,7 +314,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         _seasonOne.pause();
 
         vm.expectRevert("Pausable: paused");
-        _seasonOne.redeem(1);
+        _seasonOne.redeem(address(this), 1);
     }
 
     function testClawbackWithAdminRoleSuccess() public {

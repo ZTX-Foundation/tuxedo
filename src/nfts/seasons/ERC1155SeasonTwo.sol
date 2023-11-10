@@ -15,7 +15,7 @@ contract ERC1155SeasonTwo is SeasonsBase {
         address _tokenIdRegistryContract
     ) SeasonsBase(_core, _nftContract, _rewardToken, _tokenIdRegistryContract) {}
 
-    function redeem(uint256 tokenId) public override {}
+    function redeem(address hodler, uint256 tokenId) public override {}
 
     function initalizeSeasonDistribution(
         TokenIdRewardAmount[] memory tokenIdRewardAmounts
