@@ -22,6 +22,7 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
     /// --------------- Events -----------------///
 
     event TotalRewardTokensSet(uint256 oldtotalRewardTokens, uint256 newtotalRewardTokens);
+    event Redeemed(address indexed user, uint256 indexed tokenId, uint256 rewardAmount);
 
     /// --------------- Storage -----------------///
 
@@ -103,11 +104,6 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
 
     // TODO confirm roles?
     function clawback(address to) public hasAnyOfTwoRoles(Roles.ADMIN, Roles.FINANCIAL_CONTROLLER) {
-        // checks
-        if (!paused()) {
-            revert NoPaused();
-        }
-
         // effects
         totalClawedBack = totalRewardTokens;
         totalRewardTokens = 0;

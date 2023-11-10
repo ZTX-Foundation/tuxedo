@@ -104,5 +104,7 @@ contract ERC1155SeasonOne is SeasonsBase {
 
         // Release reward tokens
         rewardToken.safeTransfer(msg.sender, _rewardAmount);
+
+        emit Redeemed(msg.sender, tokenId, _rewardAmount);
     }
 }
