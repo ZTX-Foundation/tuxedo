@@ -98,11 +98,9 @@ contract ERC1155SeasonOne is SeasonsBase {
         totalRewardTokensUsed += _rewardAmount;
 
         /// ---- interaction ---- ///
-        // Transfer
-        nftContract.safeTransferFrom(msg.sender, address(this), tokenId, 1, "");
 
         // Burn
-        nftContract.burn(address(this), tokenId, 1);
+        nftContract.burn(msg.sender, tokenId, 1);
 
         // Release reward tokens
         rewardToken.safeTransfer(msg.sender, _rewardAmount);
