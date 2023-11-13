@@ -150,7 +150,7 @@ contract IntegrationTestERC1155SeasonOne is BaseTest {
 
         // redeem nft
         _erc1155Consumables.setApprovalForAll(address(_seasonOne), true);
-        _seasonOne.redeem(address(this), _tokenId);
+        _seasonOne.redeem(_tokenId);
 
         // verify the balance of the season contract
         assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 400);

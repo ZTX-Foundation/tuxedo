@@ -77,7 +77,7 @@ contract ERC1155SeasonOne is SeasonsBase {
         return totalRewardTokens;
     }
 
-    function redeem(address hodler, uint256 tokenId) public override whenNotPaused verifySolvent {
+    function redeem(uint256 tokenId) public override whenNotPaused verifySolvent {
         /// ---- checks ---- ///
         require(tokenIdRewardAmount[tokenId] > 0, "ERC1155SeasonOne: No redeemable tokens for given tokenId");
         require(
@@ -100,11 +100,11 @@ contract ERC1155SeasonOne is SeasonsBase {
         /// ---- interaction ---- ///
 
         // Burn
-        nftContract.burn(hodler, tokenId, 1);
+        nftContract.burn(msg.sender, tokenId, 1);
 
         // Release reward tokens
-        rewardToken.safeTransfer(hodler, _rewardAmount);
+        rewardToken.safeTransfer(msg.sender, _rewardAmount);
 
-        emit Redeemed(hodler, tokenId, _rewardAmount);
+        emit Redeemed(msg.sender, tokenId, _rewardAmount);
     }
 }

@@ -87,7 +87,7 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
         TokenIdRewardAmount[] memory tokenIdRewardAmounts
     ) external virtual returns (uint256);
 
-    function redeem(address hodler, uint256 tokenId) public virtual;
+    function redeem(uint256 tokenId) public virtual;
 
     /// @notice Register tokenIds to the tokenIdRegistryContract
     function registerTokenIds(TokenIdRewardAmount[] memory tokenIdRewardAmounts) internal {
