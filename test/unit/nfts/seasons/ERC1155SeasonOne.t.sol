@@ -9,17 +9,23 @@ import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.
 import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
-import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
 import {SeasonBase} from "@test/unit/nfts/seasons/SeasonBase.t.sol";
 import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
+import {ERC1155SeaonsHelperLib as Helper} from "@test/helpers/ERC1155SeasonsHelper.sol";
 
 contract UnitTestERC1155SeasonOne is SeasonBase {
+    /// ----------------------------------- Events ----------------------------------------------/
+
+    /// @dev emitted when totalRewardTokens is set
+    event TotalRewardTokensSet(uint256 oldtotalRewardTokens, uint256 newtotalRewardTokens);
+
+    /// ------------------------------------------------------------------------------------------/
+
     SeasonsTokenIdRegistry private _registry;
     ERC1155SeasonOne private _seasonOne;
     ERC1155MaxSupplyMintable private _capsuleNFT;
-    ERC1155AutoGraphMinter private _autoGraphMinter;
 
     function setUp() public override(SeasonBase) {
         super.setUp();
@@ -61,41 +67,44 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         vm.prank(addresses.minterAddress);
         _capsuleNFT.mint(address(this), _tokenId, units);
 
+        vm.prank(addresses.lockerAddress);
+        lock.unlock(0);
+
         assertEq(_capsuleNFT.balanceOf(address(this), _tokenId), units);
     }
 
-    function calulateTotalRewardAmount(
-        TokenIdRewardAmount[] memory tokenIdRewardAmounts
-    ) public view returns (uint256) {
-        uint256 totalNeeded = 0;
-        for (uint256 i = 0; i < tokenIdRewardAmounts.length; i++) {
-            uint _maxTokenSupply = _capsuleNFT.maxTokenSupply(tokenIdRewardAmounts[i].tokenId);
-            totalNeeded += (tokenIdRewardAmounts[i].rewardAmount * _maxTokenSupply);
-        }
-        return totalNeeded;
-    }
-
-    /// ------------------------------------------------------------------------------------------/
-
-    function testConfigSeasonDistribution() public returns (uint256) {
+    function SeasonDistributionStruct() public pure returns (TokenIdRewardAmount[] memory) {
         TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](3);
 
         // Set tokenId to Reward Amount.
         tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 1, rewardAmount: 400});
         tokenIdRewardAmounts[1] = TokenIdRewardAmount({tokenId: 2, rewardAmount: 1000});
         tokenIdRewardAmounts[2] = TokenIdRewardAmount({tokenId: 3, rewardAmount: 1600});
+        return tokenIdRewardAmounts;
+    }
 
-        vm.prank(addresses.adminAddress);
-        _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
+    /// ------------------------------------------------------------------------------------------/
 
-        assertEq(_seasonOne.totalRewardTokens(), calulateTotalRewardAmount(tokenIdRewardAmounts));
+    function testInitalizeSeasonDistribution() public returns (uint256) {
+        uint _totalRewardTokens = Helper.calulateTotalRewardAmount(SeasonDistributionStruct(), _capsuleNFT);
+
+        vm.startPrank(addresses.adminAddress);
+        vm.expectEmit(true, true, true, true);
+        emit TotalRewardTokensSet(0, _totalRewardTokens);
+        _seasonOne.initalizeSeasonDistribution(SeasonDistributionStruct());
+        vm.stopPrank();
+
+        assertEq(
+            _seasonOne.totalRewardTokens(),
+            Helper.calulateTotalRewardAmount(SeasonDistributionStruct(), _capsuleNFT)
+        );
         assertEq(_registry.tokenIdSeasonContract(1), address(_seasonOne));
         assertEq(_registry.tokenIdSeasonContract(2), address(_seasonOne));
         assertEq(_registry.tokenIdSeasonContract(3), address(_seasonOne));
         return _seasonOne.totalRewardTokens();
     }
 
-    function testConfigSeasonDistributionFailZeroReward() public {
+    function testInitalizeSeasonDistributionFailZeroReward() public {
         TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](1);
 
         // Set tokenId to Reward Amount.
@@ -103,10 +112,10 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
 
         vm.prank(addresses.adminAddress);
         vm.expectRevert("ERC1155SeasonOne: rewardAmount cannot be 0");
-        _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
+        _seasonOne.initalizeSeasonDistribution(tokenIdRewardAmounts);
     }
 
-    function testConfigSeasonDistributionFailZeroSupply() public {
+    function testInitalizeSeasonDistributionFailZeroSupply() public {
         TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](1);
 
         // Set tokenId to Reward Amount.
@@ -114,85 +123,193 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
 
         vm.prank(addresses.adminAddress);
         vm.expectRevert("ERC1155SeasonOne: maxTokenSupply cannot be 0");
-        _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
+        _seasonOne.initalizeSeasonDistribution(tokenIdRewardAmounts);
     }
 
-    function testConfigSeasonDistributionFailNoDeployerRole() public {
+    function testInitalizeSeasonDistributionFailNoDeployerRole() public {
         TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](1);
 
         // Set tokenId to Reward Amount.
         tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 1, rewardAmount: 1000});
 
         vm.expectRevert("CoreRef: no role on core");
-        _seasonOne.configSeasonDistribution(tokenIdRewardAmounts);
+        _seasonOne.initalizeSeasonDistribution(tokenIdRewardAmounts);
     }
 
-    function testConfigNotSolvent() public {
-        testConfigSeasonDistribution(); // config contract.
+    function testInitalizeNotSolvent() public {
+        testInitalizeSeasonDistribution(); // config contract.
         assertEq(_seasonOne.solvent(), false); // no funds in contract.
     }
 
-    function testConfigAndMakeSolvent() public returns (uint256) {
-        uint256 totalNeeded = testConfigSeasonDistribution(); // config contract.
+    function testInitalizeAndMakeSolvent() public returns (uint256) {
+        uint256 _totalNeeded = testInitalizeSeasonDistribution();
 
-        token.mint(address(this), totalNeeded);
-        token.approve(address(_seasonOne), totalNeeded);
+        token.mint(address(this), _totalNeeded);
+        token.approve(address(_seasonOne), _totalNeeded);
         _seasonOne.fund();
 
         assertEq(_seasonOne.solvent(), true);
-        return totalNeeded;
+        return _totalNeeded;
+    }
+
+    function testInitalizeCalledTwice() public {
+        testInitalizeSeasonDistribution();
+
+        vm.expectRevert("SeasonsTokenIdRegistry: tokenId already registered to a Season Contract");
+        vm.startPrank(addresses.adminAddress);
+        _seasonOne.initalizeSeasonDistribution(SeasonDistributionStruct());
+        vm.stopPrank();
+    }
+
+    function testInitalizeAndMakeSolventAndReconfigSeasonDistributionMakeSolvent() public {
+        uint256 _totalNeeded = testInitalizeAndMakeSolvent();
+        assertEq(_seasonOne.totalRewardTokens(), _totalNeeded);
+
+        // increase capsule NFT supply caps.
+        vm.startPrank(addresses.adminAddress);
+        _capsuleNFT.setSupplyCap(1, 3000);
+        _capsuleNFT.setSupplyCap(2, 3000);
+        _capsuleNFT.setSupplyCap(3, 3000);
+        vm.stopPrank();
+
+        // Confirm updated supply
+        assertEq(_capsuleNFT.maxTokenSupply(1), 3000);
+        assertEq(_capsuleNFT.maxTokenSupply(2), 3000);
+        assertEq(_capsuleNFT.maxTokenSupply(3), 3000);
+
+        uint _newTotalRewardTokens = Helper.calulateTotalRewardAmount(SeasonDistributionStruct(), _capsuleNFT);
+
+        // Reconfig distribution
+        vm.prank(addresses.adminAddress);
+        vm.expectEmit(true, true, true, true);
+        emit TotalRewardTokensSet(_totalNeeded, _newTotalRewardTokens);
+        uint256 _newTotalNeeded = _seasonOne.reconfigSeasonDistribution();
+
+        assertTrue(_newTotalNeeded > _totalNeeded);
+        assertEq(_seasonOne.totalRewardTokens(), _newTotalNeeded);
+        assertEq(
+            _seasonOne.totalRewardTokens(),
+            Helper.calulateTotalRewardAmount(SeasonDistributionStruct(), _capsuleNFT)
+        );
+        assertEq(_seasonOne.totalRewardTokens(), 9000000);
+        assertEq(_seasonOne.solvent(), false);
+
+        token.mint(address(this), _newTotalNeeded);
+        token.approve(address(_seasonOne), _newTotalNeeded);
+        _seasonOne.fund();
+        assertEq(_seasonOne.solvent(), true);
     }
 
     function testBalance() public {
-        uint256 totalNeeded = testConfigSeasonDistribution(); // config contract.
+        uint256 _totalNeeded = testInitalizeSeasonDistribution(); // config contract.
         assertEq(_seasonOne.balance(), 0); // no funds in contract.
 
-        token.mint(address(this), totalNeeded);
-        token.approve(address(_seasonOne), totalNeeded);
+        token.mint(address(this), _totalNeeded);
+        token.approve(address(_seasonOne), _totalNeeded);
         _seasonOne.fund();
 
-        assertEq(_seasonOne.balance(), totalNeeded);
+        assertEq(_seasonOne.balance(), _totalNeeded);
     }
 
     function testRedeemNotSolvent() public {
-        testConfigNotSolvent();
+        testInitalizeNotSolvent();
         vm.expectRevert("SeasonsBase: Contract Not solvent");
         _seasonOne.redeem(1);
     }
 
     function testRedeemInvalidTokenId() public {
-        testConfigAndMakeSolvent(); // config and fund contract
+        testInitalizeAndMakeSolvent(); // config and fund contract
 
         vm.expectRevert("ERC1155SeasonOne: No redeemable tokens for given tokenId");
         _seasonOne.redeem(0);
     }
 
     function testRedeemNoCapsulesInWallet() public {
-        testConfigAndMakeSolvent(); // config and fund contract
+        testInitalizeAndMakeSolvent(); // config and fund contract
 
         vm.expectRevert("ERC1155SeasonOne: No capsule available in users wallet");
         _seasonOne.redeem(1);
     }
 
     function testRedeem() public {
-        testConfigAndMakeSolvent(); // config and fund contract
-        uint _tokenId = 1;
+        testInitalizeAndMakeSolvent(); // config and fund contract
         uint beforeTotalRewardTokens = _seasonOne.totalRewardTokens();
         assertEq(token.balanceOf(address(_seasonOne)), beforeTotalRewardTokens);
 
-        mint(1, _tokenId); // mint 1 capsule of tokenId 1
+        uint _tokenId = 1;
+        mint(_tokenId, 1); // mint 1 capsule of tokenId 1
         _capsuleNFT.setApprovalForAll(address(_seasonOne), true);
-        _seasonOne.redeem(_tokenId);
+        _seasonOne.redeem(1);
 
         assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 400);
+        assertEq(_seasonOne.totalRewardTokens(), beforeTotalRewardTokens - 400);
+        assertEq(_seasonOne.totalRewardTokensUsed(), 400);
         assertEq(_capsuleNFT.balanceOf(address(this), _tokenId), 0); // moved
         assertEq(_capsuleNFT.balanceOf(address(_seasonOne), _tokenId), 0); // burnt
         assertEq(token.balanceOf(address(this)), 400);
         assertEq(token.balanceOf(address(_seasonOne)), beforeTotalRewardTokens - 400);
     }
 
+    function testRedeemThenReConfigDistrbution() public {
+        testInitalizeAndMakeSolvent(); // config and fund contract
+        uint beforeTotalRewardTokens = _seasonOne.totalRewardTokens();
+        assertEq(token.balanceOf(address(_seasonOne)), beforeTotalRewardTokens);
+
+        uint _tokenId = 1;
+        mint(_tokenId, 1); // mint 1 capsule of tokenId 1
+        _capsuleNFT.setApprovalForAll(address(_seasonOne), true);
+        _seasonOne.redeem(_tokenId);
+
+        assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 400);
+        assertEq(_seasonOne.totalRewardTokens(), beforeTotalRewardTokens - 400);
+        assertEq(_capsuleNFT.balanceOf(address(this), _tokenId), 0); // moved
+        assertEq(_capsuleNFT.balanceOf(address(_seasonOne), _tokenId), 0); // burnt
+        assertEq(token.balanceOf(address(this)), 400);
+        assertEq(token.balanceOf(address(_seasonOne)), beforeTotalRewardTokens - 400);
+
+        _tokenId = 2;
+        mint(_tokenId, 1); // mint 1 capsule of tokenId 2
+        _capsuleNFT.setApprovalForAll(address(_seasonOne), true);
+        _seasonOne.redeem(_tokenId);
+
+        assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 1000);
+        assertEq(_seasonOne.totalRewardTokens(), beforeTotalRewardTokens - 400 - 1000);
+        assertEq(_capsuleNFT.balanceOf(address(this), _tokenId), 0); // moved
+        assertEq(_capsuleNFT.balanceOf(address(_seasonOne), _tokenId), 0); // burnt
+        assertEq(token.balanceOf(address(this)), 400 + 1000);
+        assertEq(token.balanceOf(address(_seasonOne)), beforeTotalRewardTokens - 400 - 1000);
+
+        /// increase capsule NFT supply caps.
+        vm.startPrank(addresses.adminAddress);
+        _capsuleNFT.setSupplyCap(1, 3000);
+        _capsuleNFT.setSupplyCap(2, 3000);
+        _capsuleNFT.setSupplyCap(3, 3000);
+        vm.stopPrank();
+
+        // Confirm updated supply
+        assertEq(_capsuleNFT.maxTokenSupply(1), 3000);
+        assertEq(_capsuleNFT.maxTokenSupply(2), 3000);
+        assertEq(_capsuleNFT.maxTokenSupply(3), 3000);
+
+        // Reconfig distribution
+        vm.prank(addresses.adminAddress);
+        uint256 _newTotal = _seasonOne.reconfigSeasonDistribution();
+        assertEq(
+            _seasonOne.totalRewardTokens(),
+            Helper.calulateTotalRewardAmount(SeasonDistributionStruct(), _capsuleNFT) - 400 - 1000
+        );
+        assertEq(_newTotal, 8998600); // manual calulation
+
+        assertEq(_seasonOne.solvent(), false);
+
+        token.mint(address(this), _newTotal);
+        token.approve(address(_seasonOne), _newTotal);
+        _seasonOne.fund();
+        assertEq(_seasonOne.solvent(), true);
+    }
+
     function testRedeemWhenPaused() public {
-        testConfigAndMakeSolvent(); // config and fund contract
+        testInitalizeAndMakeSolvent(); // config and fund contract
         vm.prank(addresses.adminAddress);
         _seasonOne.pause();
 
@@ -201,7 +318,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
     }
 
     function testClawbackWithAdminRoleSuccess() public {
-        uint totals = testConfigAndMakeSolvent(); // config and fund contract
+        uint totals = testInitalizeAndMakeSolvent(); // config and fund contract
         uint _tokenId = 1;
         address recepitent = address(123);
 
@@ -220,7 +337,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
     }
 
     function testClawbackWithFinanicalControllerRoleSuccess() public {
-        uint totals = testConfigAndMakeSolvent(); // config and fund contract
+        uint totals = testInitalizeAndMakeSolvent(); // config and fund contract
         uint _tokenId = 1;
         address recepitent = address(123);
 
@@ -240,7 +357,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
     }
 
     function testClawbackWithOutRoleFail() public {
-        uint totals = testConfigAndMakeSolvent(); // config and fund contract
+        uint totals = testInitalizeAndMakeSolvent(); // config and fund contract
         address recepitent = address(123);
 
         assertEq(token.balanceOf(address(_seasonOne)), totals);

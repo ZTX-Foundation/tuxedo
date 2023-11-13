@@ -190,48 +190,6 @@ contract zipTest is Proposal, TimelockProposal {
 
             addresses.addAddress("GAME_CONSUMABLE", address(consumer));
         }
-
-        {
-            // SeasonsTokenIdRegistry setup
-            SeasonsTokenIdRegistry seasonsTokenIdRegistry = new SeasonsTokenIdRegistry(address(_core));
-            addresses.addAddress("SEASONS_TOKENID_REGISTRY", address(seasonsTokenIdRegistry));
-
-            /// ERC1155MaxSupplyMintable
-            string memory _metadataBaseUri = string(
-                abi.encodePacked("https://meta.", vm.envString("ENVIRONMENT"), vm.envString("DOMAIN"), "/")
-            );
-
-            // CapsulesNFT ERC1155 setup
-            ERC1155MaxSupplyMintable erc1155CapsulesNFT = new ERC1155MaxSupplyMintable(
-                address(_core),
-                string(abi.encodePacked(_metadataBaseUri, "/consumables/metadata/seasons/1/capsules/")), //TODO confirm path
-                "Capsules",
-                "CAPS"
-            );
-            addresses.addAddress("ERC1155_CAPSULES_NFT", address(erc1155CapsulesNFT));
-
-            // Config tokenId to Reaward Amount
-            TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](3);
-            tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 1, rewardAmount: 400});
-            tokenIdRewardAmounts[1] = TokenIdRewardAmount({tokenId: 2, rewardAmount: 1000});
-            tokenIdRewardAmounts[2] = TokenIdRewardAmount({tokenId: 3, rewardAmount: 1600});
-
-            // SeasonOne Logic contract setup
-            ERC1155SeasonOne erc1155SeasonOne = new ERC1155SeasonOne(
-                address(_core),
-                address(erc1155CapsulesNFT),
-                addresses.getAddress("TOKEN"),
-                address(seasonsTokenIdRegistry)
-            );
-            addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne));
-
-            // TODO erc1155.setSupplyCap(1, 4000); numbers need to be given by HQ
-            // TODO erc1155.setSupplyCap(2, 4000); numbers need to be given by HQ
-            // TODO erc1155.setSupplyCap(3, 4000); numbers need to be given by HQ
-
-            // TODO cant called this until supply has been set.
-            // erc1155SeasonOne.configSeasonDistribution(tokenIdRewardAmounts);
-        }
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {

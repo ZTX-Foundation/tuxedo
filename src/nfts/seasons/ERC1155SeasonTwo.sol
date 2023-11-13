@@ -10,14 +10,14 @@ import {CoreRef} from "@protocol/refs/CoreRef.sol";
 contract ERC1155SeasonTwo is SeasonsBase {
     constructor(
         address _core,
-        address _nftSeasonContract,
+        address _nftContract,
         address _rewardToken,
         address _tokenIdRegistryContract
-    ) SeasonsBase(_core, _nftSeasonContract, _rewardToken, _tokenIdRegistryContract) {}
+    ) SeasonsBase(_core, _nftContract, _rewardToken, _tokenIdRegistryContract) {}
 
     function redeem(uint256 tokenId) public override {}
 
-    function configSeasonDistribution(
+    function initalizeSeasonDistribution(
         TokenIdRewardAmount[] memory tokenIdRewardAmounts
     ) external override whenNotPaused onlyRole(Roles.ADMIN) returns (uint256) {}
 }
