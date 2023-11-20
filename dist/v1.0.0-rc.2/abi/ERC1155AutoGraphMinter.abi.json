@@ -160,13 +160,13 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "jobId",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "units",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
