@@ -81,7 +81,7 @@
         "commander": "^11.1.0",
         "ethers": "^5.7.0",
         "husky": "^8.0.3",
-        "jose": "^5.0.1",
+        "jose": "^5.1.0",
         "keccak256": "^1.0.6",
         "lint-staged": "^15.0.2",
         "merkletreejs": "^0.3.11",
