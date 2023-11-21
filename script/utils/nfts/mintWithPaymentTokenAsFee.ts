@@ -1,5 +1,5 @@
 /**
- * Mint an NFT for free.
+ * Mint with payment token as fee
  */
 import fs from "fs";
 import { program } from "commander";
@@ -7,8 +7,8 @@ import { ethers } from "ethers";
 import { hashMessage } from "@ethersproject/hash";
 
 program
-    .name("mintForFree.ts")
-    .description("Mint an NFT for free.")
+    .name("mintWithPaymentTokenAsFee.ts")
+    .description("Mint with payment token as fee.")
     .requiredOption(
         "-i, --abi-path <path>",
         "Path to the ABI file",
@@ -25,6 +25,8 @@ program
     .requiredOption("-a, --units <amount>", "Number of NFTs to mint")
     .requiredOption("-s, --salt <salt>", "Salt")
     .requiredOption("-e, --expiry-token <expiry>", "Expiry token")
+    .requiredOption("-p, --payment-token <address>", "Payment token contract")
+    .requiredOption("-q, --payment-amount <amount>", "Payment amount")
     .requiredOption("-x, --hash <hash>", "Hash")
     .requiredOption("-g, --signature <signature>", "Signature")
     .requiredOption(
@@ -47,18 +49,24 @@ const autoGraphMinterContract = new ethers.Contract(
     wallet
 );
 
+const params = {
+    recipient: program.opts().recipient,
+    jobId: program.opts().jobId,
+    tokenId: program.opts().tokenId,
+    units: program.opts().units,
+    hash: program.opts().hash,
+    salt: program.opts().salt,
+    signature: program.opts().signature,
+    nftContract: program.opts().nftContractAddress,
+    paymentToken: program.opts().paymentToken,
+    paymentAmount: program.opts().paymentAmount,
+    expiryToken: program.opts().expiryToken,
+};
+
 /// call mintForFree contract function.
 await autoGraphMinterContract
-    .mintForFree(
-        program.opts().recipient,
-        program.opts().jobId,
-        program.opts().tokenId,
-        program.opts().units,
-        program.opts().hash,
-        program.opts().salt,
-        program.opts().signature,
-        program.opts().nftContractAddress,
-        program.opts().expiryToken,
+    .mintWithPaymentTokenAsFee(
+        params,
         { gasLimit: 100000000, gasPrice: 100000000 }
     )
     .then((tx: any) => {
