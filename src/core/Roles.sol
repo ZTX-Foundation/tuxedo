@@ -20,6 +20,7 @@ library Roles {
 
     /// @notice the token governance role. Token holders can vote on proposals to change the protocol
     /// should only be owned by a timelock
+    /// TODO naming convention should include _PROTOCOL_ in the name if it is a protocol only role
     bytes32 internal constant TOKEN_GOVERNOR = keccak256("TOKEN_GOVERNOR_ROLE");
 
     /// @notice the protector role. Admin of pause, veto, revoke, and minor roles
@@ -28,18 +29,21 @@ library Roles {
 
     /// @notice can mint tokens arbitrarily
     /// should only be owned by a protocol contract
+    /// TODO naming convention should include _PROTOCOL_ in the name if it is a protocol only role
     bytes32 internal constant MINTER = keccak256("MINTER_ROLE");
 
     /// @notice can operate a registry contract
     /// should only be owned by a protocol contract
+    /// TODO naming convention should include _PROTOCOL_ in the name if it is a protocol only role
     bytes32 internal constant REGISTRY_OPERATOR = keccak256("REGISTRY_OPERATOR_ROLE");
 
     /// @notice can notarize a mint signature
     /// to be used by an offchain service to create a unique signature for a mint transaction for later use
     bytes32 internal constant MINTER_NOTARY = keccak256("MINTER_NOTARY_ROLE");
 
-    /// @notice can move funds out of Finance Deposits
+    /// @notice can move funds out of Finance Deposits that implement the IDepositBase interface
     /// should only be owned by a protocol contract
+    /// TODO naming convention should include _PROTOCOL_ in the name if it is a protocol only role
     bytes32 internal constant FINANCIAL_CONTROLLER = keccak256("FINANCIAL_CONTROLLER_ROLE");
 
     /// @notice can move faster to protect funds than the guardian
@@ -48,6 +52,8 @@ library Roles {
 
     /// @notice can lock and unlock the global reentrancy lock
     /// should only be owned by a protocol contract
+    /// protocol roles are only protocols, no assignments to multisigs
+    /// TODO naming convention should include _PROTOCOL_ in the name if it is a protocol only role
     bytes32 internal constant LOCKER = keccak256("LOCKER_ROLE");
 
     /// @notice game consumer notary role.
