@@ -181,7 +181,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
         require(!expiredHashes[params.inputHash], "ERC1155AutoGraphMinter: Hash expired");
         require(!completedJobs[params.jobId], "ERC1155AutoGraphMinter: Job already completed");
         require(
-            core.hasRole(Roles.MINTER_NOTARY, recoverSigner(params.inputHash, params.signature)),
+            core.hasRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, recoverSigner(params.inputHash, params.signature)),
             "ERC1155AutoGraphMinter: Missing MINTER_NOTARY Role"
         );
 
@@ -491,7 +491,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @param nftContractAddress the address to whitelist
     function addWhitelistedContract(
         address nftContractAddress
-    ) external hasAnyOfTwoRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN) {
+    ) external hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
         _addWhitelistAddress(nftContractAddress);
         emit WhitelistedContractAdded(nftContractAddress);
     }
@@ -500,7 +500,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @param nftContractAddress the address to whitelist
     function removeWhitelistedContract(
         address nftContractAddress
-    ) external hasAnyOfTwoRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN) {
+    ) external hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
         _removeWhitelistAddress(nftContractAddress);
         emit WhitelistedContractRemoved(nftContractAddress);
     }
@@ -509,7 +509,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @param whitelistAddresses the addresses to whitelist, as calldata
     function addWhitelistedContracts(
         address[] calldata whitelistAddresses
-    ) external hasAnyOfTwoRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN) {
+    ) external hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
         _addWhitelistAddresses(whitelistAddresses);
     }
 
@@ -517,7 +517,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @param whitelistAddresses the addresses remove from whitelist, as calldata
     function removeWhitelistedContracts(
         address[] calldata whitelistAddresses
-    ) external hasAnyOfTwoRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN) {
+    ) external hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
         _removeWhitelistAddresses(whitelistAddresses);
     }
 

@@ -102,7 +102,7 @@ contract GlobalReentrancyLock is IGlobalReentrancyLock, CoreRef {
     /// @dev only valid state transitions:
     /// - lock to level 1 from level 0
     /// - lock to level 2 from level 1
-    function lock(uint8 toLock) external override onlyRole(Roles.LOCKER) {
+    function lock(uint8 toLock) external override onlyRole(Roles.LOCKER_PROTOCOL_ROLE) {
         uint8 currentLevel = lockLevel; /// cache to save 1 warm SLOAD
 
         require(toLock == currentLevel + 1, "GlobalReentrancyLock: invalid lock level");
@@ -145,7 +145,7 @@ contract GlobalReentrancyLock is IGlobalReentrancyLock, CoreRef {
     /// @dev only valid state transitions:
     /// - unlock to level 0 from level 1 as original locker in same block as lock
     /// - lock from level 2 down to level 1 in same block as lock
-    function unlock(uint8 toUnlock) external override onlyRole(Roles.LOCKER) {
+    function unlock(uint8 toUnlock) external override onlyRole(Roles.LOCKER_PROTOCOL_ROLE) {
         uint8 currentLevel = lockLevel;
 
         //slither-disable-next-line incorrect-equality

@@ -13,7 +13,7 @@ contract SeasonsTokenIdRegistry is CoreRef {
     function register(
         uint256 tokenId,
         address seasonContract
-    ) external onlyRole(Roles.REGISTRY_OPERATOR) whenNotPaused {
+    ) external onlyRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE) whenNotPaused {
         _register(tokenId, seasonContract);
     }
 
@@ -28,7 +28,7 @@ contract SeasonsTokenIdRegistry is CoreRef {
     function registerBatch(
         uint256[] memory tokenIds,
         address seasonContract
-    ) external onlyRole(Roles.REGISTRY_OPERATOR) whenNotPaused {
+    ) external onlyRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE) whenNotPaused {
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _register(tokenIds[i], seasonContract);
         }

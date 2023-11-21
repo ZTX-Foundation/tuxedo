@@ -52,12 +52,12 @@ contract zip001 is Proposal {
         _core.setGlobalLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK"));
 
         /// Set LOCKER role for all NFT minting contracts
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
 
         /// Set MINTER role for all NFT minting contracts
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
     }
 
     function _afterDeployOnChain(Addresses, address deployer) internal override {
@@ -121,27 +121,27 @@ contract zip001 is Proposal {
         /// Verfiy all roles have been assigned correcly
         /// Verfiy LOCKER role
         assertTrue(
-            _core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
+            _core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
             "incorrect locker wearables"
         );
         assertTrue(
-            _core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")),
+            _core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")),
             "incorrect locker admin minter"
         );
 
         /// Verfiy MINTER role
         assertTrue(
-            _core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
+            _core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
             "incorrect minter wearables"
         );
         assertTrue(
-            _core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")),
+            _core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER")),
             "incorrect minter admin minter"
         );
 
         // Sum of Role counts to date
-        assertEq(_core.getRoleMemberCount(Roles.LOCKER), 2, "incorrect locker count");
-        assertEq(_core.getRoleMemberCount(Roles.MINTER), 2, "incorrect minter count");
+        assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 2, "incorrect locker count");
+        assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 2, "incorrect minter count");
     }
 
     function _validateOnChain(Addresses, address deployer) internal override {

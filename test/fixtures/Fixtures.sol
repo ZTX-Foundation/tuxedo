@@ -26,14 +26,14 @@ function getCore(Vm vm) returns (Core) {
     vm.startPrank(TestAddresses.adminAddress);
     Core core = new Core();
 
-    core.grantRole(Roles.TOKEN_GOVERNOR, TestAddresses.tokenGovernorAddress);
+    core.grantRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, TestAddresses.tokenGovernorAddress);
     core.grantRole(Roles.GUARDIAN, TestAddresses.guardianAddress);
-    core.grantRole(Roles.MINTER, TestAddresses.minterAddress);
-    core.grantRole(Roles.FINANCIAL_CONTROLLER, TestAddresses.financialControllerAddress);
+    core.grantRole(Roles.MINTER_PROTOCOL_ROLE, TestAddresses.minterAddress);
+    core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, TestAddresses.financialControllerAddress);
     core.grantRole(Roles.FINANCIAL_GUARDIAN, TestAddresses.financialGuardianAddress);
-    core.grantRole(Roles.LOCKER, TestAddresses.lockerAddress);
-    core.grantRole(Roles.MINTER_NOTARY, TestAddresses.minterNotaryAddress);
-    core.grantRole(Roles.REGISTRY_OPERATOR, TestAddresses.registryOperatorAddress);
+    core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, TestAddresses.lockerAddress);
+    core.grantRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, TestAddresses.minterNotaryAddress);
+    core.grantRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, TestAddresses.registryOperatorAddress);
 
     vm.stopPrank();
     return core;
@@ -74,11 +74,11 @@ function getSystem(
 
     vm.startPrank(TestAddresses.adminAddress);
     core.setGlobalLock(address(lock));
-    core.grantRole(Roles.LOCKER, address(nft));
-    core.grantRole(Roles.LOCKER, address(sale));
-    core.grantRole(Roles.MINTER, address(sale));
-    core.grantRole(Roles.LOCKER, address(guardian));
-    core.grantRole(Roles.FINANCIAL_CONTROLLER, address(guardian));
+    core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(nft));
+    core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(sale));
+    core.grantRole(Roles.MINTER_PROTOCOL_ROLE, address(sale));
+    core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(guardian));
+    core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, address(guardian));
     core.grantRole(Roles.GUARDIAN, address(guardian));
     vm.stopPrank();
 

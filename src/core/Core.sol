@@ -24,15 +24,15 @@ contract Core is AccessControlEnumerable {
     constructor() {
         _grantRole(Roles.ADMIN, msg.sender);
         _setRoleAdmin(Roles.ADMIN, Roles.ADMIN);
-        _setRoleAdmin(Roles.TOKEN_GOVERNOR, Roles.ADMIN);
+        _setRoleAdmin(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN);
         _setRoleAdmin(Roles.GUARDIAN, Roles.ADMIN);
-        _setRoleAdmin(Roles.MINTER, Roles.ADMIN);
-        _setRoleAdmin(Roles.FINANCIAL_CONTROLLER, Roles.ADMIN);
+        _setRoleAdmin(Roles.MINTER_PROTOCOL_ROLE, Roles.ADMIN);
+        _setRoleAdmin(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, Roles.ADMIN);
         _setRoleAdmin(Roles.FINANCIAL_GUARDIAN, Roles.ADMIN);
-        _setRoleAdmin(Roles.LOCKER, Roles.ADMIN);
-        _setRoleAdmin(Roles.MINTER_NOTARY, Roles.ADMIN);
-        _setRoleAdmin(Roles.GAME_CONSUMER_NOTARY, Roles.ADMIN);
-        _setRoleAdmin(Roles.REGISTRY_OPERATOR, Roles.ADMIN);
+        _setRoleAdmin(Roles.LOCKER_PROTOCOL_ROLE, Roles.ADMIN);
+        _setRoleAdmin(Roles.MINTER_NOTARY_PROTOCOL_ROLE, Roles.ADMIN);
+        _setRoleAdmin(Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE, Roles.ADMIN);
+        _setRoleAdmin(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, Roles.ADMIN);
     }
 
     /// @notice create a new role. This is the only way
@@ -48,7 +48,7 @@ contract Core is AccessControlEnumerable {
     /// @dev only callable by admin or token governor
     function setGlobalLock(address _lock) external {
         require(
-            hasRole(Roles.ADMIN, msg.sender) || hasRole(Roles.TOKEN_GOVERNOR, msg.sender),
+            hasRole(Roles.ADMIN, msg.sender) || hasRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, msg.sender),
             "Core: must be admin or token governor"
         );
 

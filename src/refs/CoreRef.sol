@@ -85,13 +85,13 @@ abstract contract CoreRef is Pausable {
 
     /// @notice set pausable methods to paused
     /// callable by admin, guardian, or token governance
-    function pause() external hasAnyOfThreeRoles(Roles.ADMIN, Roles.TOKEN_GOVERNOR, Roles.GUARDIAN) {
+    function pause() external hasAnyOfThreeRoles(Roles.ADMIN, Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.GUARDIAN) {
         _pause();
     }
 
     /// @notice set pausable methods to unpaused
     /// callable by admin or token governance
-    function unpause() external hasAnyOfThreeRoles(Roles.ADMIN, Roles.TOKEN_GOVERNOR, Roles.GUARDIAN) {
+    function unpause() external hasAnyOfThreeRoles(Roles.ADMIN, Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.GUARDIAN) {
         _unpause();
     }
 

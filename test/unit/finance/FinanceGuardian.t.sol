@@ -26,7 +26,7 @@ contract UnitTestFinanceGuardian is BaseTest {
         deposit = new MockDeposit(address(core), address(token), 0);
 
         vm.startPrank(addresses.adminAddress);
-        core.grantRole(Roles.LOCKER, address(deposit));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(deposit));
         guardian.addWhitelistAddress(address(deposit));
         token.mint(address(deposit), mintAmount);
         vm.stopPrank();
@@ -50,10 +50,10 @@ contract UnitTestFinanceGuardian is BaseTest {
     }
 
     function testGuardianRoles() public {
-        assertTrue(core.hasRole(Roles.LOCKER, address(deposit)));
-        assertTrue(core.hasRole(Roles.LOCKER, address(guardian)));
+        assertTrue(core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, address(deposit)));
+        assertTrue(core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, address(guardian)));
         assertTrue(core.hasRole(Roles.GUARDIAN, address(guardian)));
-        assertTrue(core.hasRole(Roles.FINANCIAL_CONTROLLER, address(guardian)));
+        assertTrue(core.hasRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, address(guardian)));
     }
 
     function testPausedAfterWithdrawToSafeAddress() public {

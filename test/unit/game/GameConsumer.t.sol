@@ -24,7 +24,7 @@ contract GameConsumerUnitTest is BaseTest {
         notary = vm.addr(privateKey);
 
         vm.prank(addresses.adminAddress);
-        core.grantRole(Roles.GAME_CONSUMER_NOTARY, notary);
+        core.grantRole(Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE, notary);
 
         gameConsumer = new GameConsumer(address(core), address(token), address(this), address(weth));
     }
@@ -167,7 +167,7 @@ contract GameConsumerUnitTest is BaseTest {
 
     function testTakePaymentFailsSignerNotOracle() public {
         vm.prank(addresses.adminAddress);
-        core.revokeRole(Roles.GAME_CONSUMER_NOTARY, notary);
+        core.revokeRole(Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE, notary);
 
         (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(token)
@@ -270,7 +270,7 @@ contract GameConsumerUnitTest is BaseTest {
     function testTakePaymentWithEthFailsSignerNotOracle() public {
         vm.deal(address(this), 1e18);
         vm.prank(addresses.adminAddress);
-        core.revokeRole(Roles.GAME_CONSUMER_NOTARY, notary);
+        core.revokeRole(Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE, notary);
 
         (address payer, uint256 jobId, uint256 expiryTimestamp, uint256 salt, bytes32 hash, bytes memory sig) = setupTakePaymentTx(
             address(weth)

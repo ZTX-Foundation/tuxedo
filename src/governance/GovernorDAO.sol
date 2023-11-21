@@ -60,23 +60,23 @@ contract GovernorDAO is
 
     /// @notice Override of a GovernorSettings function, to restrict to TOKEN_GOVERNOR role.
     /// @param newVotingDelay The new voting delay, in blocks
-    function setVotingDelay(uint256 newVotingDelay) public override onlyRole(Roles.TOKEN_GOVERNOR) {
+    function setVotingDelay(uint256 newVotingDelay) public override onlyRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE) {
         _setVotingDelay(newVotingDelay);
     }
 
     /// @notice Override of a GovernorSettings function, to restrict to Core TOKEN_GOVERNOR role.
     /// @param newVotingPeriod The new voting period, in blocks
-    function setVotingPeriod(uint256 newVotingPeriod) public override onlyRole(Roles.TOKEN_GOVERNOR) {
+    function setVotingPeriod(uint256 newVotingPeriod) public override onlyRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE) {
         _setVotingPeriod(newVotingPeriod);
     }
 
     /// @notice Override of a GovernorSettings.sol function, to restrict to Core TOKEN_GOVERNOR role.
-    function setProposalThreshold(uint256 newProposalThreshold) public override onlyRole(Roles.TOKEN_GOVERNOR) {
+    function setProposalThreshold(uint256 newProposalThreshold) public override onlyRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE) {
         _setProposalThreshold(newProposalThreshold);
     }
 
     /// @notice Adjust quorum, restricted to TOKEN_GOVERNOR role.
-    function setQuorum(uint256 newQuorum) public onlyRole(Roles.TOKEN_GOVERNOR) {
+    function setQuorum(uint256 newQuorum) public onlyRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE) {
         require(newQuorum > 0, "GovernorDAO: quorum must be greater than 0");
         _setQuorum(newQuorum);
     }

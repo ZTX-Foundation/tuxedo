@@ -200,27 +200,27 @@ contract zipTest is Proposal, TimelockProposal {
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
 
         /// LOCKER role
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_SALE_WEARABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
 
         /// MINTER role
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_SALE_WEARABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
 
         /// TOKEN_GOVERNOR role
-        _core.grantRole(Roles.TOKEN_GOVERNOR, addresses.getAddress("GOVERNOR_DAO"));
+        _core.grantRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, addresses.getAddress("GOVERNOR_DAO"));
 
         /// GUARDIAN role
         _core.grantRole(Roles.GUARDIAN, addresses.getAddress("FINANCE_GUARDIAN"));
         _core.grantRole(Roles.GUARDIAN, addresses.getAddress("GUARDIAN_MULTISIG"));
 
         /// FINANCIAL_CONTROLLER role
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER, addresses.getAddress("FINANCE_GUARDIAN"));
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER, addresses.getAddress("TREASURY_WALLET"));
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER, addresses.getAddress("WETH_TREASURY_WALLET"));
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER, addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER"));
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("FINANCE_GUARDIAN"));
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("TREASURY_WALLET"));
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("WETH_TREASURY_WALLET"));
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER"));
 
         /// FINANCIAL_GUARDIAN Role
         _core.grantRole(Roles.FINANCIAL_GUARDIAN, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
@@ -276,26 +276,26 @@ contract zipTest is Proposal, TimelockProposal {
         assertEq(address(ERC20Splitter(addresses.getAddress("CONSUMABLE_SPLITTER")).core()), address(_core));
 
         /// Check that right number of roles has been assigned
-        assertEq(_core.getRoleMemberCount(Roles.FINANCIAL_CONTROLLER), 4);
+        assertEq(_core.getRoleMemberCount(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE), 4);
         assertEq(_core.getRoleMemberCount(Roles.GUARDIAN), 2);
         assertEq(_core.getRoleMemberCount(Roles.FINANCIAL_GUARDIAN), 1);
-        assertEq(_core.getRoleMemberCount(Roles.LOCKER), 8);
-        assertEq(_core.getRoleMemberCount(Roles.MINTER), 8);
+        assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 8);
+        assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 8);
 
         /// ADMIN role
         // assertEq(_core.getRoleMember(Roles.ADMIN, 1), addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
 
         /// TOKEN_GOVERNOR role
-        assertEq(_core.getRoleMember(Roles.TOKEN_GOVERNOR, 0), addresses.getAddress("GOVERNOR_DAO"));
+        assertEq(_core.getRoleMember(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, 0), addresses.getAddress("GOVERNOR_DAO"));
 
         /// GUARDIAN role
         assertEq(_core.getRoleMember(Roles.GUARDIAN, 0), addresses.getAddress("FINANCE_GUARDIAN"));
         assertEq(_core.getRoleMember(Roles.GUARDIAN, 1), addresses.getAddress("GUARDIAN_MULTISIG"));
 
         /// FINANCIAL_CONTROLLER role
-        assertEq(_core.getRoleMember(Roles.FINANCIAL_CONTROLLER, 0), addresses.getAddress("FINANCE_GUARDIAN"));
-        assertEq(_core.getRoleMember(Roles.FINANCIAL_CONTROLLER, 1), addresses.getAddress("TREASURY_WALLET"));
-        assertEq(_core.getRoleMember(Roles.FINANCIAL_CONTROLLER, 2), addresses.getAddress("WETH_TREASURY_WALLET"));
+        assertEq(_core.getRoleMember(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, 0), addresses.getAddress("FINANCE_GUARDIAN"));
+        assertEq(_core.getRoleMember(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, 1), addresses.getAddress("TREASURY_WALLET"));
+        assertEq(_core.getRoleMember(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, 2), addresses.getAddress("WETH_TREASURY_WALLET"));
 
         /// FINANCIAL_GUARDIAN role
         assertEq(_core.getRoleMember(Roles.FINANCIAL_GUARDIAN, 0), addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));

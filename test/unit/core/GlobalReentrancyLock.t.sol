@@ -29,8 +29,8 @@ contract UnitTestGlobalReentrancyLock is Test {
         vm.startPrank(addresses.tokenGovernorAddress);
         core = new Core();
         testLock = new MockReentrancyLock(address(core));
-        core.grantRole(Roles.LOCKER, address(testLock));
-        core.grantRole(Roles.LOCKER, locker);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(testLock));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, locker);
         lock = new GlobalReentrancyLock(address(core));
         core.setGlobalLock(address(lock));
 
@@ -45,13 +45,13 @@ contract UnitTestGlobalReentrancyLock is Test {
         assertEq(lock.lastSender(), address(0));
         assertEq(lock.lastBlockEntered(), 0);
 
-        assertTrue(core.hasRole(Roles.LOCKER, address(testLock)));
+        assertTrue(core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, address(testLock)));
     }
 
     function testLockFailsWithoutRole() public {
         vm.prank(addresses.tokenGovernorAddress);
-        core.revokeRole(Roles.LOCKER, address(testLock));
-        assertTrue(!core.hasRole(Roles.LOCKER, address(testLock)));
+        core.revokeRole(Roles.LOCKER_PROTOCOL_ROLE, address(testLock));
+        assertTrue(!core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, address(testLock)));
 
         vm.expectRevert("CoreRef: no role on core");
 
@@ -63,8 +63,8 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testLockFailsWithoutRoleRevokeGlobalLocker() public {
         vm.prank(addresses.tokenGovernorAddress);
-        core.revokeRole(Roles.LOCKER, address(testLock));
-        assertTrue(!core.hasRole(Roles.LOCKER, address(testLock)));
+        core.revokeRole(Roles.LOCKER_PROTOCOL_ROLE, address(testLock));
+        assertTrue(!core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, address(testLock)));
 
         vm.expectRevert("CoreRef: no role on core");
 
@@ -96,9 +96,9 @@ contract UnitTestGlobalReentrancyLock is Test {
             assertTrue(!lock.isLocked());
 
             address toPrank = address(uint160(i > 7 ? 7 : i));
-            if (!core.hasRole(Roles.LOCKER, toPrank)) {
+            if (!core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, toPrank)) {
                 vm.prank(addresses.tokenGovernorAddress);
-                core.grantRole(Roles.LOCKER, toPrank);
+                core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, toPrank);
             }
 
             vm.prank(toPrank);
@@ -128,9 +128,9 @@ contract UnitTestGlobalReentrancyLock is Test {
             assertTrue(!lock.isLocked());
 
             address toPrank = address(uint160(i > 7 ? 7 : i));
-            if (!core.hasRole(Roles.LOCKER, toPrank)) {
+            if (!core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, toPrank)) {
                 vm.prank(addresses.tokenGovernorAddress);
-                core.grantRole(Roles.LOCKER, toPrank);
+                core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, toPrank);
             }
 
             vm.prank(toPrank);
@@ -165,9 +165,9 @@ contract UnitTestGlobalReentrancyLock is Test {
             assertEq(lock.lockLevel(), 0);
 
             address toPrank = address(uint160(i > 7 ? 7 : i));
-            if (!core.hasRole(Roles.LOCKER, toPrank)) {
+            if (!core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, toPrank)) {
                 vm.prank(addresses.tokenGovernorAddress);
-                core.grantRole(Roles.LOCKER, toPrank);
+                core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, toPrank);
             }
 
             vm.prank(toPrank);
@@ -214,7 +214,7 @@ contract UnitTestGlobalReentrancyLock is Test {
     function testLockStopsReentrancy() public {
         MockReentrancyLockFailure lock2 = new MockReentrancyLockFailure(address(core), address(testLock));
         vm.prank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, address(lock2));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(lock2));
 
         /// CoreRef modifier globalLock enforces level
         vm.expectRevert("GlobalReentrancyLock: invalid lock level");
@@ -254,7 +254,7 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testGovernorSystemRecovery() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
 
         lock.lock(1);
 
@@ -279,7 +279,7 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testGovernorSystemRecoveryLevelTwoLocked() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
         lock.lock(1);
         vm.stopPrank();
 
@@ -308,7 +308,7 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testGovernorSystemRecoveryLevelTwoAndLevelOneLocked() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
         lock.lock(1);
         vm.stopPrank();
 
@@ -338,14 +338,14 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testOnlySameLockerCanUnlock() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
 
         lock.lock(1);
-        core.grantRole(Roles.LOCKER, address(this));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(this));
 
         vm.stopPrank();
 
-        assertTrue(core.hasRole(Roles.LOCKER, address(this)));
+        assertTrue(core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, address(this)));
         assertTrue(lock.isLocked());
         assertTrue(!lock.isUnlocked());
         assertEq(lock.lastBlockEntered(), block.number);
@@ -365,14 +365,14 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testOnlySameLockerCanUnlockLevelTwo() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
         lock.lock(1);
         vm.stopPrank();
 
         vm.prank(locker);
         lock.lock(2);
 
-        assertTrue(core.hasRole(Roles.LOCKER, addresses.tokenGovernorAddress));
+        assertTrue(core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress));
 
         assertEq(lock.lockLevel(), 2);
 
@@ -388,15 +388,15 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testInvalidStateReverts() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, address(this));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(this));
         lock.lock(1);
         vm.stopPrank();
 
         lock.lock(2);
 
-        assertTrue(core.hasRole(Roles.LOCKER, addresses.tokenGovernorAddress));
-        assertTrue(core.hasRole(Roles.LOCKER, address(this)));
+        assertTrue(core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress));
+        assertTrue(core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, address(this)));
 
         assertEq(lock.lockLevel(), 2);
 
@@ -412,8 +412,8 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testLockingLevelTwoWhileLevelOneLockedDoesntSetSender() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, address(this));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(this));
 
         lock.lock(1);
         assertEq(lock.lockLevel(), 1);
@@ -432,7 +432,7 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testUnlockingLevelOneWhileLevelTwoLockedFails() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, address(this));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(this));
         vm.stopPrank();
 
         lock.lock(1);
@@ -454,7 +454,7 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testCannotLockLevel2WhileLevelNotLocked() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
 
         vm.expectRevert("GlobalReentrancyLock: invalid lock level");
         lock.lock(2);
@@ -467,7 +467,7 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testCannotLockLevel2WhileLevel1LockedPreviousBlock() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
 
         lock.lock(1);
         vm.roll(block.number + 1);
@@ -484,7 +484,7 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testCannotLockLevel2WhileLevel2Locked() public {
         vm.prank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
 
         vm.prank(addresses.tokenGovernorAddress);
         lock.lock(1);
@@ -505,7 +505,7 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testCannotLockLevel3() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
 
         lock.lock(1);
         vm.stopPrank();
@@ -526,7 +526,7 @@ contract UnitTestGlobalReentrancyLock is Test {
     function testUnlockFailsSystemNotEntered() public {
         vm.startPrank(addresses.tokenGovernorAddress);
 
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
         lock.lock(1);
         lock.unlock(0);
         vm.expectRevert("GlobalReentrancyLock: system not entered");
@@ -540,7 +540,7 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testUnlockFailsSystemNotEnteredBlockAdvanced() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
         lock.lock(1);
         lock.unlock(0);
         vm.roll(block.number + 1);
@@ -550,8 +550,8 @@ contract UnitTestGlobalReentrancyLock is Test {
 
     function testUnlockLevelTwoFailsSystemEnteredLevelOne() public {
         vm.startPrank(addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
         lock.lock(1);
         vm.expectRevert("GlobalReentrancyLock: unlock level must be 1 lower");
         lock.unlock(2);
@@ -563,7 +563,7 @@ contract UnitTestGlobalReentrancyLock is Test {
     function testUnlockLevel2FailsSystemNotEnteredBlockAdvanced() public {
         vm.startPrank(addresses.tokenGovernorAddress);
 
-        core.grantRole(Roles.LOCKER, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
         lock.lock(1);
         vm.stopPrank();
 

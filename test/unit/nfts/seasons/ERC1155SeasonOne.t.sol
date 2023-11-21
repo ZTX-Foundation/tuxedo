@@ -38,7 +38,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
 
         // Set supply
         vm.startPrank(addresses.adminAddress);
-        core.grantRole(Roles.LOCKER, address(_capsuleNFT));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(_capsuleNFT));
         _capsuleNFT.setSupplyCap(1, 1000);
         _capsuleNFT.setSupplyCap(2, 1000);
         _capsuleNFT.setSupplyCap(3, 1000);
@@ -54,7 +54,7 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
 
         // Give contract the registry operator role
         vm.prank(addresses.adminAddress);
-        core.grantRole(Roles.REGISTRY_OPERATOR, address(_seasonOne));
+        core.grantRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, address(_seasonOne));
     }
 
     /// ----------------------------------- Helpers ----------------------------------------------/

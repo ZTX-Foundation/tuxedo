@@ -694,7 +694,7 @@ contract BasePauseSystem is BaseTest {
         actualERC721Staking = new ActualERC721Staking(addresses.getAddress("CORE"), address(mockERC721));
 
         vm.startPrank(addresses.getAddress("ADMIN_MULTISIG"));
-        Core(addresses.getAddress("CORE")).grantRole(Roles.LOCKER, address(actualERC721Staking));
+        Core(addresses.getAddress("CORE")).grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(actualERC721Staking));
         vm.stopPrank();
     }
 }

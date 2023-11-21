@@ -18,45 +18,45 @@ library Roles {
     /// should only be owned by a multisig and or timelock
     bytes32 internal constant ADMIN = keccak256("ADMIN_ROLE");
 
-    /// @notice the token governance role. Token holders can vote on proposals to change the protocol
-    /// should only be owned by a timelock
-    /// TODO naming convention should include _PROTOCOL_ in the name if it is a protocol only role
-    bytes32 internal constant TOKEN_GOVERNOR = keccak256("TOKEN_GOVERNOR_ROLE");
-
     /// @notice the protector role. Admin of pause, veto, revoke, and minor roles
     /// should only be owned by a multisig
     bytes32 internal constant GUARDIAN = keccak256("GUARDIAN_ROLE");
-
-    /// @notice can mint tokens arbitrarily
-    /// should only be owned by a protocol contract
-    /// TODO naming convention should include _PROTOCOL_ in the name if it is a protocol only role
-    bytes32 internal constant MINTER = keccak256("MINTER_ROLE");
-
-    /// @notice can operate a registry contract
-    /// should only be owned by a protocol contract
-    /// TODO naming convention should include _PROTOCOL_ in the name if it is a protocol only role
-    bytes32 internal constant REGISTRY_OPERATOR = keccak256("REGISTRY_OPERATOR_ROLE");
-
-    /// @notice can notarize a mint signature
-    /// to be used by an offchain service to create a unique signature for a mint transaction for later use
-    bytes32 internal constant MINTER_NOTARY = keccak256("MINTER_NOTARY_ROLE");
-
-    /// @notice can move funds out of Finance Deposits that implement the IDepositBase interface
-    /// should only be owned by a protocol contract
-    /// TODO naming convention should include _PROTOCOL_ in the name if it is a protocol only role
-    bytes32 internal constant FINANCIAL_CONTROLLER = keccak256("FINANCIAL_CONTROLLER_ROLE");
 
     /// @notice can move faster to protect funds than the guardian
     /// can be owned by an EOA
     bytes32 internal constant FINANCIAL_GUARDIAN = keccak256("FINANCIAL_GUARDIAN_ROLE");
 
+    /*///////////////////////////////////////////////////////////////
+                                 Protocol Roles
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice the token governance role. Token holders can vote on proposals to change the protocol
+    /// should only be owned by a timelock
+    bytes32 internal constant DAO_GOVERNOR_PROTOCOL_ROLE = keccak256("DAO_GOVERNOR_ROLE");
+
+    /// @notice can move funds out of Finance Deposits that implement the IDepositBase interface
+    /// should only be owned by a protocol contract
+    bytes32 internal constant FINANCIAL_CONTROLLER_PROTOCOL_ROLE = keccak256("FINANCIAL_CONTROLLER_ROLE");
+
+    /// @notice can mint tokens arbitrarily
+    /// should only be owned by a protocol contract
+    bytes32 internal constant MINTER_PROTOCOL_ROLE = keccak256("MINTER_ROLE");
+
+
+    /// @notice can operate a registry contract
+    /// should only be owned by a protocol contract
+    bytes32 internal constant REGISTRY_OPERATOR_PROTOCOL_ROLE = keccak256("REGISTRY_OPERATOR_ROLE");
+
+    /// @notice can notarize a mint signature
+    /// to be used by an offchain service to create a unique signature for a mint transaction for later use
+    bytes32 internal constant MINTER_NOTARY_PROTOCOL_ROLE = keccak256("MINTER_NOTARY_ROLE");
+
     /// @notice can lock and unlock the global reentrancy lock
     /// should only be owned by a protocol contract
     /// protocol roles are only protocols, no assignments to multisigs
-    /// TODO naming convention should include _PROTOCOL_ in the name if it is a protocol only role
-    bytes32 internal constant LOCKER = keccak256("LOCKER_ROLE");
+    bytes32 internal constant LOCKER_PROTOCOL_ROLE = keccak256("LOCKER_ROLE");
 
     /// @notice game consumer notary role.
     /// can issue signatures for in-game crafting and speed ups
-    bytes32 internal constant GAME_CONSUMER_NOTARY = keccak256("GAME_CONSUMER_NOTARY_ROLE");
+    bytes32 internal constant GAME_CONSUMER_NOTARY_PROTOCOL_ROLE = keccak256("GAME_CONSUMER_NOTARY_ROLE");
 }

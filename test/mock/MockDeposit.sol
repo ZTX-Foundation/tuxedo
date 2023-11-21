@@ -49,7 +49,7 @@ contract MockDeposit is IDepositBase, CoreRef {
     function withdrawETH(
         address payable to,
         uint256 amount
-    ) external onlyRole(Roles.FINANCIAL_CONTROLLER) {
+    ) external onlyRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE) {
         to.transfer(amount);
     }
 

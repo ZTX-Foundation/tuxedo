@@ -26,7 +26,7 @@ contract UnitTestActualERC721Staking is BaseTest, ERC721Holder {
         stakingToken = new MockERC721();
         staking = new ActualERC721Staking(address(core), address(stakingToken));
         vm.prank(addresses.adminAddress);
-        core.grantRole(Roles.LOCKER, address(staking));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(staking));
         vm.warp(block.timestamp + 1); /// core assumption of contract is block.timestamp != 0
     }
 

@@ -42,7 +42,7 @@ contract FinanceGuardian is WhitelistedAddresses, IFinanceGuardian, CoreRef {
     /// @param deposit the address to whitelist
     function addWhitelistAddress(
         address deposit
-    ) external override hasAnyOfTwoRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN) {
+    ) external override hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
         _addWhitelistAddress(deposit);
     }
 
@@ -50,7 +50,7 @@ contract FinanceGuardian is WhitelistedAddresses, IFinanceGuardian, CoreRef {
     /// @param _whitelistAddresses the addresses to whitelist, as calldata
     function addWhitelistAddresses(
         address[] calldata _whitelistAddresses
-    ) external override hasAnyOfTwoRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN) {
+    ) external override hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
         _addWhitelistAddresses(_whitelistAddresses);
     }
 
@@ -60,7 +60,7 @@ contract FinanceGuardian is WhitelistedAddresses, IFinanceGuardian, CoreRef {
     /// @param deposit the address to remove from whitelist
     function removeWhitelistAddress(
         address deposit
-    ) external override hasAnyOfThreeRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN, Roles.GUARDIAN) {
+    ) external override hasAnyOfThreeRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN, Roles.GUARDIAN) {
         _removeWhitelistAddress(deposit);
     }
 
@@ -68,7 +68,7 @@ contract FinanceGuardian is WhitelistedAddresses, IFinanceGuardian, CoreRef {
     /// @param _whitelistAddresses the addresses to remove from whitelist
     function removeWhitelistAddresses(
         address[] calldata _whitelistAddresses
-    ) external override hasAnyOfThreeRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN, Roles.GUARDIAN) {
+    ) external override hasAnyOfThreeRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN, Roles.GUARDIAN) {
         _removeWhitelistAddresses(_whitelistAddresses);
     }
 
@@ -83,7 +83,7 @@ contract FinanceGuardian is WhitelistedAddresses, IFinanceGuardian, CoreRef {
     )
         external
         override
-        hasAnyOfFourRoles(Roles.TOKEN_GOVERNOR, Roles.GUARDIAN, Roles.FINANCIAL_GUARDIAN, Roles.ADMIN)
+        hasAnyOfFourRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.GUARDIAN, Roles.FINANCIAL_GUARDIAN, Roles.ADMIN)
         globalLock(1)
         onlyWhitelist(deposit)
     {
@@ -98,7 +98,7 @@ contract FinanceGuardian is WhitelistedAddresses, IFinanceGuardian, CoreRef {
     )
         external
         override
-        hasAnyOfFourRoles(Roles.TOKEN_GOVERNOR, Roles.GUARDIAN, Roles.FINANCIAL_GUARDIAN, Roles.ADMIN)
+        hasAnyOfFourRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.GUARDIAN, Roles.FINANCIAL_GUARDIAN, Roles.ADMIN)
         globalLock(1)
         onlyWhitelist(deposit)
     {
@@ -117,7 +117,7 @@ contract FinanceGuardian is WhitelistedAddresses, IFinanceGuardian, CoreRef {
     )
         external
         override
-        hasAnyOfFourRoles(Roles.TOKEN_GOVERNOR, Roles.GUARDIAN, Roles.FINANCIAL_GUARDIAN, Roles.ADMIN)
+        hasAnyOfFourRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.GUARDIAN, Roles.FINANCIAL_GUARDIAN, Roles.ADMIN)
         globalLock(1)
         onlyWhitelist(deposit)
     {
@@ -134,7 +134,7 @@ contract FinanceGuardian is WhitelistedAddresses, IFinanceGuardian, CoreRef {
     )
         external
         override
-        hasAnyOfFourRoles(Roles.TOKEN_GOVERNOR, Roles.GUARDIAN, Roles.FINANCIAL_GUARDIAN, Roles.ADMIN)
+        hasAnyOfFourRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.GUARDIAN, Roles.FINANCIAL_GUARDIAN, Roles.ADMIN)
         globalLock(1)
         onlyWhitelist(deposit)
     {

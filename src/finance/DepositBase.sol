@@ -20,7 +20,7 @@ abstract contract DepositBase is IDepositBase, CoreRef {
         address token,
         address to,
         uint256 amount
-    ) public virtual override onlyRole(Roles.FINANCIAL_CONTROLLER) whenNotPaused {
+    ) public virtual override onlyRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE) whenNotPaused {
         IERC20(token).safeTransfer(to, amount);
         emit WithdrawERC20(msg.sender, token, to, amount);
     }
