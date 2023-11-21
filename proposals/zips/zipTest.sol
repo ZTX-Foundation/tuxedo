@@ -139,6 +139,9 @@ contract zipTest is Proposal, TimelockProposal {
             governorDAOTimelock.revokeRole(governorDAOTimelock.TIMELOCK_ADMIN_ROLE(), governorDAOTimelockAdmin);
         }
 
+        /// TODO rename names of these holding deposits, or maybe just remove this zip
+        /// and tests altogether if requirements aren't here yet
+
         {
             ERC20HoldingDeposit burnHoldingDeposit = new ERC20HoldingDeposit(
                 address(_core),
