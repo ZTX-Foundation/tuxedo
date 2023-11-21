@@ -103,6 +103,7 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
     function reconfigSeasonDistribution() external virtual returns (uint256) {}
 
     // TODO confirm roles?
+    /// TODO, should this implement IDepositBase so that Finance Guardian can pull funds?
     function clawback(address to) public hasAnyOfTwoRoles(Roles.ADMIN, Roles.FINANCIAL_CONTROLLER) {
         // effects
         totalClawedBack = totalRewardTokens;
