@@ -104,6 +104,15 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         return _seasonOne.totalRewardTokens();
     }
 
+    function testSetup() public {
+        assertEq(_seasonOne.totalRewardTokens(), 0);
+        assertEq(_seasonOne.totalClawedBack(), 0);
+        assertEq(_seasonOne.totalRewardTokensUsed(), 0);
+        assertEq(address(_seasonOne.rewardToken()), address(token));
+        assertEq(address(_seasonOne.nftContract()), address(_capsuleNFT));
+        assertEq(address(_seasonOne.tokenIdRegistryContract()), address(_registry));
+    }
+
     function testInitalizeSeasonDistributionFailZeroReward() public {
         TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](1);
 
