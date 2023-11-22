@@ -10,13 +10,14 @@ import {Roles} from "@protocol/core/Roles.sol";
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {DepositBase} from "@protocol/finance/DepositBase.sol";
 
 struct TokenIdRewardAmount {
     uint256 tokenId;
     uint256 rewardAmount;
 }
 
-abstract contract SeasonsBase is CoreRef, ERC1155Holder {
+abstract contract SeasonsBase is CoreRef, ERC1155Holder, DepositBase {
     using SafeERC20 for IERC20;
 
     /// --------------- Events -----------------///
@@ -26,8 +27,13 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
 
     /// --------------- Storage -----------------///
 
+    /// @notice ERC1155 contract for the season
     ERC1155MaxSupplyMintable public immutable nftContract;
+
+    /// @notice ERC20 contract for the reward token, should be ZTX
     IERC20 public immutable rewardToken;
+
+    /// @notice Contract to register tokenIds
     SeasonsTokenIdRegistry public immutable tokenIdRegistryContract;
 
     /// @notice Total amount of reward tokens needed by the contract to be solvent
@@ -78,9 +84,14 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
         return IERC20(rewardToken).balanceOf(address(this)) >= totalRewardTokens;
     }
 
-    /// @notice Check the balance of the contract
-    function balance() public view returns (uint256) {
+    /// @notice Check the balance of the contract in reward token
+    function balance() public view override returns (uint256) {
         return IERC20(rewardToken).balanceOf(address(this));
+    }
+
+    /// @notice return the address of the reward token for this season contract
+    function balanceReportedIn() public view override returns (address) {
+        return address(rewardToken);
     }
 
     function initalizeSeasonDistribution(
@@ -102,13 +113,33 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder {
     /// @notice Reconfig the season distribution when a supply change increased
     function reconfigSeasonDistribution() external virtual returns (uint256) {}
 
-    // TODO confirm roles?
-    function clawback(address to) public hasAnyOfTwoRoles(Roles.ADMIN, Roles.FINANCIAL_CONTROLLER) {
-        // effects
-        totalClawedBack = totalRewardTokens;
-        totalRewardTokens = 0;
+    /// @notice Clawback all reward tokens to a specific address
+    /// @param to address to send the reward tokens to
+    /// @dev This function is only callable by the ADMIN or FINANCIAL_CONTROLLER
+    /// this can push the contract into insolvency, be very careful calling this
+    function clawbackAll(address to) external hasAnyOfTwoRoles(Roles.ADMIN, Roles.FINANCIAL_CONTROLLER) {
+        uint256 amount = totalRewardTokens;
 
-        // interaction
-        IERC20(rewardToken).safeTransfer(to, totalClawedBack);
+        // effects + interactions
+        _withdrawTokens(to, amount);
+    }
+
+    /// @dev This function is only callable by the FINANCIAL_CONTROLLER
+    /// Callable regardless of pause state.
+    /// this can push the contract into insolvency, be very careful calling this
+    function withdraw(address to, uint256 amount) public onlyRole(Roles.FINANCIAL_CONTROLLER) {
+        /// this can push the contract into insolvency, be very careful
+        _withdrawTokens(to, amount);
+    }
+
+    function _withdrawTokens(address to, uint256 amount) private {
+        /// effects
+        totalRewardTokens -= amount;
+        totalClawedBack += amount;
+
+        /// interaction
+        IERC20(address(rewardToken)).safeTransfer(to, amount);
+
+        emit WithdrawERC20(msg.sender, address(rewardToken), to, amount);
     }
 }
