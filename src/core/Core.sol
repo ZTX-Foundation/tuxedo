@@ -24,7 +24,7 @@ contract Core is AccessControlEnumerable {
     constructor() {
         _grantRole(Roles.ADMIN, msg.sender);
         _setRoleAdmin(Roles.ADMIN, Roles.ADMIN);
-        _setRoleAdmin(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN);
+        _setRoleAdmin(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, Roles.ADMIN);
         _setRoleAdmin(Roles.GUARDIAN, Roles.ADMIN);
         _setRoleAdmin(Roles.MINTER_PROTOCOL_ROLE, Roles.ADMIN);
         _setRoleAdmin(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, Roles.ADMIN);
@@ -48,7 +48,7 @@ contract Core is AccessControlEnumerable {
     /// @dev only callable by admin or token governor
     function setGlobalLock(address _lock) external {
         require(
-            hasRole(Roles.ADMIN, msg.sender) || hasRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, msg.sender),
+            hasRole(Roles.ADMIN, msg.sender) || hasRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, msg.sender),
             "Core: must be admin or token governor"
         );
 

@@ -15,7 +15,7 @@ contract UnitTestCore is Test {
 
     function testRoleCount() public {
         assertEq(core.getRoleMemberCount(Roles.ADMIN), 1);
-        assertEq(core.getRoleMemberCount(Roles.DAO_GOVERNOR_PROTOCOL_ROLE), 1);
+        assertEq(core.getRoleMemberCount(Roles.GOVERNOR_DAO_PROTOCOL_ROLE), 1);
         assertEq(core.getRoleMemberCount(Roles.GUARDIAN), 1);
         assertEq(core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 1);
         assertEq(core.getRoleMemberCount(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE), 1);
@@ -25,7 +25,7 @@ contract UnitTestCore is Test {
 
     function testRoleMembers() public {
         assertEq(core.getRoleMember(Roles.ADMIN, 0), TestAddresses.adminAddress);
-        assertEq(core.getRoleMember(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, 0), TestAddresses.tokenGovernorAddress);
+        assertEq(core.getRoleMember(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, 0), TestAddresses.tokenGovernorAddress);
         assertEq(core.getRoleMember(Roles.GUARDIAN, 0), TestAddresses.guardianAddress);
         assertEq(core.getRoleMember(Roles.MINTER_PROTOCOL_ROLE, 0), TestAddresses.minterAddress);
         assertEq(core.getRoleMember(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, 0), TestAddresses.financialControllerAddress);
@@ -33,7 +33,7 @@ contract UnitTestCore is Test {
         assertEq(core.getRoleMember(Roles.LOCKER_PROTOCOL_ROLE, 0), TestAddresses.lockerAddress);
 
         assertTrue(core.hasRole(Roles.ADMIN, TestAddresses.adminAddress));
-        assertTrue(core.hasRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, TestAddresses.tokenGovernorAddress));
+        assertTrue(core.hasRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, TestAddresses.tokenGovernorAddress));
         assertTrue(core.hasRole(Roles.GUARDIAN, TestAddresses.guardianAddress));
         assertTrue(core.hasRole(Roles.MINTER_PROTOCOL_ROLE, TestAddresses.minterAddress));
         assertTrue(core.hasRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, TestAddresses.financialControllerAddress));
@@ -119,7 +119,7 @@ contract UnitTestCore is Test {
                 newRole != Roles.GUARDIAN &&
                 newRole != Roles.LOCKER_PROTOCOL_ROLE &&
                 newRole != Roles.MINTER_PROTOCOL_ROLE &&
-                newRole != Roles.DAO_GOVERNOR_PROTOCOL_ROLE &&
+                newRole != Roles.GOVERNOR_DAO_PROTOCOL_ROLE &&
                 newRole != Roles.MINTER_NOTARY_PROTOCOL_ROLE &&
                 newRole != Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE &&
                 newRole != Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE
@@ -174,6 +174,6 @@ contract UnitTestCore is Test {
         string memory errorMessage = getRevertMessage(Roles.ADMIN, address(this));
 
         vm.expectRevert(bytes(errorMessage));
-        core.grantRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, TestAddresses.userAddress);
+        core.grantRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, TestAddresses.userAddress);
     }
 }

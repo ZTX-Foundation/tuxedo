@@ -60,14 +60,14 @@ abstract contract RateLimited is CoreRef {
     /// @notice set the rate limit per second
     function setReplenishRatePerSecond(
         uint128 newRateLimitPerSecond
-    ) external virtual hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
+    ) external virtual hasAnyOfTwoRoles(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, Roles.ADMIN) {
         _updateBufferRemaining();
 
         _setReplenishRatePerSecond(newRateLimitPerSecond);
     }
 
     /// @notice set the buffer cap
-    function setBufferCap(uint128 newBufferCap) external virtual hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
+    function setBufferCap(uint128 newBufferCap) external virtual hasAnyOfTwoRoles(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, Roles.ADMIN) {
         _setBufferCap(newBufferCap);
     }
 

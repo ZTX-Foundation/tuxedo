@@ -32,7 +32,7 @@ library Roles {
 
     /// @notice the token governance role. Token holders can vote on proposals to change the protocol
     /// should only be owned by a timelock
-    bytes32 internal constant DAO_GOVERNOR_PROTOCOL_ROLE = keccak256("DAO_GOVERNOR_ROLE");
+    bytes32 internal constant GOVERNOR_DAO_PROTOCOL_ROLE = keccak256("DAO_GOVERNOR_ROLE");
 
     /// @notice can move funds out of Finance Deposits that implement the IDepositBase interface
     /// should only be owned by a protocol contract

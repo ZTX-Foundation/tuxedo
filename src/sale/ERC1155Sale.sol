@@ -487,7 +487,7 @@ contract ERC1155Sale is IERC1155Sale, CoreRef {
     /// callable by token governor and admin
     /// @param tokenId the id of the token to set the price for
     /// @param fee the fee to charge for buying the token
-    function setFee(uint256 tokenId, uint16 fee) external override hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
+    function setFee(uint256 tokenId, uint16 fee) external override hasAnyOfTwoRoles(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, Roles.ADMIN) {
         require(tokenInfo[tokenId].saleStartTime != 0, "ERC1155Sale: asset not listed");
         require(fee != 0, "ERC1155Sale: fee cannot be 0");
         require(fee <= MAX_FEE, "ERC1155Sale: fee cannot exceed max");

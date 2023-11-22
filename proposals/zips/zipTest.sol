@@ -210,7 +210,7 @@ contract zipTest is Proposal, TimelockProposal {
         _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
 
         /// TOKEN_GOVERNOR role
-        _core.grantRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, addresses.getAddress("GOVERNOR_DAO"));
+        _core.grantRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, addresses.getAddress("GOVERNOR_DAO"));
 
         /// GUARDIAN role
         _core.grantRole(Roles.GUARDIAN, addresses.getAddress("FINANCE_GUARDIAN"));
@@ -286,7 +286,7 @@ contract zipTest is Proposal, TimelockProposal {
         // assertEq(_core.getRoleMember(Roles.ADMIN, 1), addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
 
         /// TOKEN_GOVERNOR role
-        assertEq(_core.getRoleMember(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, 0), addresses.getAddress("GOVERNOR_DAO"));
+        assertEq(_core.getRoleMember(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, 0), addresses.getAddress("GOVERNOR_DAO"));
 
         /// GUARDIAN role
         assertEq(_core.getRoleMember(Roles.GUARDIAN, 0), addresses.getAddress("FINANCE_GUARDIAN"));

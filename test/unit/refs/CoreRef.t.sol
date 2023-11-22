@@ -147,7 +147,7 @@ contract CoreRefTest is Test {
     }
 
     function testTokenGovernor(address caller) public {
-        if (!core.hasRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, caller)) {
+        if (!core.hasRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, caller)) {
             vm.expectRevert("CoreRef: no role on core");
         }
         vm.prank(caller);

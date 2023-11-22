@@ -26,7 +26,7 @@ function getCore(Vm vm) returns (Core) {
     vm.startPrank(TestAddresses.adminAddress);
     Core core = new Core();
 
-    core.grantRole(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, TestAddresses.tokenGovernorAddress);
+    core.grantRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, TestAddresses.tokenGovernorAddress);
     core.grantRole(Roles.GUARDIAN, TestAddresses.guardianAddress);
     core.grantRole(Roles.MINTER_PROTOCOL_ROLE, TestAddresses.minterAddress);
     core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, TestAddresses.financialControllerAddress);

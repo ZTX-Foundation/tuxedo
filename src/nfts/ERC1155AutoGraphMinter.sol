@@ -491,7 +491,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @param nftContractAddress the address to whitelist
     function addWhitelistedContract(
         address nftContractAddress
-    ) external hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
+    ) external hasAnyOfTwoRoles(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, Roles.ADMIN) {
         _addWhitelistAddress(nftContractAddress);
         emit WhitelistedContractAdded(nftContractAddress);
     }
@@ -500,7 +500,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @param nftContractAddress the address to whitelist
     function removeWhitelistedContract(
         address nftContractAddress
-    ) external hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
+    ) external hasAnyOfTwoRoles(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, Roles.ADMIN) {
         _removeWhitelistAddress(nftContractAddress);
         emit WhitelistedContractRemoved(nftContractAddress);
     }
@@ -509,7 +509,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @param whitelistAddresses the addresses to whitelist, as calldata
     function addWhitelistedContracts(
         address[] calldata whitelistAddresses
-    ) external hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
+    ) external hasAnyOfTwoRoles(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, Roles.ADMIN) {
         _addWhitelistAddresses(whitelistAddresses);
     }
 
@@ -517,7 +517,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @param whitelistAddresses the addresses remove from whitelist, as calldata
     function removeWhitelistedContracts(
         address[] calldata whitelistAddresses
-    ) external hasAnyOfTwoRoles(Roles.DAO_GOVERNOR_PROTOCOL_ROLE, Roles.ADMIN) {
+    ) external hasAnyOfTwoRoles(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, Roles.ADMIN) {
         _removeWhitelistAddresses(whitelistAddresses);
     }
 
