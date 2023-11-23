@@ -124,24 +124,21 @@ contract zipTest is Proposal, TimelockProposal {
             governorDAOTimelock.revokeRole(governorDAOTimelock.TIMELOCK_ADMIN_ROLE(), governorDAOTimelockAdmin);
         }
 
-        /// TODO rename names of these holding deposits, or maybe just remove this zip
-        /// and tests altogether if requirements aren't here yet
-
         {
             ERC20HoldingDeposit burnHoldingDeposit = new ERC20HoldingDeposit(
                 address(_core),
                 addresses.getAddress("TOKEN")
             );
-            addresses.addAddress("BURNER_WALLET", address(burnHoldingDeposit));
+            addresses.addAddress("BURNER_HOLDING_DEPOSIT", address(burnHoldingDeposit));
 
             ERC20HoldingDeposit wethTreasuryHoldingDeposit = new ERC20HoldingDeposit(
                 address(_core),
                 addresses.getAddress("WETH")
             );
-            addresses.addAddress("WETH_TREASURY_WALLET", address(wethTreasuryHoldingDeposit));
+            addresses.addAddress("WETH_TREASURY_HOLDING_DEPOSIT", address(wethTreasuryHoldingDeposit));
 
             ERC20Splitter.Allocation[] memory allocations = new ERC20Splitter.Allocation[](2);
-            allocations[0].deposit = addresses.getAddress("BURNER_WALLET");
+            allocations[0].deposit = addresses.getAddress("BURNER_HOLDING_DEPOSIT");
             allocations[0].ratio = 5_000;
             allocations[1].deposit = addresses.getAddress("TREASURY_WALLET_MULTISIG");
             allocations[1].ratio = 5_000;
@@ -156,9 +153,9 @@ contract zipTest is Proposal, TimelockProposal {
 
             /// ERC1155Sale Splitter
             ERC20Splitter.Allocation[] memory wethAllocations = new ERC20Splitter.Allocation[](2);
-            wethAllocations[0].deposit = addresses.getAddress("WETH_TREASURY_WALLET");
+            wethAllocations[0].deposit = addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT");
             wethAllocations[0].ratio = 5_000;
-            wethAllocations[1].deposit = addresses.getAddress("WETH_TREASURY_WALLET");
+            wethAllocations[1].deposit = addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT");
             wethAllocations[1].ratio = 5_000;
 
             ERC20Splitter erc1155SaleSplitter = new ERC20Splitter(
@@ -202,7 +199,7 @@ contract zipTest is Proposal, TimelockProposal {
 
         /// FINANCIAL_CONTROLLER role
         _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("TREASURY_WALLET_MULTISIG"));
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("WETH_TREASURY_WALLET"));
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"));
         _core.grantRole(
             Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
             addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER")
@@ -231,7 +228,7 @@ contract zipTest is Proposal, TimelockProposal {
         );
 
         assertEq(address(CoreRef(addresses.getAddress("CONSUMABLE_SPLITTER")).core()), address(_core));
-        assertEq(address(CoreRef(addresses.getAddress("BURNER_WALLET")).core()), address(_core));
+        assertEq(address(CoreRef(addresses.getAddress("BURNER_HOLDING_DEPOSIT")).core()), address(_core));
 
         /// ERC1155Sale
         ERC20Splitter.Allocation[] memory erc1155SaleAllocations = ERC20Splitter(
@@ -239,9 +236,9 @@ contract zipTest is Proposal, TimelockProposal {
         ).getAllocations();
 
         assertEq(erc1155SaleAllocations.length, 2);
-        assertEq(erc1155SaleAllocations[0].deposit, addresses.getAddress("WETH_TREASURY_WALLET"));
+        assertEq(erc1155SaleAllocations[0].deposit, addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"));
         assertEq(erc1155SaleAllocations[0].ratio, 5_000);
-        assertEq(erc1155SaleAllocations[1].deposit, addresses.getAddress("WETH_TREASURY_WALLET"));
+        assertEq(erc1155SaleAllocations[1].deposit, addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"));
         assertEq(erc1155SaleAllocations[1].ratio, 5_000);
 
         assertEq(address(ERC20Splitter(addresses.getAddress("ERC1155_SALE_SPLITTER")).core()), address(_core));
@@ -252,7 +249,7 @@ contract zipTest is Proposal, TimelockProposal {
         ).getAllocations();
 
         assertEq(consumableAllocations.length, 2);
-        assertEq(consumableAllocations[0].deposit, addresses.getAddress("BURNER_WALLET"));
+        assertEq(consumableAllocations[0].deposit, addresses.getAddress("BURNER_HOLDING_DEPOSIT"));
         assertEq(consumableAllocations[0].ratio, 5_000);
         assertEq(consumableAllocations[1].deposit, addresses.getAddress("TREASURY_WALLET_MULTISIG"));
         assertEq(consumableAllocations[1].ratio, 5_000);
@@ -281,7 +278,7 @@ contract zipTest is Proposal, TimelockProposal {
         );
         assertEq(
             _core.getRoleMember(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, 1),
-            addresses.getAddress("WETH_TREASURY_WALLET")
+            addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT")
         );
     }
 
