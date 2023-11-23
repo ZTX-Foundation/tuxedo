@@ -68,7 +68,8 @@ contract zip002 is Proposal, TimelockProposal {
             10_000e18, // TODO get offical values from the HQ
             10_000_000e18,
             addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"),
-            1 // 1 hour for valid expiryToken
+            1, // 1 hour for valid expiryToken,
+            addresses.getAddress("TOKEN")
         );
         addresses.addAddress("ERC1155_AUTO_GRAPH_MINTER", address(erc1155AutoGraphMinter));
 

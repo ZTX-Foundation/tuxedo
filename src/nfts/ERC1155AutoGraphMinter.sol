@@ -45,6 +45,9 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @notice - expiryToken value for x amount hours
     uint8 public expiryTokenHoursValid; // 1 - 24 hours
 
+    /// @notice payment token
+    address public paymentToken;
+
     /// --------- Structs ---------- ///
 
     /// @dev - MintBatchParams is a struct that contains the params for minting a batch of NFTs
@@ -160,7 +163,8 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
         uint128 _replenishRatePerSecond,
         uint128 _bufferCap,
         address _paymentRecipient,
-        uint8 _expiryTokenHoursValid
+        uint8 _expiryTokenHoursValid,
+        address _paymentToken
     ) CoreRef(_core) WhitelistedAddresses(_nftContracts) RateLimited(_replenishRatePerSecond, _bufferCap) {
         require(_paymentRecipient != address(0), "ERC1155AutoGraphMinter: paymentRecipient must not be address(0)");
         require(_isValidRange(_expiryTokenHoursValid, 1, 24), "ERC1155AutoGraphMinter: Hours must be between 1 and 24");
@@ -168,6 +172,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
         // save to storage
         paymentRecipient = _paymentRecipient;
         expiryTokenHoursValid = _expiryTokenHoursValid;
+        paymentToken = _paymentToken;
     }
 
     /// ----------- Helpers ----------- ///
@@ -210,8 +215,8 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     }
 
     /// @dev checks to make sure the payment token is set to a non address(0) address and the payment amount greater than 0
-    function _mintChecksForPaymentTokenFee(address paymentToken, uint256 paymentAmount) internal pure {
-        require(paymentToken != address(0), "ERC1155AutoGraphMinter: paymentToken must not be address(0)");
+    function _mintChecksForPaymentTokenFee(address _paymentToken, uint256 paymentAmount) internal pure {
+        require(_paymentToken != address(0), "ERC1155AutoGraphMinter: paymentToken must not be address(0)");
         require(paymentAmount > 0, "ERC1155AutoGraphMinter: paymentAmount must be greater than 0");
     }
 
@@ -225,7 +230,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     function _mintBatch(
         address nftContract,
         address recipient,
-        address paymentToken,
+        address _paymentToken,
         MintBatchParams[] memory inputs
     ) internal returns (uint256[] memory, uint256[] memory, uint256) {
         uint256[] memory tokenIds = new uint256[](inputs.length);
@@ -246,7 +251,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
                     inputs[i].units,
                     inputs[i].salt,
                     nftContract,
-                    paymentToken,
+                    _paymentToken,
                     inputs[i].paymentAmount,
                     inputs[i].expiryToken
                 );
@@ -326,7 +331,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     /// @dev when creating the hash set paymentToken to address(0) and paymentAmount to 0
     function mintWithPaymentTokenAsFee(
         MintWithPaymentTokenAsFeeParams memory params
-    ) external globalLock(1) whenNotPaused onlyWhitelist(params.nftContract) {
+    ) public globalLock(1) whenNotPaused onlyWhitelist(params.nftContract) {
         HashInputsParams memory input = HashInputsParams(
             params.recipient,
             params.jobId,
@@ -356,6 +361,36 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
 
         ERC1155MaxSupplyMintable(params.nftContract).mint(params.recipient, params.tokenId, params.units);
         emit ERC1155Minted(params.nftContract, params.recipient, params.jobId, params.tokenId);
+    }
+
+    /// @notice - Mint NFTs to a given address with a given signature
+    /// @dev Alias of mintWithPaymentTokenAsFee
+    function mintWithPaymentTokenAsFeeWithParams(
+        address recipient,
+        uint256 jobId,
+        uint256 tokenId,
+        uint256 units,
+        bytes32 hash,
+        uint256 salt,
+        bytes memory signature,
+        address nftContract,
+        uint256 paymentAmount,
+        uint256 expiryToken
+    ) external globalLock(1) whenNotPaused onlyWhitelist(nftContract) {
+        MintWithPaymentTokenAsFeeParams memory params = MintWithPaymentTokenAsFeeParams(
+            recipient,
+            jobId,
+            tokenId,
+            units,
+            hash,
+            salt,
+            signature,
+            nftContract,
+            paymentToken,
+            paymentAmount,
+            expiryToken
+        );
+        mintWithPaymentTokenAsFee(params);
     }
 
     /// @notice - Mint NFTs to a given address with a given signature with Eth as a fee used for Instant Craft ingame
@@ -414,20 +449,20 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     function mintBatchWithPaymentTokenAsFee(
         address nftContract,
         address recipient,
-        address paymentToken,
+        address _paymentToken,
         MintBatchParams[] memory inputs
     ) external globalLock(1) whenNotPaused onlyWhitelist(nftContract) {
         (uint256[] memory tokenIds, uint256[] memory units, uint256 totalPayment) = _mintBatch(
             nftContract,
             recipient,
-            paymentToken,
+            _paymentToken,
             inputs
         );
 
-        _mintChecksForPaymentTokenFee(paymentToken, totalPayment);
+        _mintChecksForPaymentTokenFee(_paymentToken, totalPayment);
 
         /// make transfer for fee payment
-        IERC20(paymentToken).safeTransferFrom(msg.sender, paymentRecipient, totalPayment);
+        IERC20(_paymentToken).safeTransferFrom(msg.sender, paymentRecipient, totalPayment);
 
         ERC1155MaxSupplyMintable(nftContract).mintBatch(recipient, tokenIds, units);
         emit ERC1155BatchMinted(nftContract, recipient, tokenIds, units);

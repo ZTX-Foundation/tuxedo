@@ -50,7 +50,8 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
             _REPLENISH_RATE_PER_SECOND,
             _BUFFER_CAP,
             _defaultPaymentRecipient,
-            1
+            1,
+            address(token)
         );
 
         vm.startPrank(addresses.adminAddress);
