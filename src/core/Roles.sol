@@ -22,10 +22,6 @@ library Roles {
     /// should only be owned by a multisig
     bytes32 internal constant GUARDIAN = keccak256("GUARDIAN_ROLE");
 
-    /// @notice can move faster to protect funds than the guardian
-    /// can be owned by an EOA
-    bytes32 internal constant FINANCIAL_GUARDIAN = keccak256("FINANCIAL_GUARDIAN_ROLE");
-
     /*///////////////////////////////////////////////////////////////
                                  Protocol Roles
     //////////////////////////////////////////////////////////////*/
@@ -41,7 +37,6 @@ library Roles {
     /// @notice can mint tokens arbitrarily
     /// should only be owned by a protocol contract
     bytes32 internal constant MINTER_PROTOCOL_ROLE = keccak256("MINTER_ROLE");
-
 
     /// @notice can operate a registry contract
     /// should only be owned by a protocol contract

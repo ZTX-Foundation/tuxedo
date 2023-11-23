@@ -123,14 +123,6 @@ contract CoreRefTest is Test {
         coreRef.testFinancialController();
     }
 
-    function testFinancialGuardian(address caller) public {
-        if (!core.hasRole(Roles.FINANCIAL_GUARDIAN, caller)) {
-            vm.expectRevert("CoreRef: no role on core");
-        }
-        vm.prank(caller);
-        coreRef.testFinancialGuardian();
-    }
-
     function testGuardianAsGuardian() public {
         vm.prank(addresses.guardianAddress);
         coreRef.testGuardian();

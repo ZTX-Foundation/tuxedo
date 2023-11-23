@@ -490,12 +490,13 @@ contract BasePauseSystem is BaseTest {
     /// @notice Withdraw fees
     /// @param fee The expected amount of WETH withdrawn from the treasury
     function withdrawFees(uint256 fee) public {
-        vm.startPrank(addresses.getAddress("FINANCE_GUARDIAN"));
+        vm.startPrank(addresses.getAddress("TREASURY_WALLET_MULTISIG"));
         ERC20HoldingDeposit(addresses.getAddress("WETH_TREASURY_WALLET")).withdraw(
-            addresses.getAddress("FINANCE_GUARDIAN"),
+            addresses.getAddress("TREASURY_WALLET_MULTISIG"),
             fee
         );
         vm.stopPrank();
+        assertEq(weth.balanceOf(addresses.getAddress("TREASURY_WALLET_MULTISIG")), fee);
     }
 
     /// @notice Emergency pause

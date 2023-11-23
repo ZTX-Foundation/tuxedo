@@ -15,8 +15,6 @@ contract MockCoreRef is CoreRef {
 
     function testFinancialController() public onlyRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE) {}
 
-    function testFinancialGuardian() public onlyRole(Roles.FINANCIAL_GUARDIAN) {}
-
     function testGuardian() public onlyRole(Roles.GUARDIAN) {}
 
     function testLocker() public onlyRole(Roles.LOCKER_PROTOCOL_ROLE) {}

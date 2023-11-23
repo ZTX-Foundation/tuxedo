@@ -7,7 +7,6 @@ import {Roles} from "@protocol/core/Roles.sol";
 import {MockERC20} from "@test/mock/MockERC20.sol";
 import {Constants} from "@protocol/Constants.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
-import {FinanceGuardian} from "@protocol/finance/FinanceGuardian.sol";
 import {MockERC20, IERC20} from "@test/mock/MockERC20.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";

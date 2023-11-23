@@ -28,7 +28,6 @@ contract Core is AccessControlEnumerable {
         _setRoleAdmin(Roles.GUARDIAN, Roles.ADMIN);
         _setRoleAdmin(Roles.MINTER_PROTOCOL_ROLE, Roles.ADMIN);
         _setRoleAdmin(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, Roles.ADMIN);
-        _setRoleAdmin(Roles.FINANCIAL_GUARDIAN, Roles.ADMIN);
         _setRoleAdmin(Roles.LOCKER_PROTOCOL_ROLE, Roles.ADMIN);
         _setRoleAdmin(Roles.MINTER_NOTARY_PROTOCOL_ROLE, Roles.ADMIN);
         _setRoleAdmin(Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE, Roles.ADMIN);

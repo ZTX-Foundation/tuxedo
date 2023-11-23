@@ -12,7 +12,6 @@ import {MockERC20} from "@test/mock/MockERC20.sol";
 import {ERC1155Sale} from "@protocol/sale/ERC1155Sale.sol";
 import {TestAddresses} from "./TestAddresses.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
-import {FinanceGuardian} from "@protocol/finance/FinanceGuardian.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
@@ -30,7 +29,6 @@ function getCore(Vm vm) returns (Core) {
     core.grantRole(Roles.GUARDIAN, TestAddresses.guardianAddress);
     core.grantRole(Roles.MINTER_PROTOCOL_ROLE, TestAddresses.minterAddress);
     core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, TestAddresses.financialControllerAddress);
-    core.grantRole(Roles.FINANCIAL_GUARDIAN, TestAddresses.financialGuardianAddress);
     core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, TestAddresses.lockerAddress);
     core.grantRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, TestAddresses.minterNotaryAddress);
     core.grantRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, TestAddresses.registryOperatorAddress);
@@ -41,23 +39,12 @@ function getCore(Vm vm) returns (Core) {
 
 /// @notice Get system
 /// @param vm Virtual machine
-/// @return Core, GlobalReentrancyLock, FinanceGuardian, ERC20Splitter, MockERC20, ERC1155MaxSupplyMintable, ERC1155Sale
+/// @return Core, GlobalReentrancyLock, ERC20Splitter, MockERC20, ERC1155MaxSupplyMintable, ERC1155Sale
 function getSystem(
     Vm vm
-)
-    returns (
-        Core,
-        GlobalReentrancyLock,
-        FinanceGuardian,
-        ERC20Splitter,
-        MockERC20,
-        ERC1155MaxSupplyMintable,
-        ERC1155Sale
-    )
-{
+) returns (Core, GlobalReentrancyLock, ERC20Splitter, MockERC20, ERC1155MaxSupplyMintable, ERC1155Sale) {
     Core core = getCore(vm);
     GlobalReentrancyLock lock = new GlobalReentrancyLock(address(core));
-    FinanceGuardian guardian = new FinanceGuardian(address(core), TestAddresses.safeAddress, new address[](0));
 
     ERC1155MaxSupplyMintable nft;
     ERC1155Sale sale;
@@ -77,12 +64,9 @@ function getSystem(
     core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(nft));
     core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(sale));
     core.grantRole(Roles.MINTER_PROTOCOL_ROLE, address(sale));
-    core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(guardian));
-    core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, address(guardian));
-    core.grantRole(Roles.GUARDIAN, address(guardian));
     vm.stopPrank();
 
-    return (core, lock, guardian, splitter, token, nft, sale);
+    return (core, lock, splitter, token, nft, sale);
 }
 
 /// @notice Configure ERC1155Sale

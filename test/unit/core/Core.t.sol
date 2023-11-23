@@ -19,7 +19,6 @@ contract UnitTestCore is Test {
         assertEq(core.getRoleMemberCount(Roles.GUARDIAN), 1);
         assertEq(core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 1);
         assertEq(core.getRoleMemberCount(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE), 1);
-        assertEq(core.getRoleMemberCount(Roles.FINANCIAL_GUARDIAN), 1);
         assertEq(core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 1);
     }
 
@@ -28,8 +27,10 @@ contract UnitTestCore is Test {
         assertEq(core.getRoleMember(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, 0), TestAddresses.tokenGovernorAddress);
         assertEq(core.getRoleMember(Roles.GUARDIAN, 0), TestAddresses.guardianAddress);
         assertEq(core.getRoleMember(Roles.MINTER_PROTOCOL_ROLE, 0), TestAddresses.minterAddress);
-        assertEq(core.getRoleMember(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, 0), TestAddresses.financialControllerAddress);
-        assertEq(core.getRoleMember(Roles.FINANCIAL_GUARDIAN, 0), TestAddresses.financialGuardianAddress);
+        assertEq(
+            core.getRoleMember(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, 0),
+            TestAddresses.financialControllerAddress
+        );
         assertEq(core.getRoleMember(Roles.LOCKER_PROTOCOL_ROLE, 0), TestAddresses.lockerAddress);
 
         assertTrue(core.hasRole(Roles.ADMIN, TestAddresses.adminAddress));
@@ -37,7 +38,6 @@ contract UnitTestCore is Test {
         assertTrue(core.hasRole(Roles.GUARDIAN, TestAddresses.guardianAddress));
         assertTrue(core.hasRole(Roles.MINTER_PROTOCOL_ROLE, TestAddresses.minterAddress));
         assertTrue(core.hasRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, TestAddresses.financialControllerAddress));
-        assertTrue(core.hasRole(Roles.FINANCIAL_GUARDIAN, TestAddresses.financialGuardianAddress));
         assertTrue(core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, TestAddresses.lockerAddress));
     }
 
@@ -90,7 +90,7 @@ contract UnitTestCore is Test {
 
         vm.prank(TestAddresses.financialControllerAddress);
         vm.expectRevert(bytes(errorMessage));
-        core.createRole(newRole, Roles.FINANCIAL_GUARDIAN);
+        core.createRole(newRole, Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE);
 
         assertEq(core.getRoleMemberCount(newRole), 0);
     }
@@ -115,7 +115,6 @@ contract UnitTestCore is Test {
             newRole != bytes32(0) &&
                 newRole != Roles.ADMIN &&
                 newRole != Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE &&
-                newRole != Roles.FINANCIAL_GUARDIAN &&
                 newRole != Roles.GUARDIAN &&
                 newRole != Roles.LOCKER_PROTOCOL_ROLE &&
                 newRole != Roles.MINTER_PROTOCOL_ROLE &&
