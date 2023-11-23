@@ -56,6 +56,9 @@ sequenceDiagram
     else
         ERC1155AutoGraphMinter->>-User: Revert
     end
+    
+    User->>+ERC1155AutoGraphMinter: mintWithPaymentTokenAsFeeWithParams(...)
+    ERC1155AutoGraphMinter->>-ERC1155AutoGraphMinter: mintWithPaymentTokenAsFee(...)
 
     User->>+ERC1155AutoGraphMinter: mintWithEthAsFee(...)
     alt Valid expiry token and has correct paymentAmount
@@ -274,6 +277,7 @@ The constructor accepts six arguments:
 - `_bufferCap`: The maximum limit for the rate limit buffer.
 - `_paymentRecipient`: The address that will receive payments.
 - `_expiryTokenHoursValid`: The validity period (in hours) for an expiry token.
+- `_paymentTOken`: The ERC20 token address to use for payment.
 
 The constructor checks that `_paymentRecipient` is not the zero address and that `_expiryTokenHoursValid` is within a valid range (between 1 and 24 hours), and it initializes several state variables including:
 
@@ -298,6 +302,9 @@ Mints NFTs to a given address with a provided signature for free.
 
 ### `mintWithPaymentTokenAsFee`
 Mints NFTs to a given address with a provided signature, using a token as a fee for payment.
+
+### `mintWithPaymentTokenAsFeeWithParams`
+An alias for `mintWithPaymentTokenAsFee`. Function takes individual parameters, instead of a `MintWithPaymentTokenAsFeeParams` struct.
 
 ### `mintWithEthAsFee`
 Mints NFTs to a given address with a provided signature, using ETH as a fee for payment.

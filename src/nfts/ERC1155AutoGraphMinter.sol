@@ -46,7 +46,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     uint8 public expiryTokenHoursValid; // 1 - 24 hours
 
     /// @notice payment token
-    address public paymentToken;
+    address public immutable paymentToken;
 
     /// --------- Structs ---------- ///
 
