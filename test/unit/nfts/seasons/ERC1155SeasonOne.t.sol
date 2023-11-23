@@ -104,6 +104,15 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         return _seasonOne.totalRewardTokens();
     }
 
+    function testSetup() public {
+        assertEq(_seasonOne.totalRewardTokens(), 0);
+        assertEq(_seasonOne.totalClawedBack(), 0);
+        assertEq(_seasonOne.totalRewardTokensUsed(), 0);
+        assertEq(address(_seasonOne.rewardToken()), address(token));
+        assertEq(address(_seasonOne.nftContract()), address(_capsuleNFT));
+        assertEq(address(_seasonOne.tokenIdRegistryContract()), address(_registry));
+    }
+
     function testInitalizeSeasonDistributionFailZeroReward() public {
         TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](1);
 
@@ -326,9 +335,10 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
 
         vm.startPrank(addresses.adminAddress);
         _seasonOne.pause();
-        _seasonOne.clawback(recepitent);
+        _seasonOne.clawbackAll(recepitent);
         vm.stopPrank();
 
+        assertEq(_seasonOne.totalRewardTokens(), 0, "totalRewardTokens ne 0");
         assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 0);
         assertEq(_seasonOne.totalClawedBack(), totals);
 
@@ -347,13 +357,40 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         _seasonOne.pause();
 
         vm.prank(addresses.financialControllerAddress);
-        _seasonOne.clawback(recepitent);
+        _seasonOne.clawbackAll(recepitent);
 
         assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 0);
         assertEq(_seasonOne.totalClawedBack(), totals);
 
         assertEq(token.balanceOf(address(_seasonOne)), 0);
         assertEq(token.balanceOf(recepitent), totals);
+    }
+
+    function testWithdrawWithFinanicalControllerRoleSuccess() public {
+        uint totals = testInitalizeAndMakeSolvent(); // config and fund contract
+        uint _tokenId = 1;
+        address recepitent = address(123);
+
+        assertEq(token.balanceOf(address(_seasonOne)), totals);
+
+        vm.prank(addresses.adminAddress);
+        _seasonOne.pause();
+
+        vm.prank(addresses.financialControllerAddress);
+        _seasonOne.withdraw(recepitent, totals);
+
+        assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 0);
+        assertEq(_seasonOne.totalClawedBack(), totals);
+        assertEq(_seasonOne.totalRewardTokens(), 0, "totalRewardTokens ne 0");
+
+        assertEq(token.balanceOf(address(_seasonOne)), 0);
+        assertEq(token.balanceOf(recepitent), totals);
+    }
+
+    function testWithdrawNonFinanicalControllerRoleFails() public {
+        vm.prank(addresses.adminAddress);
+        vm.expectRevert("CoreRef: no role on core");
+        _seasonOne.withdraw(address(0), 0);
     }
 
     function testClawbackWithOutRoleFail() public {
@@ -363,6 +400,6 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         assertEq(token.balanceOf(address(_seasonOne)), totals);
 
         vm.expectRevert("CoreRef: no role on core");
-        _seasonOne.clawback(recepitent);
+        _seasonOne.clawbackAll(recepitent);
     }
 }
