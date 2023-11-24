@@ -376,7 +376,7 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
         address nftContract,
         uint256 paymentAmount,
         uint256 expiryToken
-    ) external globalLock(1) whenNotPaused onlyWhitelist(nftContract) {
+    ) external whenNotPaused onlyWhitelist(nftContract) {
         MintWithPaymentTokenAsFeeParams memory params = MintWithPaymentTokenAsFeeParams(
             recipient,
             jobId,
