@@ -9,8 +9,8 @@ pragma solidity 0.8.18;
                            and are used to control multisig functionality. 
          * Protocol Roles - roles which are owned by protocol contracts and are used to
                            control protocol functionality.
- @dev   Due to a in flight change to the role names, the keccak256 string do not match the namning convention
-        the names are correct, but the keccak256 strings are not. 
+ @dev   Due to a in flight change to the role names, the keccak256 string do not match the namning convention.
+        The names are correct, but the keccak256 strings are not. 
         As we didnt want to create a new hash and have to then redeploy the whole system 
  */
 library Roles {
