@@ -484,18 +484,19 @@ contract BasePauseSystem is BaseTest {
     /// @param fee The expected amount of WETH allocated to the treasury
     function allocateFees(uint256 fee) public {
         ERC20Splitter(addresses.getAddress("ERC1155_SALE_SPLITTER")).allocate();
-        assertEq(weth.balanceOf(addresses.getAddress("WETH_TREASURY_WALLET")), fee);
+        assertEq(weth.balanceOf(addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT")), fee);
     }
 
     /// @notice Withdraw fees
     /// @param fee The expected amount of WETH withdrawn from the treasury
     function withdrawFees(uint256 fee) public {
-        vm.startPrank(addresses.getAddress("FINANCE_GUARDIAN"));
-        ERC20HoldingDeposit(addresses.getAddress("WETH_TREASURY_WALLET")).withdraw(
-            addresses.getAddress("FINANCE_GUARDIAN"),
+        vm.startPrank(addresses.getAddress("TREASURY_WALLET_MULTISIG"));
+        ERC20HoldingDeposit(addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT")).withdraw(
+            addresses.getAddress("TREASURY_WALLET_MULTISIG"),
             fee
         );
         vm.stopPrank();
+        assertEq(weth.balanceOf(addresses.getAddress("TREASURY_WALLET_MULTISIG")), fee);
     }
 
     /// @notice Emergency pause
@@ -694,7 +695,7 @@ contract BasePauseSystem is BaseTest {
         actualERC721Staking = new ActualERC721Staking(addresses.getAddress("CORE"), address(mockERC721));
 
         vm.startPrank(addresses.getAddress("ADMIN_MULTISIG"));
-        Core(addresses.getAddress("CORE")).grantRole(Roles.LOCKER, address(actualERC721Staking));
+        Core(addresses.getAddress("CORE")).grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(actualERC721Staking));
         vm.stopPrank();
     }
 }

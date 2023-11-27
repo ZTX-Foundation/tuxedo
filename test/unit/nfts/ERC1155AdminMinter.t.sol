@@ -19,8 +19,8 @@ contract UnitTestERC1155AdminMinter is BaseTest {
         minter = new ERC1155AdminMinter(address(core));
 
         vm.startPrank(addresses.adminAddress);
-        core.grantRole(Roles.LOCKER, address(minter));
-        core.grantRole(Roles.MINTER, address(minter));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(minter));
+        core.grantRole(Roles.MINTER_PROTOCOL_ROLE, address(minter));
         vm.stopPrank();
     }
 

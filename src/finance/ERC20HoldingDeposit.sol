@@ -40,7 +40,7 @@ contract ERC20HoldingDeposit is DepositBase {
     function withdraw(
         address to,
         uint256 amountUnderlying
-    ) external override onlyRole(Roles.FINANCIAL_CONTROLLER) whenNotPaused {
+    ) external override onlyRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE) whenNotPaused {
         token.safeTransfer(to, amountUnderlying);
         emit Withdrawal(msg.sender, to, amountUnderlying);
     }

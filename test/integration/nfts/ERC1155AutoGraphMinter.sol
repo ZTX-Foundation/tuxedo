@@ -55,7 +55,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
 
         /// @dev Set up notary signing role
         vm.startPrank(addresses.getAddress("ADMIN_MULTISIG"));
-        Core(addresses.getAddress("CORE")).grantRole(Roles.MINTER_NOTARY, _notary);
+        Core(addresses.getAddress("CORE")).grantRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, _notary);
         vm.stopPrank();
 
         /// @dev Setup supplyCaps

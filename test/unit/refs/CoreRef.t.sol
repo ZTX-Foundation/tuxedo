@@ -32,7 +32,7 @@ contract CoreRefTest is Test {
 
         vm.startPrank(caller);
 
-        if (!core.hasRole(Roles.MINTER, caller)) {
+        if (!core.hasRole(Roles.MINTER_PROTOCOL_ROLE, caller)) {
             vm.expectRevert("CoreRef: no role on core");
         }
         coreRef.testMinter();
@@ -116,19 +116,11 @@ contract CoreRefTest is Test {
     }
 
     function testFinancialController(address caller) public {
-        if (!core.hasRole(Roles.FINANCIAL_CONTROLLER, caller)) {
+        if (!core.hasRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, caller)) {
             vm.expectRevert("CoreRef: no role on core");
         }
         vm.prank(caller);
         coreRef.testFinancialController();
-    }
-
-    function testFinancialGuardian(address caller) public {
-        if (!core.hasRole(Roles.FINANCIAL_GUARDIAN, caller)) {
-            vm.expectRevert("CoreRef: no role on core");
-        }
-        vm.prank(caller);
-        coreRef.testFinancialGuardian();
     }
 
     function testGuardianAsGuardian() public {
@@ -147,7 +139,7 @@ contract CoreRefTest is Test {
     }
 
     function testTokenGovernor(address caller) public {
-        if (!core.hasRole(Roles.TOKEN_GOVERNOR, caller)) {
+        if (!core.hasRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, caller)) {
             vm.expectRevert("CoreRef: no role on core");
         }
         vm.prank(caller);

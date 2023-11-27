@@ -85,7 +85,7 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef {
         address recipient,
         uint256 tokenId,
         uint256 amount
-    ) external onlyRole(Roles.MINTER) whenNotPaused globalLock(2) {
+    ) external onlyRole(Roles.MINTER_PROTOCOL_ROLE) whenNotPaused globalLock(2) {
         require(totalSupply(tokenId) + amount <= maxTokenSupply[tokenId], "BaseERC1155NFT: supply exceeded");
 
         /// no bytes passed on mint
@@ -105,7 +105,7 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef {
         address recipient,
         uint256[] calldata tokenIds,
         uint256[] calldata amounts
-    ) external onlyRole(Roles.MINTER) whenNotPaused globalLock(2) {
+    ) external onlyRole(Roles.MINTER_PROTOCOL_ROLE) whenNotPaused globalLock(2) {
         /// arity check on tokenIds.length and amounts.length done in ERC1155 _mintBatch
         _mintBatch(recipient, tokenIds, amounts, "");
 

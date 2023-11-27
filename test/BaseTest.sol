@@ -11,7 +11,6 @@ import {MockERC20} from "@test/mock/MockERC20.sol";
 import {Constants} from "@protocol/Constants.sol";
 import {ERC1155Sale} from "@protocol/sale/ERC1155Sale.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
-import {FinanceGuardian} from "@protocol/finance/FinanceGuardian.sol";
 import {MockERC20, IERC20} from "@test/mock/MockERC20.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
@@ -23,7 +22,6 @@ contract BaseTest is Test, ERC1155Holder {
     GlobalReentrancyLock public lock;
     ERC1155Sale public sale;
     ERC1155MaxSupplyMintable public nft;
-    FinanceGuardian public guardian;
     ERC20Splitter public splitter;
     MockERC20 public token;
     MockWeth public weth;
@@ -42,7 +40,7 @@ contract BaseTest is Test, ERC1155Holder {
     uint256 constant supplyCap = 10_000;
 
     function setUp() public virtual {
-        (core, lock, guardian, splitter, token, nft, sale) = getSystem(vm);
+        (core, lock, splitter, token, nft, sale) = getSystem(vm);
         weth = MockWeth(address(sale.weth()));
 
         configureSale(vm, tokenId, sale, proceedsRecipient, feeRecipient, address(token), tokenPrice, fee);

@@ -487,7 +487,7 @@ contract ERC1155Sale is IERC1155Sale, CoreRef {
     /// callable by token governor and admin
     /// @param tokenId the id of the token to set the price for
     /// @param fee the fee to charge for buying the token
-    function setFee(uint256 tokenId, uint16 fee) external override hasAnyOfTwoRoles(Roles.TOKEN_GOVERNOR, Roles.ADMIN) {
+    function setFee(uint256 tokenId, uint16 fee) external override hasAnyOfTwoRoles(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, Roles.ADMIN) {
         require(tokenInfo[tokenId].saleStartTime != 0, "ERC1155Sale: asset not listed");
         require(fee != 0, "ERC1155Sale: fee cannot be 0");
         require(fee <= MAX_FEE, "ERC1155Sale: fee cannot exceed max");
@@ -510,7 +510,7 @@ contract ERC1155Sale is IERC1155Sale, CoreRef {
         address token,
         address to,
         uint256 amount
-    ) public override onlyRole(Roles.FINANCIAL_CONTROLLER) whenNotPaused {
+    ) public override onlyRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE) whenNotPaused {
         IERC20(token).safeTransfer(to, amount);
         emit WithdrawERC20(msg.sender, token, to, amount);
     }

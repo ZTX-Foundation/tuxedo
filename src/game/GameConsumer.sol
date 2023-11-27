@@ -74,7 +74,7 @@ contract GameConsumer is CoreRef, ERC20HoldingDeposit {
         require(quoteExpiry >= block.timestamp, "GameConsumer: timestamp expired");
         require(!usedHashes[hash], "GameConsumer: hash already used");
         require(
-            core.hasRole(Roles.GAME_CONSUMER_NOTARY, recoverSigner(hash, signature)),
+            core.hasRole(Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE, recoverSigner(hash, signature)),
             "GameConsumer: Missing GAME_CONSUMER_NOTARY Role"
         );
 

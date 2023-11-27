@@ -11,7 +11,6 @@ import {MockERC20} from "@test/mock/MockERC20.sol";
 import {Constants} from "@protocol/Constants.sol";
 import {ERC1155Sale} from "@protocol/sale/ERC1155Sale.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
-import {FinanceGuardian} from "@protocol/finance/FinanceGuardian.sol";
 import {MockERC20, IERC20} from "@test/mock/MockERC20.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
@@ -47,7 +46,6 @@ contract UnitTestERC1155Sale is BaseTest {
         assertEq(address(sale.core()), address(core));
         assertEq(address(core.lock()), address(lock));
         assertEq(address(lock.core()), address(core));
-        assertEq(address(guardian.core()), address(core));
 
         (address tokenPricedIn, , uint240 price, uint16 _fee, bool overrideRoot, bytes32 merkleRoot) = sale
             .getTokenInfo(tokenId);

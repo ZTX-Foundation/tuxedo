@@ -7,7 +7,6 @@ import {Roles} from "@protocol/core/Roles.sol";
 import {MockERC20} from "@test/mock/MockERC20.sol";
 import {Constants} from "@protocol/Constants.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
-import {FinanceGuardian} from "@protocol/finance/FinanceGuardian.sol";
 import {MockERC20, IERC20} from "@test/mock/MockERC20.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
@@ -56,9 +55,9 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
         vm.startPrank(addresses.adminAddress);
         _autoGraphMinter.addWhitelistedContract(address(nft));
         nft.setSupplyCap(0, supplyCap);
-        core.grantRole(Roles.MINTER, address(_autoGraphMinter));
-        core.grantRole(Roles.LOCKER, address(_autoGraphMinter));
-        core.grantRole(Roles.MINTER_NOTARY, _notary);
+        core.grantRole(Roles.MINTER_PROTOCOL_ROLE, address(_autoGraphMinter));
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(_autoGraphMinter));
+        core.grantRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, _notary);
         vm.stopPrank();
     }
 
@@ -173,7 +172,7 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
         Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
 
         vm.prank(addresses.adminAddress);
-        core.revokeRole(Roles.MINTER_NOTARY, _notary);
+        core.revokeRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, _notary);
 
         vm.expectRevert("ERC1155AutoGraphMinter: Missing MINTER_NOTARY Role");
         _autoGraphMinter.mintForFree(
@@ -590,7 +589,7 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
         );
 
         vm.prank(addresses.adminAddress);
-        core.revokeRole(Roles.MINTER_NOTARY, _notary);
+        core.revokeRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, _notary);
 
         vm.expectRevert("ERC1155AutoGraphMinter: Missing MINTER_NOTARY Role");
         _autoGraphMinter.mintBatchForFree(address(nft), address(this), params);

@@ -117,7 +117,7 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder, DepositBase {
     /// @param to address to send the reward tokens to
     /// @dev This function is only callable by the ADMIN or FINANCIAL_CONTROLLER
     /// this can push the contract into insolvency, be very careful calling this
-    function clawbackAll(address to) external hasAnyOfTwoRoles(Roles.ADMIN, Roles.FINANCIAL_CONTROLLER) {
+    function clawbackAll(address to) external hasAnyOfTwoRoles(Roles.ADMIN, Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE) {
         uint256 amount = totalRewardTokens;
 
         // effects + interactions
@@ -127,7 +127,7 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder, DepositBase {
     /// @dev This function is only callable by the FINANCIAL_CONTROLLER
     /// Callable regardless of pause state.
     /// this can push the contract into insolvency, be very careful calling this
-    function withdraw(address to, uint256 amount) public onlyRole(Roles.FINANCIAL_CONTROLLER) {
+    function withdraw(address to, uint256 amount) public onlyRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE) {
         /// this can push the contract into insolvency, be very careful
         _withdrawTokens(to, amount);
     }

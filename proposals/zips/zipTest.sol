@@ -17,7 +17,6 @@ import {ERC1155Sale} from "@protocol/sale/ERC1155Sale.sol";
 import {GameConsumer} from "@protocol/game/GameConsumer.sol";
 import {GovernorDAO} from "@protocol/governance/GovernorDAO.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
-import {FinanceGuardian} from "@protocol/finance/FinanceGuardian.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
@@ -69,20 +68,6 @@ contract zipTest is Proposal, TimelockProposal {
                 addresses.getAddress("WETH")
             );
             addresses.addAddress("ERC1155_SALE_WEARABLES", address(wearablesERC1155Sale));
-
-            /// FinanceGuardian
-            whitelistAddresses.push(addresses.getAddress("WETH_ERC20_HOLDING_DEPOSIT"));
-            whitelistAddresses.push(address(consumablesERC1155Sale));
-            whitelistAddresses.push(address(placeablesERC1155Sale));
-            whitelistAddresses.push(address(wearablesERC1155Sale));
-
-            FinanceGuardian financeGuardian = new FinanceGuardian(
-                address(_core),
-                addresses.getAddress("FINANCE_GUARDIAN_SAFE_ADDRESS"),
-                whitelistAddresses
-            );
-
-            addresses.addAddress("FINANCE_GUARDIAN", address(financeGuardian));
         }
 
         {
@@ -144,18 +129,18 @@ contract zipTest is Proposal, TimelockProposal {
                 address(_core),
                 addresses.getAddress("TOKEN")
             );
-            addresses.addAddress("BURNER_WALLET", address(burnHoldingDeposit));
+            addresses.addAddress("BURNER_HOLDING_DEPOSIT", address(burnHoldingDeposit));
 
             ERC20HoldingDeposit wethTreasuryHoldingDeposit = new ERC20HoldingDeposit(
                 address(_core),
                 addresses.getAddress("WETH")
             );
-            addresses.addAddress("WETH_TREASURY_WALLET", address(wethTreasuryHoldingDeposit));
+            addresses.addAddress("WETH_TREASURY_HOLDING_DEPOSIT", address(wethTreasuryHoldingDeposit));
 
             ERC20Splitter.Allocation[] memory allocations = new ERC20Splitter.Allocation[](2);
-            allocations[0].deposit = addresses.getAddress("BURNER_WALLET");
+            allocations[0].deposit = addresses.getAddress("BURNER_HOLDING_DEPOSIT");
             allocations[0].ratio = 5_000;
-            allocations[1].deposit = addresses.getAddress("TREASURY_WALLET");
+            allocations[1].deposit = addresses.getAddress("TREASURY_WALLET_MULTISIG");
             allocations[1].ratio = 5_000;
 
             /// ERC20Splitter
@@ -168,9 +153,9 @@ contract zipTest is Proposal, TimelockProposal {
 
             /// ERC1155Sale Splitter
             ERC20Splitter.Allocation[] memory wethAllocations = new ERC20Splitter.Allocation[](2);
-            wethAllocations[0].deposit = addresses.getAddress("WETH_TREASURY_WALLET");
+            wethAllocations[0].deposit = addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT");
             wethAllocations[0].ratio = 5_000;
-            wethAllocations[1].deposit = addresses.getAddress("WETH_TREASURY_WALLET");
+            wethAllocations[1].deposit = addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT");
             wethAllocations[1].ratio = 5_000;
 
             ERC20Splitter erc1155SaleSplitter = new ERC20Splitter(
@@ -197,30 +182,31 @@ contract zipTest is Proposal, TimelockProposal {
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
 
         /// LOCKER role
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_SALE_WEARABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
 
         /// MINTER role
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_SALE_WEARABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
 
         /// TOKEN_GOVERNOR role
-        _core.grantRole(Roles.TOKEN_GOVERNOR, addresses.getAddress("GOVERNOR_DAO"));
+        _core.grantRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, addresses.getAddress("GOVERNOR_DAO"));
 
         /// GUARDIAN role
-        _core.grantRole(Roles.GUARDIAN, addresses.getAddress("FINANCE_GUARDIAN"));
         _core.grantRole(Roles.GUARDIAN, addresses.getAddress("GUARDIAN_MULTISIG"));
 
         /// FINANCIAL_CONTROLLER role
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER, addresses.getAddress("FINANCE_GUARDIAN"));
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER, addresses.getAddress("TREASURY_WALLET"));
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER, addresses.getAddress("WETH_TREASURY_WALLET"));
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER, addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER"));
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("TREASURY_WALLET_MULTISIG"));
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"));
+        _core.grantRole(
+            Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
+            addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER")
+        );
 
         /// FINANCIAL_GUARDIAN Role
-        _core.grantRole(Roles.FINANCIAL_GUARDIAN, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
     }
 
     function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
@@ -241,10 +227,8 @@ contract zipTest is Proposal, TimelockProposal {
             address(_core)
         );
 
-        assertEq(address(FinanceGuardian(addresses.getAddress("FINANCE_GUARDIAN")).core()), address(_core));
-
         assertEq(address(CoreRef(addresses.getAddress("CONSUMABLE_SPLITTER")).core()), address(_core));
-        assertEq(address(CoreRef(addresses.getAddress("BURNER_WALLET")).core()), address(_core));
+        assertEq(address(CoreRef(addresses.getAddress("BURNER_HOLDING_DEPOSIT")).core()), address(_core));
 
         /// ERC1155Sale
         ERC20Splitter.Allocation[] memory erc1155SaleAllocations = ERC20Splitter(
@@ -252,9 +236,9 @@ contract zipTest is Proposal, TimelockProposal {
         ).getAllocations();
 
         assertEq(erc1155SaleAllocations.length, 2);
-        assertEq(erc1155SaleAllocations[0].deposit, addresses.getAddress("WETH_TREASURY_WALLET"));
+        assertEq(erc1155SaleAllocations[0].deposit, addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"));
         assertEq(erc1155SaleAllocations[0].ratio, 5_000);
-        assertEq(erc1155SaleAllocations[1].deposit, addresses.getAddress("WETH_TREASURY_WALLET"));
+        assertEq(erc1155SaleAllocations[1].deposit, addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"));
         assertEq(erc1155SaleAllocations[1].ratio, 5_000);
 
         assertEq(address(ERC20Splitter(addresses.getAddress("ERC1155_SALE_SPLITTER")).core()), address(_core));
@@ -265,37 +249,37 @@ contract zipTest is Proposal, TimelockProposal {
         ).getAllocations();
 
         assertEq(consumableAllocations.length, 2);
-        assertEq(consumableAllocations[0].deposit, addresses.getAddress("BURNER_WALLET"));
+        assertEq(consumableAllocations[0].deposit, addresses.getAddress("BURNER_HOLDING_DEPOSIT"));
         assertEq(consumableAllocations[0].ratio, 5_000);
-        assertEq(consumableAllocations[1].deposit, addresses.getAddress("TREASURY_WALLET"));
+        assertEq(consumableAllocations[1].deposit, addresses.getAddress("TREASURY_WALLET_MULTISIG"));
         assertEq(consumableAllocations[1].ratio, 5_000);
 
         assertEq(address(ERC20Splitter(addresses.getAddress("CONSUMABLE_SPLITTER")).core()), address(_core));
 
         /// Check that right number of roles has been assigned
-        assertEq(_core.getRoleMemberCount(Roles.FINANCIAL_CONTROLLER), 4);
-        assertEq(_core.getRoleMemberCount(Roles.GUARDIAN), 2);
-        assertEq(_core.getRoleMemberCount(Roles.FINANCIAL_GUARDIAN), 1);
-        assertEq(_core.getRoleMemberCount(Roles.LOCKER), 8);
-        assertEq(_core.getRoleMemberCount(Roles.MINTER), 8);
+        assertEq(_core.getRoleMemberCount(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE), 4);
+        assertEq(_core.getRoleMemberCount(Roles.GUARDIAN), 1);
+        assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 8);
+        assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 8);
 
         /// ADMIN role
         // assertEq(_core.getRoleMember(Roles.ADMIN, 1), addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
 
         /// TOKEN_GOVERNOR role
-        assertEq(_core.getRoleMember(Roles.TOKEN_GOVERNOR, 0), addresses.getAddress("GOVERNOR_DAO"));
+        assertEq(_core.getRoleMember(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, 0), addresses.getAddress("GOVERNOR_DAO"));
 
         /// GUARDIAN role
-        assertEq(_core.getRoleMember(Roles.GUARDIAN, 0), addresses.getAddress("FINANCE_GUARDIAN"));
-        assertEq(_core.getRoleMember(Roles.GUARDIAN, 1), addresses.getAddress("GUARDIAN_MULTISIG"));
+        assertEq(_core.getRoleMember(Roles.GUARDIAN, 0), addresses.getAddress("GUARDIAN_MULTISIG"));
 
         /// FINANCIAL_CONTROLLER role
-        assertEq(_core.getRoleMember(Roles.FINANCIAL_CONTROLLER, 0), addresses.getAddress("FINANCE_GUARDIAN"));
-        assertEq(_core.getRoleMember(Roles.FINANCIAL_CONTROLLER, 1), addresses.getAddress("TREASURY_WALLET"));
-        assertEq(_core.getRoleMember(Roles.FINANCIAL_CONTROLLER, 2), addresses.getAddress("WETH_TREASURY_WALLET"));
-
-        /// FINANCIAL_GUARDIAN role
-        assertEq(_core.getRoleMember(Roles.FINANCIAL_GUARDIAN, 0), addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
+        assertEq(
+            _core.getRoleMember(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, 0),
+            addresses.getAddress("TREASURY_WALLET_MULTISIG")
+        );
+        assertEq(
+            _core.getRoleMember(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, 1),
+            addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT")
+        );
     }
 
     function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}

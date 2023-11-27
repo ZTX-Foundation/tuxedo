@@ -44,7 +44,7 @@ contract IntegrationTestERC1155SeasonOne is BaseTest {
 
         vm.startPrank(addresses.getAddress("ADMIN_MULTISIG"));
         /// @dev setup notary signing role
-        Core(addresses.getAddress("CORE")).grantRole(Roles.MINTER_NOTARY, _notary);
+        Core(addresses.getAddress("CORE")).grantRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, _notary);
 
         /// @dev setup the inital supply caps ie start of a season
         _erc1155Consumables.setSupplyCap(1, 10_000); // tier 1

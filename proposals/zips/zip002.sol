@@ -97,17 +97,17 @@ contract zip002 is Proposal, TimelockProposal {
 
     function _afterDeploy(Addresses addresses, address) internal override {
         // Set LOCKER role for all NFT minting contracts
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
-        _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
 
         /// MINTER role for all NFT minting contracts
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
-        _core.grantRole(Roles.MINTER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
 
         /// REGISTRY_OPERATOR role on the seasonOne contract
-        _core.grantRole(Roles.REGISTRY_OPERATOR, addresses.getAddress("ERC1155_SEASON_ONE"));
+        _core.grantRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SEASON_ONE"));
 
         // TODO should we config the seasonOne contract here?
     }
@@ -140,30 +140,30 @@ contract zip002 is Proposal, TimelockProposal {
         {
             /// Verfiy LOCKER role
             assertEq(
-                _core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
+                _core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
                 true
             );
-            assertEq(_core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")), true);
-            assertEq(_core.hasRole(Roles.LOCKER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")), true);
+            assertEq(_core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")), true);
+            assertEq(_core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")), true);
 
             /// Verfiy MINTER role
             assertEq(
-                _core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
+                _core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
                 true
             );
-            assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")), true);
-            assertEq(_core.hasRole(Roles.MINTER, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")), true);
+            assertEq(_core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")), true);
+            assertEq(_core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")), true);
         }
 
         /// Verfiy REGISTRY_OPERATOR role
         {
-            assertEq(_core.hasRole(Roles.REGISTRY_OPERATOR, addresses.getAddress("ERC1155_SEASON_ONE")), true);
+            assertEq(_core.hasRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SEASON_ONE")), true);
         }
 
         // Sum of Role counts to date
         {
-            assertEq(_core.getRoleMemberCount(Roles.LOCKER), 5);
-            assertEq(_core.getRoleMemberCount(Roles.MINTER), 5);
+            assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 5);
+            assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 5);
         }
     }
 

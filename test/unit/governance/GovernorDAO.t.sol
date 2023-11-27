@@ -71,9 +71,9 @@ contract UnitTestGovernorDAO is Test {
 
         /// Prank as admin to setup roles
         vm.startPrank(addresses.adminAddress);
-        core.createRole(Roles.TOKEN_GOVERNOR, Roles.ADMIN);
+        core.createRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, Roles.ADMIN);
         core.createRole(Roles.GUARDIAN, Roles.ADMIN);
-        core.grantRole(Roles.TOKEN_GOVERNOR, addresses.tokenGovernorAddress);
+        core.grantRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, addresses.tokenGovernorAddress);
         core.grantRole(Roles.GUARDIAN, addresses.guardianAddress);
         vm.stopPrank();
 

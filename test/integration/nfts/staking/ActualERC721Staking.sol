@@ -34,7 +34,7 @@ contract IntegrationTestActualERC721Staking is BaseTest {
         staking = new ActualERC721Staking(addresses.getAddress("CORE"), address(stakingToken));
 
         vm.startPrank(addresses.getAddress("ADMIN_MULTISIG"));
-        Core(addresses.getAddress("CORE")).grantRole(Roles.LOCKER, address(staking));
+        Core(addresses.getAddress("CORE")).grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(staking));
         vm.stopPrank();
         vm.warp(block.timestamp + 1);
 

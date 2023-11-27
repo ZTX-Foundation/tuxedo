@@ -9,15 +9,13 @@ contract MockCoreRef is CoreRef {
 
     function testAdmin() public onlyRole(Roles.ADMIN) {}
 
-    function testTokenGovernor() public onlyRole(Roles.TOKEN_GOVERNOR) {}
+    function testTokenGovernor() public onlyRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE) {}
 
-    function testMinter() public onlyRole(Roles.MINTER) {}
+    function testMinter() public onlyRole(Roles.MINTER_PROTOCOL_ROLE) {}
 
-    function testFinancialController() public onlyRole(Roles.FINANCIAL_CONTROLLER) {}
-
-    function testFinancialGuardian() public onlyRole(Roles.FINANCIAL_GUARDIAN) {}
+    function testFinancialController() public onlyRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE) {}
 
     function testGuardian() public onlyRole(Roles.GUARDIAN) {}
 
-    function testLocker() public onlyRole(Roles.LOCKER) {}
+    function testLocker() public onlyRole(Roles.LOCKER_PROTOCOL_ROLE) {}
 }
