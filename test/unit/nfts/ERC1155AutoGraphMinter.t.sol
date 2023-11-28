@@ -831,7 +831,7 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
             parts.salt,
             parts.signature,
             address(nft),
-            parts.expiryToken + 1 hours
+            parts.expiryToken + 1 seconds
         );
     }
 
@@ -872,7 +872,7 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
             parts.signature,
             address(nft),
             111,
-            parts.expiryToken + 1 hours
+            parts.expiryToken + 1 seconds
         );
 
         vm.expectRevert("ERC1155AutoGraphMinter: Expiry token must be in the past");
@@ -933,7 +933,7 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
                 address(nft),
                 address(token),
                 111,
-                parts.expiryToken + 1 hours
+                parts.expiryToken + 1 seconds
             );
 
         vm.expectRevert("ERC1155AutoGraphMinter: Expiry token must be in the past");
