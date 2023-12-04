@@ -83,7 +83,7 @@
         "husky": "^8.0.3",
         "jose": "^5.1.1",
         "keccak256": "^1.0.6",
-        "lint-staged": "^15.1.0",
+        "lint-staged": "^15.2.0",
         "merkletreejs": "^0.3.11",
         "moralis": "^2.23.2",
         "soltypes": "^2.0.0"
