@@ -196,6 +196,8 @@ contract ERC1155AutoGraphMinter is WhitelistedAddresses, CoreRef, RateLimited {
     }
 
     function _isExpiryTokenValid(uint256 expiryToken) internal view returns (bool) {
+        require(expiryToken <= block.timestamp, "ERC1155AutoGraphMinter: Expiry token must be in the past");
+
         // Convert hours to seconds
         uint256 hoursInSeconds = uint256(expiryTokenHoursValid) * 1 hours;
 
