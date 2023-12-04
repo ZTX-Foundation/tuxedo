@@ -818,6 +818,23 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
         );
     }
 
+    function testMintForFreeExpiryTokenInTheFuture() public {
+        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
+
+        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token must be in the past");
+        _autoGraphMinter.mintForFree(
+            parts.recipient,
+            parts.jobId,
+            parts.tokenId,
+            parts.units,
+            parts.hash,
+            parts.salt,
+            parts.signature,
+            address(nft),
+            parts.expiryToken + 1 seconds
+        );
+    }
+
     function testMintWithEthAsFeeExpireTokenExpired() public {
         uint256 expiryToken = block.timestamp;
         Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft), address(0), 111, expiryToken);
@@ -839,6 +856,26 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
         );
 
         vm.expectRevert("ERC1155AutoGraphMinter: Expiry token is expired");
+        _autoGraphMinter.mintWithEthAsFee{value: 111}(inputs);
+    }
+
+    function testMintWithEthAsFeeExpiryTokenInTheFuture() public {
+        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft), address(0), 111, block.timestamp);
+
+        ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+            parts.recipient,
+            parts.jobId,
+            parts.tokenId,
+            parts.units,
+            parts.hash,
+            parts.salt,
+            parts.signature,
+            address(nft),
+            111,
+            parts.expiryToken + 1 seconds
+        );
+
+        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token must be in the past");
         _autoGraphMinter.mintWithEthAsFee{value: 111}(inputs);
     }
 
@@ -868,6 +905,38 @@ contract UnitTestERC1155AutoGraphMinter is BaseTest {
         vm.warp(block.timestamp + 1 hours + 1);
 
         vm.expectRevert("ERC1155AutoGraphMinter: Expiry token is expired");
+        _autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
+    }
+
+    function testMintWithPaymentTokenAsFeeExpiryTokenInTheFuture() public {
+        Helper.TxParts memory parts = Helper.setupTx(
+            vm,
+            _privateKey,
+            address(nft),
+            address(token),
+            111,
+            block.timestamp
+        );
+
+        token.mint(address(this), 111);
+        token.approve(address(_autoGraphMinter), 111);
+
+        ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
+            .MintWithPaymentTokenAsFeeParams(
+                parts.recipient,
+                parts.jobId,
+                parts.tokenId,
+                parts.units,
+                parts.hash,
+                parts.salt,
+                parts.signature,
+                address(nft),
+                address(token),
+                111,
+                parts.expiryToken + 1 seconds
+            );
+
+        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token must be in the past");
         _autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
     }
 
