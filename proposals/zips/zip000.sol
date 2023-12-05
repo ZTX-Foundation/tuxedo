@@ -16,11 +16,7 @@ contract zip000 is Proposal, TimelockProposal {
     string public name = "ZIP000";
     string public description = "The ZTX Genesis Proposal";
 
-    function _beforeDeploy(Addresses, address deployer) internal override {
-        // first deployment. Nothing to check
-    }
-
-    function _deploy(Addresses addresses, address) internal override {
+    function deploy(Addresses addresses, address) public override {
         /// Token deployment
         {
             Token token = new Token(
@@ -31,14 +27,12 @@ contract zip000 is Proposal, TimelockProposal {
         }
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {
+    function afterDeploy(Addresses addresses, address) public override {
         /// Token transfer
         IERC20(addresses.getAddress("TOKEN")).transfer(addresses.getAddress("TREASURY_WALLET_MULTISIG"), MAX_SUPPLY);
     }
 
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _validate(Addresses addresses, address) internal override {
+    function validate(Addresses addresses, address) public override {
         /// Check Treasury balance
         assertEq(
             IERC20(addresses.getAddress("TOKEN")).balanceOf(addresses.getAddress("TREASURY_WALLET_MULTISIG")),
@@ -46,13 +40,9 @@ contract zip000 is Proposal, TimelockProposal {
         );
     }
 
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
+    function teardown(Addresses addresses, address deployer) public override {}
 
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
+    function build(Addresses addresses, address deployer) public override {}
 
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _build(Addresses addresses, address deployer) internal override {}
-
-    function _run(Addresses addresses, address deployer) internal override {}
+    function run(Addresses addresses, address deployer) public override {}
 }

@@ -23,15 +23,7 @@ contract zip002 is Proposal, TimelockProposal {
     string public name = "ZIP002";
     string public description = "CGV1 draft ZTX proposal";
 
-    function _beforeDeploy(Addresses addresses, address deployer) internal override {
-        /// Get Core Address
-        _core = Core(addresses.getCore());
-
-        // Admin required for the deployment of this proposal
-        assertEq(_core.hasRole(Roles.ADMIN, deployer), true);
-    }
-
-    function _deploy(Addresses addresses, address) internal override {
+    function deploy(Addresses addresses, address) public override {
         /// NTF contracts
         /// Setup metadata base uri
         string memory _metadataBaseUri = string(
@@ -95,7 +87,7 @@ contract zip002 is Proposal, TimelockProposal {
         addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne));
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {
+    function afterDeploy(Addresses addresses, address) public override {
         // Set LOCKER role for all NFT minting contracts
         _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
         _core.grantRole(Roles.LOCKER, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
@@ -112,9 +104,7 @@ contract zip002 is Proposal, TimelockProposal {
         // TODO should we config the seasonOne contract here?
     }
 
-    function _afterDeployOnChain(Addresses, address deployer) internal override {}
-
-    function _validate(Addresses addresses, address) internal override {
+    function validate(Addresses addresses, address) public override {
         /// Verfiy all contracts are pointing to the correct core address
         {
             assertEq(
@@ -167,13 +157,9 @@ contract zip002 is Proposal, TimelockProposal {
         }
     }
 
-    function _validateOnChain(Addresses, address deployer) internal override {}
+    function teardown(Addresses addresses, address) public override {}
 
-    function _validateForTestingOnly(Addresses, address deployer) internal override {}
+    function build(Addresses addresses, address) public override {}
 
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _build(Addresses addresses, address deployer) internal override {}
-
-    function _run(Addresses addresses, address deployer) internal override {}
+    function run(Addresses addresses, address ) public override {}
 }

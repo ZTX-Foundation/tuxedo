@@ -16,37 +16,71 @@ Remove --broadcast if you want to try locally first, without paying any gas.
 */
 
 contract DeployProposal is Script, zip {
+    Addresses private addresses;
     uint256 public privateKey;
-    bool public doDeploy;
-    bool public doAfterdeploy;
-    bool public doValidate;
-    bool public doTeardown;
+
+    bool private DO_DEPLOY;
+    bool private DO_AFTER_DEPLOY;
+    bool private DO_AFTER_DEPLOY_SETUP;
+    bool private DO_BUILD;
+    bool private DO_RUN;
+    bool private DO_TEARDOWN;
+    bool private DO_VALIDATE;
+    bool private DO_PRINT;
+    uint256 private ETH_PRIVATE_KEY;
 
     function setUp() public {
-        // Default behavior: do debug prints
+        // Default behavior: use Anvil 0 private key
+        ETH_PRIVATE_KEY = uint256(vm.envOr("ETH_PRIVATE_KEY", bytes32(type(uint256).max)));
+
         DEBUG = vm.envOr("DEBUG", true);
-        privateKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
-        // Default behavior: do deploy
-        doDeploy = vm.envOr("DO_DEPLOY", true);
-        // Default behavior: do after-deploy
-        doAfterdeploy = vm.envOr("DO_AFTERDEPLOY", true);
-        // Default behavior: do validate
-        doValidate = vm.envOr("DO_VALIDATE", true);
-        // Default behavior: don't do teardown
-        doTeardown = vm.envOr("DO_TEARDOWN", false);
+        DO_DEPLOY = vm.envOr("DO_DEPLOY", true);
+        DO_AFTER_DEPLOY = vm.envOr("DO_AFTER_DEPLOY", true);
+        DO_AFTER_DEPLOY_SETUP = vm.envOr("DO_AFTER_DEPLOY_SETUP", true);
+        DO_BUILD = vm.envOr("DO_BUILD", true);
+        DO_RUN = vm.envOr("DO_RUN", true);
+        DO_TEARDOWN = vm.envOr("DO_TEARDOWN", true);
+        DO_VALIDATE = vm.envOr("DO_VALIDATE", true);
+        DO_PRINT = vm.envOr("DO_PRINT", true);
+
+        addresses = new Addresses();
     }
 
     function run() public {
-        Addresses addresses = new Addresses();
         addresses.resetRecordingAddresses();
 
-        /// Run the deploy OnChain workflow
-        deployOnChain(addresses, privateKey);
+        address deployerAddress = vm.addr(ETH_PRIVATE_KEY);
 
-        (string[] memory recordedNames, address[] memory recordedAddresses) = addresses.getRecordedAddresses();
-        for (uint256 i = 0; i < recordedNames.length; i++) {
-            // solhint-disable-next-line
-            console.log("Deployed", recordedAddresses[i], recordedNames[i]);
+        console.log("deployerAddress: ", deployerAddress);
+
+        vm.startBroadcast(ETH_PRIVATE_KEY);
+        if (DO_DEPLOY) deploy(addresses, deployerAddress);
+        if (DO_AFTER_DEPLOY) afterDeploy(addresses, deployerAddress);
+        vm.stopBroadcast();
+
+        if (DO_BUILD) build(addresses, deployerAddress);
+        if (DO_RUN) run(addresses, deployerAddress);
+        if (DO_TEARDOWN) teardown(addresses, deployerAddress);
+        if (DO_VALIDATE) validate(addresses, deployerAddress);
+        if (DO_PRINT) {
+            printProposalActionSteps();
+        }
+
+        if (DO_DEPLOY) {
+            (string[] memory recordedNames, address[] memory recordedAddresses) = addresses.getRecordedAddresses();
+            for (uint256 i = 0; i < recordedNames.length; i++) {
+                console.log("Deployed", recordedAddresses[i], recordedNames[i]);
+            }
+
+            console.log();
+
+            for (uint256 i = 0; i < recordedNames.length; i++) {
+                console.log('_addAddress("%s",', recordedNames[i]);
+                console.log(block.chainid);
+                console.log(", ");
+                console.log(recordedAddresses[i]);
+                console.log(");");
+            }
         }
     }
 }

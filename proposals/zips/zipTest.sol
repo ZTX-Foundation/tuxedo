@@ -33,11 +33,7 @@ contract zipTest is Proposal, TimelockProposal {
 
     address[] public whitelistAddresses;
 
-    function _beforeDeploy(Addresses addresses, address) internal override {
-        _core = Core(addresses.getCore());
-    }
-
-    function _deploy(Addresses addresses, address deployer) internal override {
+    function deploy(Addresses addresses, address deployer) public override {
         {
             ERC20HoldingDeposit wethErc20HoldingDeposit = new ERC20HoldingDeposit(
                 address(_core),
@@ -192,7 +188,7 @@ contract zipTest is Proposal, TimelockProposal {
         }
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {
+    function afterDeploy(Addresses addresses, address) public override {
         /// ADMIN role
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
 
@@ -223,15 +219,13 @@ contract zipTest is Proposal, TimelockProposal {
         _core.grantRole(Roles.FINANCIAL_GUARDIAN, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
     }
 
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
+    function build(Addresses addresses, address deployer) public override {}
 
-    function _build(Addresses addresses, address deployer) internal override {}
+    function run(Addresses addresses, address deployer) public override {}
 
-    function _run(Addresses addresses, address deployer) internal override {}
+    function teardown(Addresses addresses, address deployer) public override {}
 
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _validate(Addresses addresses, address) internal override {
+    function validate(Addresses addresses, address) public override {
         assertEq(address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_CONSUMABLES")).core()), address(_core));
         assertEq(address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_WEARABLES")).core()), address(_core));
         assertEq(address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_PLACEABLES")).core()), address(_core));
@@ -297,8 +291,4 @@ contract zipTest is Proposal, TimelockProposal {
         /// FINANCIAL_GUARDIAN role
         assertEq(_core.getRoleMember(Roles.FINANCIAL_GUARDIAN, 0), addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
     }
-
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
 }

@@ -120,4 +120,18 @@ abstract contract TimelockProposal is Proposal {
             console.log("proposal already executed");
         }
     }
+
+    function printProposalActionSteps() public override {
+        console.log("\n\nProposal Name:\n\n%s", this.name());
+
+        console.log("\n\n------------------ Proposal Actions ------------------");
+
+        for (uint256 i = 0; i < actions.length; i++) {
+            console.log("%d). %s", i + 1, actions[i].description);
+            console.log("target: %s\nvalue: %d\npayload", actions[i].target, actions[i].value);
+            emit log_bytes(actions[i].arguments);
+
+            console.log("\n");
+        }
+    }
 }
