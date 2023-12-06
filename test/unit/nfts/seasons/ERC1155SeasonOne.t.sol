@@ -354,7 +354,6 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
         _seasonOne.clawbackAll(recepitent);
         vm.stopPrank();
 
-        assertEq(_seasonOne.totalRewardTokens(), 0, "totalRewardTokens ne 0");
         assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 0);
         assertEq(_seasonOne.totalClawedBack(), totals);
 
@@ -397,7 +396,6 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
 
         assertEq(_seasonOne.tokenIdUsedAmount(_tokenId), 0);
         assertEq(_seasonOne.totalClawedBack(), totals);
-        assertEq(_seasonOne.totalRewardTokens(), 0, "totalRewardTokens ne 0");
 
         assertEq(token.balanceOf(address(_seasonOne)), 0);
         assertEq(token.balanceOf(recepitent), totals);

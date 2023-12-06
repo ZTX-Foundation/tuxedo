@@ -135,7 +135,6 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder, DepositBase, FunctionLo
 
     function _withdrawTokens(address to, uint256 amount) private {
         /// effects
-        totalRewardTokens -= amount;
         totalClawedBack += amount;
 
         /// interaction
