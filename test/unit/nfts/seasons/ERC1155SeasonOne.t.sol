@@ -164,9 +164,25 @@ contract UnitTestERC1155SeasonOne is SeasonBase {
     function testInitalizeCalledTwice() public {
         testInitalizeSeasonDistribution();
 
-        vm.expectRevert("SeasonsTokenIdRegistry: tokenId already registered to a Season Contract");
+        vm.expectRevert("FunctionLocker: function locked");
         vm.startPrank(addresses.adminAddress);
         _seasonOne.initalizeSeasonDistribution(SeasonDistributionStruct());
+        vm.stopPrank();
+    }
+
+    function testInitalizeSeasonDistributionCalledTwiceNewInputs() public {
+        testInitalizeSeasonDistribution();
+
+        TokenIdRewardAmount[] memory tokenIdRewardAmounts = new TokenIdRewardAmount[](3);
+
+        // Set tokenId to Reward Amount.
+        tokenIdRewardAmounts[0] = TokenIdRewardAmount({tokenId: 4, rewardAmount: 800});
+        tokenIdRewardAmounts[1] = TokenIdRewardAmount({tokenId: 5, rewardAmount: 2000});
+        tokenIdRewardAmounts[2] = TokenIdRewardAmount({tokenId: 6, rewardAmount: 3200});
+
+        vm.startPrank(addresses.adminAddress);
+        vm.expectRevert("FunctionLocker: function locked");
+        _seasonOne.initalizeSeasonDistribution(tokenIdRewardAmounts);
         vm.stopPrank();
     }
 
