@@ -55,7 +55,7 @@ contract ERC1155SeasonOne is SeasonsBase {
         /// Register tokenIds with the tokenIdRegistryContract
         registerTokenIds(tokenIdRewardAmounts);
 
-        totalRewardTokens = (_totalRewardTokens - totalRewardTokensUsed);
+        totalRewardTokens = _totalRewardTokens;
         emit TotalRewardTokensSet(0, totalRewardTokens);
         return totalRewardTokens;
     }
