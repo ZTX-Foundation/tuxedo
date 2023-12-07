@@ -136,8 +136,6 @@ contract ERC1155MaxSupplyMintable is ERC1155Supply, ERC1155Burnable, CoreRef {
 
     /// ----------- INTERNAL OVERRIDES ------------
 
-    /// @notice disallow sending of tokens to the token contract itself
-    /// @param to the address that receives tokens
     function _beforeTokenTransfer(
         address operator,
         address from,
