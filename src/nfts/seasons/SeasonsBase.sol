@@ -11,13 +11,14 @@ import {Roles} from "@protocol/core/Roles.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {DepositBase} from "@protocol/finance/DepositBase.sol";
+import {FunctionLocker} from "@protocol/utils/extensions/FunctionLocker.sol";
 
 struct TokenIdRewardAmount {
     uint256 tokenId;
     uint256 rewardAmount;
 }
 
-abstract contract SeasonsBase is CoreRef, ERC1155Holder, DepositBase {
+abstract contract SeasonsBase is CoreRef, ERC1155Holder, DepositBase, FunctionLocker {
     using SafeERC20 for IERC20;
 
     /// --------------- Events -----------------///
@@ -118,10 +119,8 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder, DepositBase {
     /// @dev This function is only callable by the ADMIN or FINANCIAL_CONTROLLER
     /// this can push the contract into insolvency, be very careful calling this
     function clawbackAll(address to) external hasAnyOfTwoRoles(Roles.ADMIN, Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE) {
-        uint256 amount = totalRewardTokens;
-
         // effects + interactions
-        _withdrawTokens(to, amount);
+        _withdrawTokens(to, balance());
     }
 
     /// @dev This function is only callable by the FINANCIAL_CONTROLLER
@@ -134,7 +133,6 @@ abstract contract SeasonsBase is CoreRef, ERC1155Holder, DepositBase {
 
     function _withdrawTokens(address to, uint256 amount) private {
         /// effects
-        totalRewardTokens -= amount;
         totalClawedBack += amount;
 
         /// interaction

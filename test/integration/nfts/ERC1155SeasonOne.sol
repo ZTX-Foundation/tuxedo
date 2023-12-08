@@ -115,7 +115,7 @@ contract IntegrationTestERC1155SeasonOne is BaseTest {
 
     function testInitalizeCalledTwice() public {
         testInitalizeSeasonDistribution();
-        vm.expectRevert("SeasonsTokenIdRegistry: tokenId already registered to a Season Contract");
+        vm.expectRevert("FunctionLocker: function locked");
         testInitalizeSeasonDistribution();
     }
 

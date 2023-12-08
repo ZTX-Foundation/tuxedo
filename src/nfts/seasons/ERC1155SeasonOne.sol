@@ -35,7 +35,7 @@ contract ERC1155SeasonOne is SeasonsBase {
     /// @dev _nftContract much have setSupplyCap() set or this tx will revert.
     function initalizeSeasonDistribution(
         TokenIdRewardAmount[] memory tokenIdRewardAmounts
-    ) external override onlyRole(Roles.ADMIN) returns (uint256) {
+    ) external override onlyRole(Roles.ADMIN) lockFunction("initalizeSeasonDistribution") returns (uint256) {
         uint256 _totalRewardTokens = 0;
         // set tokenIdRewardAmount mapping
         for (uint256 i = 0; i < tokenIdRewardAmounts.length; i++) {
@@ -55,7 +55,7 @@ contract ERC1155SeasonOne is SeasonsBase {
         /// Register tokenIds with the tokenIdRegistryContract
         registerTokenIds(tokenIdRewardAmounts);
 
-        totalRewardTokens = (_totalRewardTokens - totalRewardTokensUsed);
+        totalRewardTokens = _totalRewardTokens;
         emit TotalRewardTokensSet(0, totalRewardTokens);
         return totalRewardTokens;
     }
