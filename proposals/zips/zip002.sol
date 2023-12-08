@@ -21,7 +21,7 @@ import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 
 contract zip002 is Proposal, TimelockProposal {
     string public name = "ZIP002";
-    string public description = "CGV1 ZTX proposal";
+    string public description = "CGV1 ZTX proposal. This is a test";
 
     function _beforeDeploy(Addresses addresses, address deployer) internal override {
         /// Get Core Address
