@@ -21,7 +21,7 @@ import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 
 contract zip002 is Proposal, TimelockProposal {
     string public name = "ZIP002";
-    string public description = "CGV1 draft ZTX proposal";
+    string public description = "CGV1 ZTX proposal";
 
     function _beforeDeploy(Addresses addresses, address deployer) internal override {
         /// Get Core Address
@@ -140,24 +140,51 @@ contract zip002 is Proposal, TimelockProposal {
         {
             /// Verfiy LOCKER role
             assertEq(
-                _core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
+                _core.hasRole(
+                    Roles.LOCKER_PROTOCOL_ROLE,
+                    addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
+                ),
                 true
             );
-            assertEq(_core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")), true);
-            assertEq(_core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")), true);
+            assertEq(
+                _core.hasRole(
+                    Roles.LOCKER_PROTOCOL_ROLE,
+                    addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
+                ),
+                true
+            );
+            assertEq(
+                _core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")),
+                true
+            );
 
             /// Verfiy MINTER role
             assertEq(
-                _core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
+                _core.hasRole(
+                    Roles.MINTER_PROTOCOL_ROLE,
+                    addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
+                ),
                 true
             );
-            assertEq(_core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")), true);
-            assertEq(_core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")), true);
+            assertEq(
+                _core.hasRole(
+                    Roles.MINTER_PROTOCOL_ROLE,
+                    addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
+                ),
+                true
+            );
+            assertEq(
+                _core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")),
+                true
+            );
         }
 
         /// Verfiy REGISTRY_OPERATOR role
         {
-            assertEq(_core.hasRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SEASON_ONE")), true);
+            assertEq(
+                _core.hasRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SEASON_ONE")),
+                true
+            );
         }
 
         // Sum of Role counts to date
