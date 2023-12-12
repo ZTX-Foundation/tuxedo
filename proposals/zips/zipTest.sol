@@ -100,18 +100,6 @@ contract zipTest is Proposal, TimelockProposal {
                 addresses.getAddress("GOVERNOR_DAO")
             );
 
-            /// Admin timelock controller
-            address[] memory adminTimelockProposersExecutors = new address[](1);
-
-            adminTimelockProposersExecutors[0] = address(addresses.getAddress("ADMIN_MULTISIG"));
-            TimelockController adminTimelock = new TimelockController(
-                2 days,
-                adminTimelockProposersExecutors,
-                adminTimelockProposersExecutors,
-                address(0)
-            );
-
-            addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(adminTimelock));
             governorDAOTimelock.grantRole(governorDAOTimelock.PROPOSER_ROLE(), addresses.getAddress("GOVERNOR_DAO"));
             governorDAOTimelock.grantRole(governorDAOTimelock.EXECUTOR_ROLE(), addresses.getAddress("GOVERNOR_DAO"));
             governorDAOTimelock.grantRole(governorDAOTimelock.CANCELLER_ROLE(), addresses.getAddress("GOVERNOR_DAO"));
@@ -164,16 +152,6 @@ contract zipTest is Proposal, TimelockProposal {
                 wethAllocations
             );
             addresses.addAddress("ERC1155_SALE_SPLITTER", address(erc1155SaleSplitter));
-
-            /// Game consumer
-            GameConsumer consumer = new GameConsumer(
-                address(_core),
-                addresses.getAddress("TOKEN"),
-                addresses.getAddress("GAME_CONSUMER_PAYMENT_RECIPIENT"),
-                addresses.getAddress("WETH")
-            );
-
-            addresses.addAddress("GAME_CONSUMABLE", address(consumer));
         }
     }
 
@@ -199,7 +177,10 @@ contract zipTest is Proposal, TimelockProposal {
 
         /// FINANCIAL_CONTROLLER role
         _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("TREASURY_WALLET_MULTISIG"));
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"));
+        _core.grantRole(
+            Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
+            addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT")
+        );
         _core.grantRole(
             Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
             addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER")
