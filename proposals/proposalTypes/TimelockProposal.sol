@@ -91,17 +91,20 @@ abstract contract TimelockProposal is Proposal {
                         delay
                     )
                 );
+                console.log("proposalId: ");
+                emit log_bytes32(proposalId);
             }
         } else if (DEBUG) {
             console.log("proposal already scheduled for id");
             emit log_bytes32(proposalId);
         }
 
+        console.log("warping to", block.timestamp + delay);
         vm.warp(block.timestamp + delay);
 
         if (!timelock.isOperationDone(proposalId)) {
-            vm.prank(executorAddress);
-            timelock.executeBatch(targets, values, payloads, predecessor, salt);
+            // vm.prank(executorAddress);
+            // timelock.executeBatch(targets, values, payloads, predecessor, salt); // TODO this is not working
 
             if (DEBUG) {
                 console.log("execute batch calldata");

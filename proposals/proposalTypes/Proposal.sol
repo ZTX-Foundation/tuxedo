@@ -25,8 +25,13 @@ abstract contract Proposal is IProposal, Test {
         _beforeDeploy(addresses, deployer);
         _deploy(addresses, deployer);
         _afterDeploy(addresses, deployer);
+
+        vm.stopBroadcast();
+
         _build(addresses, deployer);
         _run(addresses, deployer);
+
+        vm.startBroadcast(deployer);
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
         _validateForTestingOnly(addresses, deployer);
@@ -51,12 +56,7 @@ abstract contract Proposal is IProposal, Test {
         vm.stopBroadcast();
 
         _build(addresses, deployer);
-
-        // start broadcast
-        vm.startBroadcast(privateKey);
         _run(addresses, deployer);
-        vm.stopBroadcast();
-        // stop broadcast
 
         _teardown(addresses, deployer);
         _validate(addresses, deployer);

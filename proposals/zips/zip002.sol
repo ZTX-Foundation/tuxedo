@@ -213,7 +213,25 @@ contract zip002 is Proposal, TimelockProposal {
 
     function _teardown(Addresses addresses, address deployer) internal override {}
 
-    function _build(Addresses addresses, address deployer) internal override {}
+    function _build(Addresses addresses, address) internal override {
+        _pushTimelockAction(
+            addresses.getAddress("CORE"),
+            abi.encodeWithSignature(
+                "grantRole(bytes32,address)",
+                Roles.LOCKER_PROTOCOL_ROLE,
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
+            ),
+            "Grant protocol locker role to ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"
+        );
+    }
 
-    function _run(Addresses addresses, address deployer) internal override {}
+    function _run(Addresses addresses, address) internal override {
+        this.setDebug(true);
+
+        _simulateTimelockActions(
+            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
+            addresses.getAddress("ADMIN_MULTISIG"),
+            addresses.getAddress("ADMIN_MULTISIG")
+        );
+    }
 }
