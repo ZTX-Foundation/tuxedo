@@ -199,52 +199,106 @@ contract zipTest is Proposal, TimelockProposal {
     function _teardown(Addresses addresses, address deployer) internal override {}
 
     function _validate(Addresses addresses, address) internal override {
-        assertEq(address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_CONSUMABLES")).core()), address(_core));
-        assertEq(address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_WEARABLES")).core()), address(_core));
-        assertEq(address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_PLACEABLES")).core()), address(_core));
+        assertEq(
+            address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_CONSUMABLES")).core()),
+            address(_core),
+            "ERC1155Sale core address is not equal to core address"
+        );
+        assertEq(
+            address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_WEARABLES")).core()),
+            address(_core),
+            "ERC1155Sale core address is not equal to core address"
+        );
+        assertEq(
+            address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_PLACEABLES")).core()),
+            address(_core),
+            "ERC1155Sale core address is not equal to core address"
+        );
 
         assertEq(
             address(ERC20HoldingDeposit(addresses.getAddress("WETH_ERC20_HOLDING_DEPOSIT")).core()),
-            address(_core)
+            address(_core),
+            "ERC20HoldingDeposit core address is not equal to core address"
         );
 
-        assertEq(address(CoreRef(addresses.getAddress("CONSUMABLE_SPLITTER")).core()), address(_core));
-        assertEq(address(CoreRef(addresses.getAddress("BURNER_HOLDING_DEPOSIT")).core()), address(_core));
+        assertEq(
+            address(CoreRef(addresses.getAddress("CONSUMABLE_SPLITTER")).core()),
+            address(_core),
+            "CONSUMABLE_SPLITTER is pointing to wrong core"
+        );
+        assertEq(
+            address(CoreRef(addresses.getAddress("BURNER_HOLDING_DEPOSIT")).core()),
+            address(_core),
+            "BURNER_HOLDING_DEPOSIT is pointing to wrong core"
+        );
 
         /// ERC1155Sale
         ERC20Splitter.Allocation[] memory erc1155SaleAllocations = ERC20Splitter(
             addresses.getAddress("ERC1155_SALE_SPLITTER")
         ).getAllocations();
 
-        assertEq(erc1155SaleAllocations.length, 2);
-        assertEq(erc1155SaleAllocations[0].deposit, addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"));
+        assertEq(erc1155SaleAllocations.length, 2, "ERC1155Sale allocations length is not equal to 2");
+        assertEq(
+            erc1155SaleAllocations[0].deposit,
+            addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"),
+            "ERC1155Sale allocation deposit is not equal to WETH_TREASURY_HOLDING_DEPOSIT"
+        );
         assertEq(erc1155SaleAllocations[0].ratio, 5_000);
-        assertEq(erc1155SaleAllocations[1].deposit, addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"));
-        assertEq(erc1155SaleAllocations[1].ratio, 5_000);
+        assertEq(
+            erc1155SaleAllocations[1].deposit,
+            addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT"),
+            "ERC1155Sale allocation deposit is not equal to WETH_TREASURY_HOLDING_DEPOSIT"
+        );
+        assertEq(erc1155SaleAllocations[1].ratio, 5_000, "ERC1155Sale allocation ratio is not equal to 5_000");
 
-        assertEq(address(ERC20Splitter(addresses.getAddress("ERC1155_SALE_SPLITTER")).core()), address(_core));
+        assertEq(
+            address(ERC20Splitter(addresses.getAddress("ERC1155_SALE_SPLITTER")).core()),
+            address(_core),
+            "ERC1155_SALE_SPLITTER is pointing to wrong core"
+        );
 
         /// Game consumable
         ERC20Splitter.Allocation[] memory consumableAllocations = ERC20Splitter(
             addresses.getAddress("CONSUMABLE_SPLITTER")
         ).getAllocations();
 
-        assertEq(consumableAllocations.length, 2);
-        assertEq(consumableAllocations[0].deposit, addresses.getAddress("BURNER_HOLDING_DEPOSIT"));
-        assertEq(consumableAllocations[0].ratio, 5_000);
-        assertEq(consumableAllocations[1].deposit, addresses.getAddress("TREASURY_WALLET_MULTISIG"));
-        assertEq(consumableAllocations[1].ratio, 5_000);
+        assertEq(consumableAllocations.length, 2, "Consumable allocations length is not equal to 2");
+        assertEq(
+            consumableAllocations[0].deposit,
+            addresses.getAddress("BURNER_HOLDING_DEPOSIT"),
+            "Consumable allocation deposit is not equal to BURNER_HOLDING_DEPOSIT"
+        );
+        assertEq(consumableAllocations[0].ratio, 5_000, "Consumable allocation ratio is not equal to 5_000");
+        assertEq(
+            consumableAllocations[1].deposit,
+            addresses.getAddress("TREASURY_WALLET_MULTISIG"),
+            "Consumable allocation deposit is not equal to TREASURY_WALLET_MULTISIG"
+        );
+        assertEq(consumableAllocations[1].ratio, 5_000, "Consumable allocation ratio is not equal to 5_000");
 
-        assertEq(address(ERC20Splitter(addresses.getAddress("CONSUMABLE_SPLITTER")).core()), address(_core));
+        assertEq(
+            address(ERC20Splitter(addresses.getAddress("CONSUMABLE_SPLITTER")).core()),
+            address(_core),
+            "CONSUMABLE_SPLITTER is pointing to wrong core"
+        );
 
         /// Check that right number of roles has been assigned
-        assertEq(_core.getRoleMemberCount(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE), 4);
-        assertEq(_core.getRoleMemberCount(Roles.GUARDIAN), 1);
-        assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 8);
-        assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 8);
-
-        /// ADMIN role
-        // assertEq(_core.getRoleMember(Roles.ADMIN, 1), addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+        assertEq(
+            _core.getRoleMemberCount(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE),
+            4,
+            "FINANCIAL_CONTROLLER_PROTOCOL_ROLE count is not equal to 4"
+        );
+        assertEq(_core.getRoleMemberCount(Roles.GUARDIAN), 1, "GUARDIAN count is not equal to 1");
+        assertEq(
+            _core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE),
+            8,
+            "LOCKER_PROTOCOL_ROLE count is not equal to 8"
+        );
+        assertEq(
+            _core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE),
+            8,
+            "MINTER_PROTOCOL_ROLE count is not equal to 8"
+        );
 
         /// TOKEN_GOVERNOR role
         assertEq(_core.getRoleMember(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, 0), addresses.getAddress("GOVERNOR_DAO"));

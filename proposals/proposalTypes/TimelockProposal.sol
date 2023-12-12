@@ -70,6 +70,11 @@ abstract contract TimelockProposal is Proposal {
 
         bytes32 proposalId = timelock.hashOperationBatch(targets, values, payloads, predecessor, salt);
 
+        if (DEBUG) {
+            console.log("proposalId: ");
+            emit log_bytes32(proposalId);
+        }
+
         if (!timelock.isOperationPending(proposalId) && !timelock.isOperation(proposalId)) {
             vm.prank(proposerAddress);
             timelock.scheduleBatch(targets, values, payloads, predecessor, salt, delay);
@@ -91,8 +96,6 @@ abstract contract TimelockProposal is Proposal {
                         delay
                     )
                 );
-                console.log("proposalId: ");
-                emit log_bytes32(proposalId);
             }
         } else if (DEBUG) {
             console.log("proposal already scheduled for id");
@@ -103,8 +106,8 @@ abstract contract TimelockProposal is Proposal {
         vm.warp(block.timestamp + delay);
 
         if (!timelock.isOperationDone(proposalId)) {
-            // vm.prank(executorAddress);
-            // timelock.executeBatch(targets, values, payloads, predecessor, salt); // TODO this is not working
+            vm.prank(executorAddress);
+            timelock.executeBatch(targets, values, payloads, predecessor, salt); // TODO this is not working
 
             if (DEBUG) {
                 console.log("execute batch calldata");

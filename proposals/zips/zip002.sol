@@ -108,22 +108,7 @@ contract zip002 is Proposal, TimelockProposal {
         addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(adminTimelock));
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {
-        // Set LOCKER role for all NFT minting contracts
-        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
-        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
-        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
-
-        /// MINTER role for all NFT minting contracts
-        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
-        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
-        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
-
-        /// REGISTRY_OPERATOR role on the seasonOne contract
-        _core.grantRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SEASON_ONE"));
-
-        // TODO should we config the seasonOne contract here?
-    }
+    function _afterDeploy(Addresses addresses, address) internal override {}
 
     function _afterDeployOnChain(Addresses, address deployer) internal override {}
 
@@ -134,19 +119,26 @@ contract zip002 is Proposal, TimelockProposal {
                 address(
                     ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")).core()
                 ),
-                address(_core)
+                address(_core),
+                "Verfiy ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES is pointing to the correct core address"
             );
             assertEq(
                 address(
                     ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).core()
                 ),
-                address(_core)
+                address(_core),
+                "Verfiy ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES is pointing to the correct core address"
             );
             assertEq(
                 address(ERC1155AutoGraphMinter(addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")).core()),
-                address(_core)
+                address(_core),
+                "Verfiy ERC1155_AUTO_GRAPH_MINTER is pointing to the correct core address"
             );
-            assertEq(address(CoreRef(addresses.getAddress("GAME_CONSUMABLE")).core()), address(_core));
+            assertEq(
+                address(CoreRef(addresses.getAddress("GAME_CONSUMABLE")).core()),
+                address(_core),
+                "Verfiy GAME_CONSUMABLE is pointing to the correct core address"
+            );
         }
 
         /// Verfiy all roles have been assigned correcly
@@ -157,18 +149,21 @@ contract zip002 is Proposal, TimelockProposal {
                     Roles.LOCKER_PROTOCOL_ROLE,
                     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
                 ),
-                true
+                true,
+                "Verifying ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES has LOCKER role"
             );
             assertEq(
                 _core.hasRole(
                     Roles.LOCKER_PROTOCOL_ROLE,
                     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
                 ),
-                true
+                true,
+                "Verifying ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES has LOCKER role"
             );
             assertEq(
                 _core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")),
-                true
+                true,
+                "Verifying ERC1155_AUTO_GRAPH_MINTER has LOCKER role"
             );
 
             /// Verfiy MINTER role
@@ -177,18 +172,21 @@ contract zip002 is Proposal, TimelockProposal {
                     Roles.MINTER_PROTOCOL_ROLE,
                     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
                 ),
-                true
+                true,
+                "Verifying ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES has MINTER role"
             );
             assertEq(
                 _core.hasRole(
                     Roles.MINTER_PROTOCOL_ROLE,
                     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
                 ),
-                true
+                true,
+                "Verifying ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES has MINTER role"
             );
             assertEq(
                 _core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")),
-                true
+                true,
+                "Verifying ERC1155_AUTO_GRAPH_MINTER has MINTER role"
             );
         }
 
@@ -196,15 +194,23 @@ contract zip002 is Proposal, TimelockProposal {
         {
             assertEq(
                 _core.hasRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SEASON_ONE")),
-                true
+                true,
+                "Verifying ERC1155_SEASON_ONE has REGISTRY_OPERATOR role"
             );
         }
 
         // Sum of Role counts to date
         {
-            assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 5);
-            assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 5);
+            assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 5, "Locker role count is not 5");
+            assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 5, "Minter role count is not 5");
         }
+
+        /// ADMIN role
+        assertEq(
+            _core.getRoleMember(Roles.ADMIN, 1),
+            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
+            "Verifying ADMIN role is pointing to the correct address"
+        );
     }
 
     function _validateOnChain(Addresses, address deployer) internal override {}
@@ -214,6 +220,7 @@ contract zip002 is Proposal, TimelockProposal {
     function _teardown(Addresses addresses, address deployer) internal override {}
 
     function _build(Addresses addresses, address) internal override {
+        /// grant protocol Locker role
         _pushTimelockAction(
             addresses.getAddress("CORE"),
             abi.encodeWithSignature(
@@ -223,6 +230,70 @@ contract zip002 is Proposal, TimelockProposal {
             ),
             "Grant protocol locker role to ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"
         );
+
+        _pushTimelockAction(
+            addresses.getAddress("CORE"),
+            abi.encodeWithSignature(
+                "grantRole(bytes32,address)",
+                Roles.LOCKER_PROTOCOL_ROLE,
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
+            ),
+            "Grant protocol locker role to ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"
+        );
+
+        _pushTimelockAction(
+            addresses.getAddress("CORE"),
+            abi.encodeWithSignature(
+                "grantRole(bytes32,address)",
+                Roles.LOCKER_PROTOCOL_ROLE,
+                addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")
+            ),
+            "Grant protocol locker role to ERC1155_AUTO_GRAPH_MINTER"
+        );
+
+        /// grant protocol minter role
+        _pushTimelockAction(
+            addresses.getAddress("CORE"),
+            abi.encodeWithSignature(
+                "grantRole(bytes32,address)",
+                Roles.MINTER_PROTOCOL_ROLE,
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
+            ),
+            "Grant protocol minter role to ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"
+        );
+
+        _pushTimelockAction(
+            addresses.getAddress("CORE"),
+            abi.encodeWithSignature(
+                "grantRole(bytes32,address)",
+                Roles.MINTER_PROTOCOL_ROLE,
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
+            ),
+            "Grant protocol minter role to ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"
+        );
+
+        _pushTimelockAction(
+            addresses.getAddress("CORE"),
+            abi.encodeWithSignature(
+                "grantRole(bytes32,address)",
+                Roles.MINTER_PROTOCOL_ROLE,
+                addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")
+            ),
+            "Grant protocol minter role to ERC1155_AUTO_GRAPH_MINTER"
+        );
+
+        /// grant registry operator role
+        _pushTimelockAction(
+            addresses.getAddress("CORE"),
+            abi.encodeWithSignature(
+                "grantRole(bytes32,address)",
+                Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE,
+                addresses.getAddress("ERC1155_SEASON_ONE")
+            ),
+            "Grant registry operator role to ERC1155_SEASON_ONE"
+        );
+
+        // TODO Should we config the Season 1 contract here?
     }
 
     function _run(Addresses addresses, address) internal override {
