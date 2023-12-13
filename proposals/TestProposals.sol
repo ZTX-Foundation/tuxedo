@@ -48,6 +48,8 @@ contract TestProposals is Test {
         proposals.push(Proposal(address(new zipTest()))); /// RnD proposal
 
         nProposals = proposals.length;
+
+        vm.warp(block.timestamp + 1); /// required for timelock to work
     }
 
     function setDebug(bool value) public {
