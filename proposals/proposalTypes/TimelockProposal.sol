@@ -107,7 +107,7 @@ abstract contract TimelockProposal is Proposal {
 
         if (!timelock.isOperationDone(proposalId)) {
             vm.prank(executorAddress);
-            timelock.executeBatch(targets, values, payloads, predecessor, salt); // TODO this is not working
+            timelock.executeBatch(targets, values, payloads, predecessor, salt);
 
             if (DEBUG) {
                 console.log("execute batch calldata");
