@@ -46,11 +46,11 @@ abstract contract Proposal is IProposal, Test {
         _beforeDeploy(addresses, deployer);
         _deploy(addresses, deployer);
         _afterDeploy(addresses, deployer);
-        _afterDeployOnChain(addresses, deployer); // Create calldata for the multisig to give the timelock admin?
+        _afterDeployOnChain(addresses, deployer);
         vm.stopBroadcast();
 
-        _build(addresses, deployer); // build the proposal
-        _run(addresses, deployer); // print calldata
+        _build(addresses, deployer);
+        _run(addresses, deployer);
 
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
