@@ -3,6 +3,7 @@ pragma solidity 0.8.18;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
+import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
 
 import {Addresses} from "@proposals/Addresses.sol";
 import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
@@ -57,6 +58,31 @@ contract zip002 is Proposal, TimelockProposal {
         );
         addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES", address(erc1155Placeables));
 
+        /// ERC20Splitter allocation settings
+        // TODO Verfiy
+        ERC20Splitter.Allocation[] memory allocations = new ERC20Splitter.Allocation[](2);
+        allocations[0].deposit = addresses.getAddress("REVENUE_WALLET_MULTISIG01");
+        allocations[0].ratio = 5_000;
+        allocations[1].deposit = addresses.getAddress("REVENUE_WALLET_MULTISIG02");
+        allocations[1].ratio = 5_000;
+
+        /// ERC20Splitter consumable splitter contract
+        ERC20Splitter consumableSplitter = new ERC20Splitter(
+            address(_core),
+            addresses.getAddress("TOKEN"),
+            allocations
+        );
+        addresses.addAddress("CONSUMABLE_SPLITTER", address(consumableSplitter));
+
+        // TODO AutoGraphMinter not working with the splitter contract
+        /// ERC20Splitter autoGraphMinter splitter contract
+        // ERC20Splitter autoGraphMinterSplitter = new ERC20Splitter(
+        //     address(_core),
+        //     addresses.getAddress("TOKEN"),
+        //     allocations
+        // );
+        // addresses.addAddress("AUTOGRAPH_SPLITTER", address(autoGraphMinterSplitter));
+
         /// AutoGraphMinter contract
         address[] memory nftContractAddresses = new address[](3);
         nftContractAddresses[0] = address(erc1155Consumables);
@@ -68,7 +94,7 @@ contract zip002 is Proposal, TimelockProposal {
             nftContractAddresses,
             3, // 10_800 per hour = 3 per second // TODO verfiy
             250_000, // 250_000 tokens per day // TODO verfiy
-            addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"),
+            addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"), //TODO fails test if using a splitter contract address
             1 // 1 hour expiry token timeout // TODO verfiy
         );
         addresses.addAddress("ERC1155_AUTO_GRAPH_MINTER", address(erc1155AutoGraphMinter));
@@ -77,7 +103,7 @@ contract zip002 is Proposal, TimelockProposal {
         GameConsumer gameConsumer = new GameConsumer(
             address(_core),
             addresses.getAddress("TOKEN"),
-            addresses.getAddress("GAME_CONSUMER_PAYMENT_RECIPIENT"),
+            addresses.getAddress("CONSUMABLE_SPLITTER"),
             addresses.getAddress("WETH")
         );
         addresses.addAddress("GAME_CONSUMABLE", address(gameConsumer));
@@ -100,10 +126,10 @@ contract zip002 is Proposal, TimelockProposal {
 
         adminTimelockProposersExecutors[0] = address(addresses.getAddress("ADMIN_MULTISIG"));
         TimelockController adminTimelock = new TimelockController(
-            0, // TODO No delay for the adminTimeLock?
+            0, // zero delay
             adminTimelockProposersExecutors,
             adminTimelockProposersExecutors,
-            address(0) // TODO what about the ADMIN_MULTISIG?
+            address(0) // No admin requried
         );
         addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(adminTimelock));
     }

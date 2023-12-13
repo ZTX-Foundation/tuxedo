@@ -82,9 +82,8 @@ contract Addresses is Test {
         _addAddress("TOKEN", 42161, 0x1C43D05be7E5b54D506e3DdB6f0305e8A66CD04e);
         _addAddress("ADMIN_MULTISIG", 42161, 0x5dE36e1b22520975021950c0ca190027A6f73aAa);
 
-        // TODO need offical addresses or are we going to use holding deps contracts?
+        // TODO We need a EOA/multisig for this one.
         _addAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT", 42161, 0x0000000000000000000000000000000000000001);
-        _addAddress("GAME_CONSUMER_PAYMENT_RECIPIENT", 42161, 0x0000000000000000000000000000000000000002);
     }
 
     /// @notice add an address for a specific _chainId

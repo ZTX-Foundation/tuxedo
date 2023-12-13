@@ -18,7 +18,6 @@ import {GameConsumer} from "@protocol/game/GameConsumer.sol";
 import {GovernorDAO} from "@protocol/governance/GovernorDAO.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
-import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
@@ -124,20 +123,6 @@ contract zipTest is Proposal, TimelockProposal {
                 addresses.getAddress("WETH")
             );
             addresses.addAddress("WETH_TREASURY_HOLDING_DEPOSIT", address(wethTreasuryHoldingDeposit));
-
-            ERC20Splitter.Allocation[] memory allocations = new ERC20Splitter.Allocation[](2);
-            allocations[0].deposit = addresses.getAddress("BURNER_HOLDING_DEPOSIT");
-            allocations[0].ratio = 5_000;
-            allocations[1].deposit = addresses.getAddress("TREASURY_WALLET_MULTISIG");
-            allocations[1].ratio = 5_000;
-
-            /// ERC20Splitter
-            ERC20Splitter consumableSplitter = new ERC20Splitter(
-                address(_core),
-                addresses.getAddress("TOKEN"),
-                allocations
-            );
-            addresses.addAddress("CONSUMABLE_SPLITTER", address(consumableSplitter));
 
             /// ERC1155Sale Splitter
             ERC20Splitter.Allocation[] memory wethAllocations = new ERC20Splitter.Allocation[](2);
@@ -258,29 +243,30 @@ contract zipTest is Proposal, TimelockProposal {
         );
 
         /// Game consumable
-        ERC20Splitter.Allocation[] memory consumableAllocations = ERC20Splitter(
-            addresses.getAddress("CONSUMABLE_SPLITTER")
-        ).getAllocations();
+        // TODO move into CGv1 zip
+        // ERC20Splitter.Allocation[] memory consumableAllocations = ERC20Splitter(
+        //     addresses.getAddress("CONSUMABLE_SPLITTER")
+        // ).getAllocations();
 
-        assertEq(consumableAllocations.length, 2, "Consumable allocations length is not equal to 2");
-        assertEq(
-            consumableAllocations[0].deposit,
-            addresses.getAddress("BURNER_HOLDING_DEPOSIT"),
-            "Consumable allocation deposit is not equal to BURNER_HOLDING_DEPOSIT"
-        );
-        assertEq(consumableAllocations[0].ratio, 5_000, "Consumable allocation ratio is not equal to 5_000");
-        assertEq(
-            consumableAllocations[1].deposit,
-            addresses.getAddress("TREASURY_WALLET_MULTISIG"),
-            "Consumable allocation deposit is not equal to TREASURY_WALLET_MULTISIG"
-        );
-        assertEq(consumableAllocations[1].ratio, 5_000, "Consumable allocation ratio is not equal to 5_000");
+        // assertEq(consumableAllocations.length, 2, "Consumable allocations length is not equal to 2");
+        // assertEq(
+        //     consumableAllocations[0].deposit,
+        //     addresses.getAddress("BURNER_HOLDING_DEPOSIT"),
+        //     "Consumable allocation deposit is not equal to BURNER_HOLDING_DEPOSIT"
+        // );
+        // assertEq(consumableAllocations[0].ratio, 5_000, "Consumable allocation ratio is not equal to 5_000");
+        // assertEq(
+        //     consumableAllocations[1].deposit,
+        //     addresses.getAddress("TREASURY_WALLET_MULTISIG"),
+        //     "Consumable allocation deposit is not equal to TREASURY_WALLET_MULTISIG"
+        // );
+        // assertEq(consumableAllocations[1].ratio, 5_000, "Consumable allocation ratio is not equal to 5_000");
 
-        assertEq(
-            address(ERC20Splitter(addresses.getAddress("CONSUMABLE_SPLITTER")).core()),
-            address(_core),
-            "CONSUMABLE_SPLITTER is pointing to wrong core"
-        );
+        // assertEq(
+        //     address(ERC20Splitter(addresses.getAddress("CONSUMABLE_SPLITTER")).core()),
+        //     address(_core),
+        //     "CONSUMABLE_SPLITTER is pointing to wrong core"
+        // );
 
         /// Check that right number of roles has been assigned
         assertEq(
