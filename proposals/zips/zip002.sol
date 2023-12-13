@@ -108,7 +108,10 @@ contract zip002 is Proposal, TimelockProposal {
         addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(adminTimelock));
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {}
+    function _afterDeploy(Addresses addresses, address) internal override {
+        // TODO split out into its own zip file that runes before this one
+        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+    }
 
     function _afterDeployOnChain(Addresses, address deployer) internal override {}
 
@@ -207,10 +210,13 @@ contract zip002 is Proposal, TimelockProposal {
 
         /// ADMIN role
         assertEq(
-            _core.getRoleMember(Roles.ADMIN, 1),
+            _core.getRoleMember(Roles.ADMIN, 2),
             addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
             "Verifying ADMIN role is pointing to the correct address"
         );
+
+        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")), true);
+        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true);
     }
 
     function _validateOnChain(Addresses, address deployer) internal override {}
