@@ -66,10 +66,10 @@ contract zip002 is Proposal, TimelockProposal {
         ERC1155AutoGraphMinter erc1155AutoGraphMinter = new ERC1155AutoGraphMinter(
             address(_core),
             nftContractAddresses,
-            10_000e18, // TODO need offical values from the boss man
-            10_000_000e18, // same as above
+            3, // 10_800 per hour = 3 per second // TODO verfiy
+            250_000, // 250_000 tokens per day // TODO verfiy
             addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"),
-            1 // 1 hour for valid expiryToken
+            1 // 1 hour expiry token timeout // TODO verfiy
         );
         addresses.addAddress("ERC1155_AUTO_GRAPH_MINTER", address(erc1155AutoGraphMinter));
 
