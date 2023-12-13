@@ -31,12 +31,9 @@ abstract contract Proposal is IProposal, Test {
         _build(addresses, deployer);
         _run(addresses, deployer);
 
-        vm.startBroadcast(deployer);
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
         _validateForTestingOnly(addresses, deployer);
-
-        vm.stopBroadcast();
     }
 
     /// @notice run the deployment on-chain
@@ -46,17 +43,14 @@ abstract contract Proposal is IProposal, Test {
 
         // start broadcast
         vm.startBroadcast(privateKey);
-
         _beforeDeploy(addresses, deployer);
         _deploy(addresses, deployer);
         _afterDeploy(addresses, deployer);
-        _afterDeployOnChain(addresses, deployer); // revoke admin role from deployer
-
-        // stop broadcast
+        _afterDeployOnChain(addresses, deployer); // Create calldata for the multisig to give the timelock admin?
         vm.stopBroadcast();
 
-        _build(addresses, deployer);
-        _run(addresses, deployer);
+        _build(addresses, deployer); // build the proposal
+        _run(addresses, deployer); // print calldata
 
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
