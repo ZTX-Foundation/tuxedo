@@ -73,6 +73,19 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "string",
+        "name": "functionSignature",
+        "type": "string"
+      }
+    ],
+    "name": "FunctionLocked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "account",
         "type": "address"
