@@ -36,6 +36,8 @@ contract zip000 is Proposal, TimelockProposal {
         IERC20(addresses.getAddress("TOKEN")).transfer(addresses.getAddress("TREASURY_WALLET_MULTISIG"), MAX_SUPPLY);
     }
 
+    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
+
     function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
 
     function _validate(Addresses addresses, address) internal override {

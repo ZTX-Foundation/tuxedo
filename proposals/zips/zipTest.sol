@@ -175,6 +175,8 @@ contract zipTest is Proposal, TimelockProposal {
         _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
     }
 
+    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
+
     function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
 
     function _build(Addresses addresses, address deployer) internal override {}

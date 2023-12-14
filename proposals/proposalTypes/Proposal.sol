@@ -25,6 +25,7 @@ abstract contract Proposal is IProposal, Test {
         _beforeDeploy(addresses, deployer);
         _deploy(addresses, deployer);
         _afterDeploy(addresses, deployer);
+        _aferDeployForTestingOnly(addresses, deployer);
 
         vm.stopBroadcast();
 
@@ -66,6 +67,10 @@ abstract contract Proposal is IProposal, Test {
 
     /// @notice runs after all deployments
     function _afterDeploy(Addresses addresses, address deployer) internal virtual;
+
+    /// @notice runs after all deployments for testing only
+    /// @dev as an example in testing mode we dont drop the admin role as its needed for further deployments in an automated test
+    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual;
 
     /// @notice runs after all deployments on-chain only and will ensure that admin role is revoked from deployer
     /// @dev Revoked admin role after all deployments and needs to added again before another deployment can be done.
