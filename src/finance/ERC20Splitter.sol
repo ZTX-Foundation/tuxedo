@@ -27,25 +27,16 @@ contract ERC20Splitter is CoreRef {
     IERC20 public immutable token;
 
     /// @notice emitted when the allocation is updated
-    event AllocationUpdate(
-        address[] oldDeposits,
-        uint256[] oldRatios,
-        address[] newDeposits,
-        uint256[] newRatios
-    );
-    
+    event AllocationUpdate(address[] oldDeposits, uint256[] oldRatios, address[] newDeposits, uint256[] newRatios);
+
     /// @notice emitted when funds are allocated to deposits
     event Allocate(address indexed caller, uint256 amount);
-    
+
     /// @notice ERC20Splitter constructor
     /// @param _core address of the core contract
     /// @param _token address of the token to split
     /// @param _deposits list of deposits and ratios to split to, optional, this can be provided later by admin
-    constructor(
-        address _core,
-        address _token,
-        Allocation[] memory _deposits
-    ) CoreRef(_core) {
+    constructor(address _core, address _token, Allocation[] memory _deposits) CoreRef(_core) {
         require(_token != address(0), "ERC20Splitter: token cannot be address(0)");
         token = IERC20(_token);
         /// do not set up deposits if non provided
@@ -53,7 +44,7 @@ contract ERC20Splitter is CoreRef {
             _setAllocation(_deposits);
         }
     }
-    
+
     /// ------- View Only Functions -------
 
     /// @notice get the number of allocations
@@ -73,7 +64,7 @@ contract ERC20Splitter is CoreRef {
     function getAllocations() external view returns (Allocation[] memory) {
         return allocations;
     }
-    
+
     /// @notice make sure an allocation has ratios that total ALLOCATION_GRANULARITY
     /// @param _deposits new list of deposits to send to
     function checkAllocation(Allocation[] memory _deposits) public pure {
@@ -83,12 +74,12 @@ contract ERC20Splitter is CoreRef {
                 total = total + _deposits[i].ratio;
             }
         }
-        
+
         require(total == Constants.BASIS_POINTS_GRANULARITY, "ERC20Splitter: ratios not 100%");
     }
 
     /// ------- Public Function -------
-    
+
     /// @notice allocate all funds in the splitter to the deposits
     /// @dev callable when not paused
     function allocate() external whenNotPaused {
@@ -102,7 +93,7 @@ contract ERC20Splitter is CoreRef {
 
         emit Allocate(msg.sender, total);
     }
-    
+
     /// @notice allocate all funds in the splitter to the deposits
     /// @dev callable when not paused
     /// @param tokenToAllocate token to be allocated by splitter based on defined ratios
@@ -138,6 +129,8 @@ contract ERC20Splitter is CoreRef {
         address[] memory _oldDeposits = new address[](allocations.length);
         unchecked {
             for (uint256 i; i < allocations.length; i++) {
+                // TODO add missing test.
+                require(_allocations[i].deposit != address(0), "ERC20Splitter: deposit cannot be address(0)");
                 _oldRatios[i] = allocations[i].ratio;
                 _oldDeposits[i] = allocations[i].deposit;
             }
@@ -149,7 +142,7 @@ contract ERC20Splitter is CoreRef {
         uint256[] memory _newRatios = new uint256[](_allocations.length);
         address[] memory _newDeposits = new address[](_allocations.length);
 
-        /// improbable to ever overflow because deposit length would need to be greater than 2^256-1 
+        /// improbable to ever overflow because deposit length would need to be greater than 2^256-1
         unchecked {
             for (uint256 i; i < _allocations.length; i++) {
                 allocations.push(_allocations[i]);

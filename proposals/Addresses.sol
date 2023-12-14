@@ -84,6 +84,11 @@ contract Addresses is Test {
 
         // TODO We need a EOA/multisig for this one.
         _addAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT", 42161, 0x0000000000000000000000000000000000000001);
+        _addAddress("REVENUE_WALLET_MULTISIG01", 42161, 0x0000000000000000000000000000000000000002);
+        _addAddress("REVENUE_WALLET_MULTISIG02", 42161, 0x0000000000000000000000000000000000000003);
+
+        // TODO comfirm address
+        _addAddress("WETH", 42161, 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
     }
 
     /// @notice add an address for a specific _chainId
