@@ -2,7 +2,6 @@
 pragma solidity 0.8.18;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
 
 import {Addresses} from "@proposals/Addresses.sol";
@@ -29,8 +28,14 @@ contract zip003 is Proposal, TimelockProposal {
         /// Get Core Address
         _core = Core(addresses.getCore());
 
-        // Admin required for the deployment of this proposal
-        assertEq(_core.hasRole(Roles.ADMIN, deployer), true);
+        /// Confirm Timelock has been giving the ADMIN role correctly before we start the deployment
+        assertEq(
+            _core.getRoleMember(Roles.ADMIN, 2),
+            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
+            "Verifying ADMIN role is pointing to the correct address"
+        );
+
+        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")), true);
     }
 
     function _deploy(Addresses addresses, address) internal override {
@@ -74,15 +79,6 @@ contract zip003 is Proposal, TimelockProposal {
         );
         addresses.addAddress("CONSUMABLE_SPLITTER", address(consumableSplitter));
 
-        // TODO AutoGraphMinter not working with the splitter contract
-        /// ERC20Splitter autoGraphMinter splitter contract
-        // ERC20Splitter autoGraphMinterSplitter = new ERC20Splitter(
-        //     address(_core),
-        //     addresses.getAddress("TOKEN"),
-        //     allocations
-        // );
-        // addresses.addAddress("AUTOGRAPH_SPLITTER", address(autoGraphMinterSplitter));
-
         /// AutoGraphMinter contract
         address[] memory nftContractAddresses = new address[](3);
         nftContractAddresses[0] = address(erc1155Consumables);
@@ -120,24 +116,11 @@ contract zip003 is Proposal, TimelockProposal {
             address(seasonsTokenIdRegistry)
         );
         addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne));
-
-        /// Admin timelock controller
-        address[] memory adminTimelockProposersExecutors = new address[](1);
-
-        adminTimelockProposersExecutors[0] = address(addresses.getAddress("ADMIN_MULTISIG"));
-        TimelockController adminTimelock = new TimelockController(
-            0, // zero delay
-            adminTimelockProposersExecutors,
-            adminTimelockProposersExecutors,
-            address(0) // No admin requried
-        );
-        addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(adminTimelock));
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {
-        // TODO split out into its own zip file that runes before this one
-        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
-    }
+    function _afterDeploy(Addresses addresses, address) internal override {}
+
+    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
 
     function _afterDeployOnChain(Addresses, address deployer) internal override {}
 
@@ -234,14 +217,6 @@ contract zip003 is Proposal, TimelockProposal {
             assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 5, "Minter role count is not 5");
         }
 
-        /// ADMIN role
-        assertEq(
-            _core.getRoleMember(Roles.ADMIN, 2),
-            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
-            "Verifying ADMIN role is pointing to the correct address"
-        );
-
-        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")), true);
         assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true);
     }
 
