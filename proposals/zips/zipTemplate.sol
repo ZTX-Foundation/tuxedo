@@ -12,9 +12,9 @@ import {Roles} from "@protocol/core/Roles.sol";
 import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 
-contract zip002 is Proposal, TimelockProposal {
-    string public name = "ZIP002";
-    string public description = "The TimeLock deployment";
+contract zipTemplate is Proposal, TimelockProposal {
+    string public name = "ZIPTEMPLATE";
+    string public description = "Template proposal";
 
     function _beforeDeploy(Addresses, address deployer) internal override {}
 

@@ -10,6 +10,7 @@ import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 import {zip000} from "@proposals/zips/zip000.sol";
 import {zip001} from "@proposals/zips/zip001.sol";
 import {zip002} from "@proposals/zips/zip002.sol";
+import {zip003} from "@proposals/zips/zip003.sol";
 import {zipTest} from "@proposals/zips/zipTest.sol";
 
 /*
@@ -42,10 +43,11 @@ contract TestProposals is Test {
         addresses = new Addresses();
 
         // Load proposals
-        proposals.push(Proposal(address(new zip000())));
-        proposals.push(Proposal(address(new zip001())));
-        proposals.push(Proposal(address(new zip002()))); /// Next draft proposal
-        proposals.push(Proposal(address(new zipTest()))); /// RnD proposal
+        proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
+        proposals.push(Proposal(address(new zip001()))); /// Wearables, Core, ADMIN_MULTISIG proposal
+        proposals.push(Proposal(address(new zip002()))); /// Timelock proposal
+        proposals.push(Proposal(address(new zip003()))); /// CGv1 proposal
+        proposals.push(Proposal(address(new zipTest()))); /// RnD/testing only proposal
 
         nProposals = proposals.length;
 
