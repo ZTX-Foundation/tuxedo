@@ -59,6 +59,7 @@ contract Addresses is Test {
         _addAddress("GAME_CONSUMABLE", 421613, 0xdde8cF29ee078B5a82C88d6Cf7CBF9600c4Cf81e);
 
         // 421614: Arbitrum  testNet (sepolia)
+        // TODO To be updated post deployment
         // _addAddress("CORE", 421614, 0x88A6473f76B70472C48cE1C5C6b0ebfcF0FB5A55);
         // _addAddress("GLOBAL_REENTRANCY_LOCK", 421614, 0xB6Bb6Ec96361a17E94991Ba5A28DAa7ca4aC5909);
         // _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", 421614, 0x0321A813eE91b6a76c3B282a05B35253e4cE75f9);
