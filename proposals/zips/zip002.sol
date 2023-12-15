@@ -18,6 +18,8 @@ contract zip002 is Proposal, TimelockProposal {
     string public name = "ZIP002";
     string public description = "The TimeLock deployment";
 
+    TimelockController private _adminTimelock;
+
     function _beforeDeploy(Addresses addresses, address deployer) internal override {
         /// Get Core Address
         _core = Core(addresses.getCore());
@@ -28,13 +30,13 @@ contract zip002 is Proposal, TimelockProposal {
         address[] memory adminTimelockProposersExecutors = new address[](1);
 
         adminTimelockProposersExecutors[0] = address(addresses.getAddress("ADMIN_MULTISIG"));
-        TimelockController adminTimelock = new TimelockController(
+        _adminTimelock = new TimelockController(
             0, // zero delay
             adminTimelockProposersExecutors,
             adminTimelockProposersExecutors,
             address(0) // No admin requried
         );
-        addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(adminTimelock));
+        addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(_adminTimelock));
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {}
@@ -50,7 +52,13 @@ contract zip002 is Proposal, TimelockProposal {
         console.log("Please give Roles.Admin to the ADMIN_TIMELOCK_CONTROLLER from the ADMIN_MULTISIG");
     }
 
-    function _validate(Addresses addresses, address) internal override {}
+    function _validate(Addresses addresses, address) internal override {
+        /// Check that the ADMIN_MULTISIG has the PROPOSER role
+        assertEq(_adminTimelock.hasRole(_adminTimelock.PROPOSER_ROLE(), addresses.getAddress("ADMIN_MULTISIG")), true);
+
+        /// Check that the ADMIN_MULTISIG has the EXECUTOR role
+        assertEq(_adminTimelock.hasRole(_adminTimelock.EXECUTOR_ROLE(), addresses.getAddress("ADMIN_MULTISIG")), true);
+    }
 
     function _validateOnChain(Addresses, address deployer) internal virtual override {}
 
