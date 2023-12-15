@@ -146,10 +146,10 @@ contract zip001 is Proposal {
 
     function _validateOnChain(Addresses, address deployer) internal override {
         /// Verify ADMIN role has been revoked from deployer
-        // assertEq(_core.hasRole(Roles.ADMIN, deployer), false, "deployer should not have admin role");
+        assertEq(_core.hasRole(Roles.ADMIN, deployer), false, "deployer should not have admin role");
 
         /// Verify only ADMIN_MULTISIG has ADMIN role
-        // assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1, "incorrect admin count");
+        assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1, "incorrect admin count");
     }
 
     function _validateForTestingOnly(Addresses, address deployer) internal override {}
