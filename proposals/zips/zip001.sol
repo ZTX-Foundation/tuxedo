@@ -62,7 +62,7 @@ contract zip001 is Proposal {
 
     function _afterDeployOnChain(Addresses, address deployer) internal override {
         // Revoke ADMIN role from deployer
-        _core.revokeRole(Roles.ADMIN, deployer);
+        // _core.revokeRole(Roles.ADMIN, deployer); // TODO to be added into next mainNet deployment
     }
 
     function _validate(Addresses addresses, address) internal override {
