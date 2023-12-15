@@ -64,7 +64,6 @@ contract zip003 is Proposal, TimelockProposal {
         addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES", address(erc1155Placeables));
 
         /// ERC20Splitter allocation settings
-        // TODO Verfiy
         ERC20Splitter.Allocation[] memory allocations = new ERC20Splitter.Allocation[](2);
         allocations[0].deposit = addresses.getAddress("REVENUE_WALLET_MULTISIG01");
         allocations[0].ratio = 5_000;
@@ -88,10 +87,10 @@ contract zip003 is Proposal, TimelockProposal {
         ERC1155AutoGraphMinter erc1155AutoGraphMinter = new ERC1155AutoGraphMinter(
             address(_core),
             nftContractAddresses,
-            3, // 10_800 per hour = 3 per second // TODO verfiy
-            250_000, // 250_000 tokens per day // TODO verfiy
+            3, // 10_800 per hour = 3 per second
+            250_000, // 250_000 tokens per day
             addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"), //TODO fails test if using a splitter contract address
-            1 // 1 hour expiry token timeout // TODO verfiy
+            1 // 1 hour expiry token timeout
         );
         addresses.addAddress("ERC1155_AUTO_GRAPH_MINTER", address(erc1155AutoGraphMinter));
 
@@ -211,13 +210,66 @@ contract zip003 is Proposal, TimelockProposal {
             );
         }
 
-        // Sum of Role counts to date
+        /// Sum of Role counts to date
         {
             assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 5, "Locker role count is not 5");
             assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 5, "Minter role count is not 5");
         }
 
-        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true);
+        /// Verfiy MULTISIGS have the correct roles
+        {
+            assertEq(
+                _core.hasRole(Roles.GUARDIAN, addresses.getAddress("GUARDIAN_MULTISIG")),
+                true,
+                "Verfiy GUARDIAN Role is set on GUARDIAN_MULTISIG"
+            );
+            assertEq(
+                _core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")),
+                true,
+                "Verfiy ADMIN Role is set on ADMIN_MULTISIG"
+            );
+        }
+
+        /// Verfiy ERC20Splitter has the correct settings
+        // TODO confirm best way to get this working.
+        {
+            ERC20Splitter splitter = ERC20Splitter(addresses.getAddress("CONSUMABLE_SPLITTER"));
+            assertEq(address(splitter.token()), addresses.getAddress("TOKEN"), "Verfiy splitter token address");
+            // assertEq(splitter.allocations(0).deposit, addresses.getAddress("REVENUE_WALLET_MULTISIG01"));
+            // assertEq(splitter.allocations(0).ratio, 5_000);
+            // assertEq(splitter.allocations(1).deposit, addresses.getAddress("REVENUE_WALLET_MULTISIG02"));
+            // assertEq(splitter.allocations(1).ratio, 5_000);
+        }
+
+        /// Verfiy ERC1155AutoGraphMinter has the correct settings
+        {
+            ERC1155AutoGraphMinter minter = ERC1155AutoGraphMinter(addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
+            assertEq(address(minter.core()), address(_core), "Verfiy minter core address");
+            assertEq(
+                address(minter.paymentRecipient()),
+                addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"),
+                "Verfiy minter payment recipient address"
+            );
+            assertEq(minter.replenishRatePerSecond(), 3, "Verfiy minter replenish rate per second");
+            assertEq(minter.bufferCap(), 250_000, "Verfiy minter max tokens per day");
+            assertEq(minter.expiryTokenHoursValid(), 1, "Verfiy minter expiry timeout");
+
+            assertEq(
+                minter.isWhitelistedAddress(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
+                true,
+                "Verify ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES is whitelisted"
+            );
+            assertEq(
+                minter.isWhitelistedAddress(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
+                true,
+                "Verify ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES is whitelisted"
+            );
+            assertEq(
+                minter.isWhitelistedAddress(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")),
+                true,
+                "Verify ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES is whitelisted"
+            );
+        }
     }
 
     function _validateOnChain(Addresses, address deployer) internal override {}
@@ -227,6 +279,17 @@ contract zip003 is Proposal, TimelockProposal {
     function _teardown(Addresses addresses, address deployer) internal override {}
 
     function _build(Addresses addresses, address) internal override {
+        /// Grant the GUARDIAN role to the GUARDIAN_MULTISIG
+        _pushTimelockAction(
+            addresses.getAddress("CORE"),
+            abi.encodeWithSignature(
+                "grantRole(bytes32,address)",
+                Roles.GUARDIAN,
+                addresses.getAddress("GUARDIAN_MULTISIG")
+            ),
+            "Grant protocol locker role to GUARDIAN_MULTISIG"
+        );
+
         /// grant protocol Locker role
         _pushTimelockAction(
             addresses.getAddress("CORE"),
