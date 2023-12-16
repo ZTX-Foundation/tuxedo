@@ -89,7 +89,7 @@ contract zip003 is Proposal, TimelockProposal {
             nftContractAddresses,
             3, // 10_800 per hour = 3 per second
             250_000, // 250_000 tokens per day
-            addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"), //TODO fails test if using a splitter contract address
+            addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"),
             1 // 1 hour expiry token timeout
         );
         addresses.addAddress("ERC1155_AUTO_GRAPH_MINTER", address(erc1155AutoGraphMinter));
@@ -231,14 +231,17 @@ contract zip003 is Proposal, TimelockProposal {
         }
 
         /// Verfiy ERC20Splitter has the correct settings
-        // TODO confirm best way to get this working.
         {
             ERC20Splitter splitter = ERC20Splitter(addresses.getAddress("CONSUMABLE_SPLITTER"));
             assertEq(address(splitter.token()), addresses.getAddress("TOKEN"), "Verfiy splitter token address");
-            // assertEq(splitter.allocations(0).deposit, addresses.getAddress("REVENUE_WALLET_MULTISIG01"));
-            // assertEq(splitter.allocations(0).ratio, 5_000);
-            // assertEq(splitter.allocations(1).deposit, addresses.getAddress("REVENUE_WALLET_MULTISIG02"));
-            // assertEq(splitter.allocations(1).ratio, 5_000);
+
+            (address address0, uint ratio0) = splitter.allocations(0);
+            (address address1, uint ratio1) = splitter.allocations(1);
+
+            assertEq(address0, addresses.getAddress("REVENUE_WALLET_MULTISIG01"));
+            assertEq(ratio0, 5_000);
+            assertEq(address1, addresses.getAddress("REVENUE_WALLET_MULTISIG02"));
+            assertEq(ratio1, 5_000);
         }
 
         /// Verfiy ERC1155AutoGraphMinter has the correct settings
