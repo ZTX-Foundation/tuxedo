@@ -269,6 +269,31 @@ contract zip003 is Proposal, TimelockProposal {
                 true,
                 "Verify ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES is whitelisted"
             );
+
+            /// Verify Game consumable
+            ERC20Splitter.Allocation[] memory consumableAllocations = ERC20Splitter(
+                addresses.getAddress("CONSUMABLE_SPLITTER")
+            ).getAllocations();
+
+            assertEq(consumableAllocations.length, 2, "Consumable allocations length is not equal to 2");
+            assertEq(
+                consumableAllocations[0].deposit,
+                addresses.getAddress("REVENUE_WALLET_MULTISIG01"),
+                "Consumable allocation deposit is not equal to BURNER_HOLDING_DEPOSIT"
+            );
+            assertEq(consumableAllocations[0].ratio, 5_000, "Consumable allocation ratio is not equal to 5_000");
+            assertEq(
+                consumableAllocations[1].deposit,
+                addresses.getAddress("REVENUE_WALLET_MULTISIG02"),
+                "Consumable allocation deposit is not equal to TREASURY_WALLET_MULTISIG"
+            );
+            assertEq(consumableAllocations[1].ratio, 5_000, "Consumable allocation ratio is not equal to 5_000");
+
+            assertEq(
+                address(ERC20Splitter(addresses.getAddress("CONSUMABLE_SPLITTER")).core()),
+                address(_core),
+                "CONSUMABLE_SPLITTER is pointing to wrong core"
+            );
         }
     }
 

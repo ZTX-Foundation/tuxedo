@@ -244,32 +244,6 @@ contract zipTest is Proposal, TimelockProposal {
             "ERC1155_SALE_SPLITTER is pointing to wrong core"
         );
 
-        /// Game consumable
-        // TODO move into CGv1 zip
-        // ERC20Splitter.Allocation[] memory consumableAllocations = ERC20Splitter(
-        //     addresses.getAddress("CONSUMABLE_SPLITTER")
-        // ).getAllocations();
-
-        // assertEq(consumableAllocations.length, 2, "Consumable allocations length is not equal to 2");
-        // assertEq(
-        //     consumableAllocations[0].deposit,
-        //     addresses.getAddress("BURNER_HOLDING_DEPOSIT"),
-        //     "Consumable allocation deposit is not equal to BURNER_HOLDING_DEPOSIT"
-        // );
-        // assertEq(consumableAllocations[0].ratio, 5_000, "Consumable allocation ratio is not equal to 5_000");
-        // assertEq(
-        //     consumableAllocations[1].deposit,
-        //     addresses.getAddress("TREASURY_WALLET_MULTISIG"),
-        //     "Consumable allocation deposit is not equal to TREASURY_WALLET_MULTISIG"
-        // );
-        // assertEq(consumableAllocations[1].ratio, 5_000, "Consumable allocation ratio is not equal to 5_000");
-
-        // assertEq(
-        //     address(ERC20Splitter(addresses.getAddress("CONSUMABLE_SPLITTER")).core()),
-        //     address(_core),
-        //     "CONSUMABLE_SPLITTER is pointing to wrong core"
-        // );
-
         /// Check that right number of roles has been assigned
         assertEq(
             _core.getRoleMemberCount(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE),
