@@ -20,7 +20,7 @@ contract zip002 is Proposal, TimelockProposal {
 
     TimelockController private _adminTimelock;
 
-    function _beforeDeploy(Addresses addresses, address deployer) internal override {
+    function _beforeDeploy(Addresses addresses, address) internal override {
         /// Get Core Address
         _core = Core(addresses.getCore());
     }
@@ -54,10 +54,25 @@ contract zip002 is Proposal, TimelockProposal {
 
     function _validate(Addresses addresses, address) internal override {
         /// Check that the ADMIN_MULTISIG has the PROPOSER role
-        assertEq(_adminTimelock.hasRole(_adminTimelock.PROPOSER_ROLE(), addresses.getAddress("ADMIN_MULTISIG")), true);
+        assertEq(
+            _adminTimelock.hasRole(_adminTimelock.PROPOSER_ROLE(), addresses.getAddress("ADMIN_MULTISIG")),
+            true,
+            "ADMIN_MULTISIG does not have PROPOSER_ROLE"
+        );
 
         /// Check that the ADMIN_MULTISIG has the EXECUTOR role
-        assertEq(_adminTimelock.hasRole(_adminTimelock.EXECUTOR_ROLE(), addresses.getAddress("ADMIN_MULTISIG")), true);
+        assertEq(
+            _adminTimelock.hasRole(_adminTimelock.EXECUTOR_ROLE(), addresses.getAddress("ADMIN_MULTISIG")),
+            true,
+            "ADMIN_MULTISIG does not have EXECUTOR_ROLE"
+        );
+
+        /// Check that the ADMIN_MULTISIG has the CANCELLER rol`e
+        assertEq(
+            _adminTimelock.hasRole(_adminTimelock.CANCELLER_ROLE(), addresses.getAddress("ADMIN_MULTISIG")),
+            true,
+            "ADMIN_MULTISIG does not have CANCELLER_ROLE"
+        );
     }
 
     function _validateOnChain(Addresses, address deployer) internal virtual override {}
