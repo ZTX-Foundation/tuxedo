@@ -391,7 +391,6 @@ contract zip003 is Proposal, TimelockProposal {
             "Grant registry operator role to ERC1155_SEASON_ONE"
         );
 
-        // TODO Should we config the Season 1 contract here? IF so what's the go live config.
     }
 
     function _run(Addresses addresses, address) internal override {
