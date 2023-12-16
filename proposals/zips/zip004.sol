@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
+import {console} from "@forge-std/console.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import {Addresses} from "@proposals/Addresses.sol";
@@ -17,7 +18,110 @@ contract zip004 is Proposal, TimelockProposal {
     string public name = "ZIP004";
     string public description = "Set TokenIds, MaxSupply and Capsule settings proposal";
 
-    function _beforeDeploy(Addresses, address deployer) internal override {}
+    struct TokenIDMaxSupplySettings {
+        uint256 tokenId;
+        uint256 maxSupply;
+    }
+
+    TokenIDMaxSupplySettings[] public placeableTokenIDMaxSupplySettings;
+
+    function _beforeDeploy(Addresses, address deployer) internal override {
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(1, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(4, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(12, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(14, 2500));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(17, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(21, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(27, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(28, 50));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(31, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(43, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(45, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(60, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(64, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(65, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(67, 2500));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(69, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(70, 50));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(72, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(74, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(76, 1000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(82, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(90, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(94, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(96, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(106, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(107, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(111, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(124, 500));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(129, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(149, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(152, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(153, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(154, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(156, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(161, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(163, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(167, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(170, 1000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(175, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(179, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(182, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(184, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(187, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(190, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(193, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(201, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(206, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(214, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(235, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(239, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(240, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(244, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(247, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(249, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(252, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(258, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(262, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(267, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(279, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(284, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(288, 500));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(292, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(294, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(300, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(302, 100_000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(303, 2500));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(314, 2500));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(325, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(329, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(331, 50));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(334, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(335, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(336, 2500));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(337, 1000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(338, 50));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(339, 6000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(340, 4000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(341, 2500));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(342, 1000));
+        placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(343, 500));
+
+        // sanity checks
+        assertEq(placeableTokenIDMaxSupplySettings.length, 80, "Invalid placeableTokenIDMaxSupplySettings length");
+
+        uint tokenIDTotal = 0;
+        uint maxSupplyTotal = 0;
+
+        // sum numbers from requrements sheet
+        for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
+            tokenIDTotal += placeableTokenIDMaxSupplySettings[i].tokenId;
+            maxSupplyTotal += placeableTokenIDMaxSupplySettings[i].maxSupply;
+        }
+
+        assertEq(tokenIDTotal, 14_654, "Invalid tokenIDTotal");
+        assertEq(maxSupplyTotal, 3_852_700, "Invalid maxSupplyTotal");
+    }
 
     function _deploy(Addresses addresses, address) internal override {}
 
@@ -33,237 +137,24 @@ contract zip004 is Proposal, TimelockProposal {
         // TODO Should we config the Season 1 contract here? IF so what's the go live config.
 
         /// Placeables config
-
-        // TokenId 1
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-            abi.encodeWithSignature("setSupplyCap(uint256,uint256)", 1, 100_000),
-            "Set placeable tokenId 1 to max supply 100_000"
-        );
-
-        // TokenId 4
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-            abi.encodeWithSignature("setSupplyCap(uint256,uint256)", 4, 100_000),
-            "Set placeable tokenId 4 to max supply 100_000"
-        );
-
-        // TokenId 12
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-            abi.encodeWithSignature("setSupplyCap(uint256,uint256)", 12, 100_000),
-            "Set placeable tokenId 12 to max supply 100_000"
-        );
-
-        // TokenId 14
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-            abi.encodeWithSignature("setSupplyCap(uint256,uint256)", 14, 2500),
-            "Set placeable tokenId 14 to max supply 100_000"
-        );
-
-        // TokenId 17
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-            abi.encodeWithSignature("setSupplyCap(uint256,uint256)", 17, 100_000),
-            "Set placeable tokenId 17 to max supply 100_000"
-        );
-
-        // TokenId 21
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-            abi.encodeWithSignature("setSupplyCap(uint256,uint256)", 21, 6000),
-            "Set placeable tokenId 21 to max supply 6000"
-        );
-
-        // TokenId 27
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-            abi.encodeWithSignature("setSupplyCap(uint256,uint256)", 27, 100_000),
-            "Set placeable tokenId 27 to max supply 100_000"
-        );
-
-        // TokenId 28
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-            abi.encodeWithSignature("setSupplyCap(uint256,uint256)", 28, 50),
-            "Set placeable tokenId 28 to max supply 50"
-        );
-
-        // TokenId 31
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-            abi.encodeWithSignature("setSupplyCap(uint256,uint256)", 31, 4000),
-            "Set placeable tokenId 31 to max supply 4000"
-        );
-
-        // TokenId 43
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-            abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 43, 4000),
-            "Set placeable tokenId 43 to max supply 4000"
-        );
-
-        // // TokenId 45
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 45, 6000),
-        //     "Set placeable tokenId 45 to max supply 6000"
-        // );
-
-        // // TokenId 60
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 60, 6000),
-        //     "Set placeable tokenId 60 to max supply 6000"
-        // );
-
-        // // TokenId 64
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 64, 100_000),
-        //     "Set placeable tokenId 64 to max supply 100_000"
-        // );
-
-        // // TokenId 65
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 65, 100_000),
-        //     "Set placeable tokenId 65 to max supply 100_000"
-        // );
-
-        // // TokenId 67
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 67, 2500),
-        //     "Set placeable tokenId 67 to max supply 2500"
-        // );
-
-        // // TokenId 69
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 69, 6000),
-        //     "Set placeable tokenId 69 to max supply 6000"
-        // );
-
-        // // TokenId 70
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 70, 50),
-        //     "Set placeable tokenId 70 to max supply 50"
-        // );
-
-        // // TokenId 72
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 72, 4000),
-        //     "Set placeable tokenId 72 to max supply 4000"
-        // );
-
-        // // TokenId 74
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 74, 4000),
-        //     "Set placeable tokenId 74 to max supply 4000"
-        // );
-
-        // // TokenId 76
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 76, 1000),
-        //     "Set placeable tokenId 76 to max supply 1000"
-        // );
-
-        // // TokenId 82
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 82, 100_000),
-        //     "Set placeable tokenId 82 to max supply 100_000"
-        // );
-
-        // // TokenId 90
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 90, 100_000),
-        //     "Set placeable tokenId 90 to max supply 100_000"
-        // );
-
-        // // TokenId 94
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 94, 100_000),
-        //     "Set placeable tokenId 94 to max supply 100_000"
-        // );
-
-        // // TokenId 96
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setSupplyCap(uint256, uint256)", 96, 100_000),
-        //     "Set placeable tokenId 96 to max supply 100_000"
-        // );
-
-        // // TokenId 106
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setMintAmountLeft(uint256,uint256)", 106, 100_000),
-        //     "Set placeable tokenId 106 to max supply 100_000"
-        // );
-
-        // // TokenId 107
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setMaxTokenSupply(uint256,uint256)", 107, 6000),
-        //     "Set placeable tokenId 107 to max supply 6000"
-        // );
-
-        // // TokenId 111
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setMaxTokenSupply(uint256,uint256)", 111, 100_000),
-        //     "Set placeable tokenId 111 to max supply 100_000"
-        // );
-
-        // // TokenId 124
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setMaxTokenSupply(uint256,uint256)", 124, 500),
-        //     "Set placeable tokenId 124 to max supply 500"
-        // );
-
-        // // TokenId 149
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setMaxTokenSupply(uint256,uint256)", 149, 100_000),
-        //     "Set placeable tokenId 149 to max supply 100_000"
-        // );
-
-        // // TokenId 152
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setMaxTokenSupply(uint256,uint256)", 152, 100_000),
-        //     "Set placeable tokenId 152 to max supply 100_000"
-        // );
-
-        // // TokenId 153
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setMaxTokenSupply(uint256,uint256)", 153, 4000),
-        //     "Set placeable tokenId 153 to max supply 4000"
-        // );
-
-        // // TokenId 154
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setMaxTokenSupply(uint256,uint256)", 154, 100_00),
-        //     "Set placeable tokenId 154 to max supply 100_00"
-        // );
-
-        // // TokenId 156
-        // _pushTimelockAction(
-        //     addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-        //     abi.encodeWithSignature("setMaxTokenSupply(uint256,uint256)", 156, 100_000),
-        //     "Set placeable tokenId 156 to max supply 100_000"
-        // );
+        for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
+            _pushTimelockAction(
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
+                abi.encodeWithSignature(
+                    "setSupplyCap(uint256,uint256)",
+                    placeableTokenIDMaxSupplySettings[i].tokenId,
+                    placeableTokenIDMaxSupplySettings[i].maxSupply
+                ),
+                string(
+                    abi.encodePacked(
+                        "Set placeable tokenId ",
+                        placeableTokenIDMaxSupplySettings[i].tokenId,
+                        " to max supply ",
+                        placeableTokenIDMaxSupplySettings[i].maxSupply
+                    )
+                )
+            );
+        }
     }
 
     function _run(Addresses addresses, address) internal override {
@@ -277,119 +168,18 @@ contract zip004 is Proposal, TimelockProposal {
     }
 
     function _validate(Addresses addresses, address) internal override {
-        /// Placeable
+        /// Verfiy Placeable
+        for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
+            uint256 tokenId = placeableTokenIDMaxSupplySettings[i].tokenId;
+            uint256 maxSupply = placeableTokenIDMaxSupplySettings[i].maxSupply;
 
-        // tokenId 1
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).getMintAmountLeft(
-                1
-            ),
-            100_000,
-            "getMintAmountLeft of placeable tokenId 1 should be 100_000"
-        );
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).maxTokenSupply(1),
-            100_000,
-            "maxTokenSupply of placeable tokenId 1 should be 100_000"
-        );
+            ERC1155MaxSupplyMintable placeable = ERC1155MaxSupplyMintable(
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
+            );
 
-        // tokenId 4
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).getMintAmountLeft(
-                4
-            ),
-            100_000,
-            "getMintAmountLeft of placeable tokenId 4 should be 100_000"
-        );
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).maxTokenSupply(4),
-            100_000,
-            "maxTokenSupply of placeable tokenId 4 should be 100_000"
-        );
-
-        // tokenId 12
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).getMintAmountLeft(
-                12
-            ),
-            100_000,
-            "getMintAmountLeft of placeable tokenId 12 should be 100_000"
-        );
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).maxTokenSupply(12),
-            100_000,
-            "maxTokenSupply of placeable tokenId 12 should be 100_000"
-        );
-
-        // tokenId 14
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).getMintAmountLeft(
-                14
-            ),
-            2500,
-            "getMintAmountLeft of placeable tokenId 14 should be 2500"
-        );
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).maxTokenSupply(14),
-            2500,
-            "maxTokenSupply of placeable tokenId 14 should be 2500"
-        );
-
-        // tokenId 17
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).getMintAmountLeft(
-                17
-            ),
-            100_000,
-            "getMintAmountLeft of placeable tokenId 17 should be 100_000"
-        );
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).maxTokenSupply(17),
-            100_000,
-            "maxTokenSupply of placeable tokenId 17 should be 100_000"
-        );
-
-        // tokenId 21
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).getMintAmountLeft(
-                21
-            ),
-            6000,
-            "getMintAmountLeft of placeable tokenId 21 should be 6000"
-        );
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).maxTokenSupply(21),
-            6000,
-            "maxTokenSupply of placeable tokenId 21 should be 6000"
-        );
-
-        // tokenId 27
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).getMintAmountLeft(
-                27
-            ),
-            100_000,
-            "getMintAmountLeft of placeable tokenId 27 should be 100_000"
-        );
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).maxTokenSupply(27),
-            100_000,
-            "maxTokenSupply of placeable tokenId 27 should be 100_000"
-        );
-
-        // tokenId 28
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).getMintAmountLeft(
-                28
-            ),
-            50,
-            "getMintAmountLeft of placeable tokenId 28 should be 50"
-        );
-        assertEq(
-            ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")).maxTokenSupply(28),
-            50,
-            "maxTokenSupply of placeable tokenId 28 should be 50"
-        );
+            assertEq(placeable.maxTokenSupply(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
+            assertEq(placeable.getMintAmountLeft(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
+        }
     }
 
     function _validateOnChain(Addresses, address deployer) internal virtual override {}
