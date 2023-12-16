@@ -24,8 +24,9 @@ contract zip004 is Proposal, TimelockProposal {
     }
 
     TokenIDMaxSupplySettings[] public placeableTokenIDMaxSupplySettings;
+    TokenIDMaxSupplySettings[] public wearableTokenIDMaxSupplySettings;
 
-    function _beforeDeploy(Addresses, address deployer) internal override {
+    function setAndConfirmPlaceableData() public {
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(1, 100_000));
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(4, 100_000));
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(12, 100_000));
@@ -123,6 +124,53 @@ contract zip004 is Proposal, TimelockProposal {
         assertEq(maxSupplyTotal, 3_852_700, "Invalid maxSupplyTotal");
     }
 
+    function setAndConfirmWearableData() public {
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(1, 100_000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(2, 6000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(3, 6000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(4, 6000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(5, 6000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(6, 6000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(8, 500));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(9, 500));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(10, 500));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(11, 100_000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(12, 100_000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(13, 4000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(14, 4000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(15, 4000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(16, 4000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(17, 4000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(18, 4000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(19, 4000));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(20, 120));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(21, 120));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(22, 120));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(23, 120));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(24, 14));
+        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(25, 14));
+
+        // sanity checks
+        assertEq(wearableTokenIDMaxSupplySettings.length, 24, "Invalid wearableTokenIDMaxSupplySettings length");
+
+        uint tokenIDTotal = 0;
+        uint maxSupplyTotal = 0;
+
+        // sum numbers from requrements sheet
+        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
+            tokenIDTotal += wearableTokenIDMaxSupplySettings[i].tokenId;
+            maxSupplyTotal += wearableTokenIDMaxSupplySettings[i].maxSupply;
+        }
+
+        assertEq(tokenIDTotal, 318, "Invalid tokenIDTotal");
+        assertEq(maxSupplyTotal, 360008, "Invalid maxSupplyTotal");
+    }
+
+    function _beforeDeploy(Addresses, address deployer) internal override {
+        setAndConfirmPlaceableData();
+        setAndConfirmWearableData();
+    }
+
     function _deploy(Addresses addresses, address) internal override {}
 
     function _afterDeploy(Addresses addresses, address) internal override {}
@@ -155,6 +203,26 @@ contract zip004 is Proposal, TimelockProposal {
                 )
             );
         }
+
+        /// Wearables config
+        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
+            _pushTimelockAction(
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"),
+                abi.encodeWithSignature(
+                    "setSupplyCap(uint256,uint256)",
+                    wearableTokenIDMaxSupplySettings[i].tokenId,
+                    wearableTokenIDMaxSupplySettings[i].maxSupply
+                ),
+                string(
+                    abi.encodePacked(
+                        "Set wearable tokenId ",
+                        wearableTokenIDMaxSupplySettings[i].tokenId,
+                        " to max supply ",
+                        wearableTokenIDMaxSupplySettings[i].maxSupply
+                    )
+                )
+            );
+        }
     }
 
     function _run(Addresses addresses, address) internal override {
@@ -179,6 +247,19 @@ contract zip004 is Proposal, TimelockProposal {
 
             assertEq(placeable.maxTokenSupply(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
             assertEq(placeable.getMintAmountLeft(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
+        }
+
+        /// Verfiy Wearable
+        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
+            uint256 tokenId = wearableTokenIDMaxSupplySettings[i].tokenId;
+            uint256 maxSupply = wearableTokenIDMaxSupplySettings[i].maxSupply;
+
+            ERC1155MaxSupplyMintable wearable = ERC1155MaxSupplyMintable(
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
+            );
+
+            assertEq(wearable.maxTokenSupply(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
+            assertEq(wearable.getMintAmountLeft(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
         }
     }
 
