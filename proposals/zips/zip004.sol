@@ -16,7 +16,7 @@ import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.
 
 contract zip004 is Proposal, TimelockProposal {
     string public name = "ZIP004";
-    string public description = "Set TokenIds, MaxSupply and Capsule settings proposal";
+    string public description = "ZTX CGv1 tokenIds, MaxSupply and Capsules config proposal";
 
     struct TokenIDMaxSupplySettings {
         uint256 tokenId;
