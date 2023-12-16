@@ -16,7 +16,7 @@ import {TimelockController} from "@openzeppelin/contracts/governance/TimelockCon
 
 contract zip002 is Proposal, TimelockProposal {
     string public name = "ZIP002";
-    string public description = "The TimeLock deployment";
+    string public description = "The ZTX TimeLock contract proposal";
 
     TimelockController private _adminTimelock;
 
