@@ -123,14 +123,19 @@ contract ERC20Splitter is CoreRef {
     /// @notice sets a new allocation for the splitter
     /// @param _allocations new list of allocations
     function _setAllocation(Allocation[] memory _allocations) internal {
+        /// make sure all deposits are not address(0)
+        unchecked {
+            for (uint256 i; i < allocations.length; i++) {
+                require(_allocations[i].deposit != address(0), "ERC20Splitter: deposit cannot be address(0)");
+            }
+        }
+
         checkAllocation(_allocations);
 
         uint256[] memory _oldRatios = new uint256[](allocations.length);
         address[] memory _oldDeposits = new address[](allocations.length);
         unchecked {
             for (uint256 i; i < allocations.length; i++) {
-                // TODO add missing test.
-                require(_allocations[i].deposit != address(0), "ERC20Splitter: deposit cannot be address(0)");
                 _oldRatios[i] = allocations[i].ratio;
                 _oldDeposits[i] = allocations[i].deposit;
             }

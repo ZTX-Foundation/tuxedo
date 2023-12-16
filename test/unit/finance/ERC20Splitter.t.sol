@@ -33,11 +33,19 @@ contract UnitTestERC20HoldingsDeposit is Test {
         allocations[1].deposit = depositTwo;
         allocations[1].ratio = 6_000;
 
-        splitter = new ERC20Splitter(
-            address(core),
-            address(token),
-            allocations
-        );
+        splitter = new ERC20Splitter(address(core), address(token), allocations);
+    }
+
+    function testInvalidZeroAddresses() public {
+        ERC20Splitter.Allocation[] memory allocations = new ERC20Splitter.Allocation[](2);
+        allocations[0].deposit = address(0);
+        allocations[0].ratio = 4_000;
+        allocations[1].deposit = address(0);
+        allocations[1].ratio = 6_000;
+
+        vm.prank(addresses.adminAddress);
+        vm.expectRevert("ERC20Splitter: deposit cannot be address(0)");
+        splitter.setAllocation(allocations);
     }
 
     function testSetup() public {
@@ -58,13 +66,13 @@ contract UnitTestERC20HoldingsDeposit is Test {
     function testDirectArrayGetCall() public {
         {
             (address deposit, uint16 ratio) = splitter.allocations(0);
-    
+
             assertEq(deposit, depositOne);
             assertEq(ratio, 4_000);
         }
         {
             (address deposit, uint16 ratio) = splitter.allocations(1);
-    
+
             assertEq(deposit, depositTwo);
             assertEq(ratio, 6_000);
         }
@@ -113,8 +121,8 @@ contract UnitTestERC20HoldingsDeposit is Test {
         splitter.allocate();
 
         assertEq(token.balanceOf(address(splitter)), 0);
-        assertEq(token.balanceOf(depositOne), tokenAmount * 4_000 / 10_000);
-        assertEq(token.balanceOf(depositTwo), tokenAmount * 6_000 / 10_000);
+        assertEq(token.balanceOf(depositOne), (tokenAmount * 4_000) / 10_000);
+        assertEq(token.balanceOf(depositTwo), (tokenAmount * 6_000) / 10_000);
     }
 
     function testSetAllocationAdminSucceeds() public {
@@ -151,7 +159,7 @@ contract UnitTestERC20HoldingsDeposit is Test {
 
         splitter.allocate(address(newToken));
 
-        assertEq(newToken.balanceOf(depositOne), tokenAmount * 4 / 10);
-        assertEq(newToken.balanceOf(depositTwo), tokenAmount * 6 / 10);
+        assertEq(newToken.balanceOf(depositOne), (tokenAmount * 4) / 10);
+        assertEq(newToken.balanceOf(depositTwo), (tokenAmount * 6) / 10);
     }
 }
