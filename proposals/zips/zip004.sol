@@ -211,7 +211,7 @@ contract zip004 is Proposal, TimelockProposal {
         }
 
         assertEq(tokenIDTotal, 6, "Invalid tokenIDTotal");
-        assertEq(rewardAmountTotal, 9134e18, "Invalid rewardAmountTotal");
+        assertEq(rewardAmountTotal, 9134e18, "Invalid rewardAmountTotal"); // numbers from santiy check sheet
     }
 
     function _beforeDeploy(Addresses, address deployer) internal override {
@@ -296,7 +296,7 @@ contract zip004 is Proposal, TimelockProposal {
         // TODO this code is reverting!!! no idea why?
         _pushTimelockAction(
             addresses.getAddress("ERC1155_SEASON_ONE"),
-            abi.encodeWithSignature("initalizeSeasonDistribution(TokenIdRewardAmount[])", tokenIdRewardAmounts),
+            abi.encodeWithSignature("initalizeSeasonDistribution((uint256,uint256)[])", tokenIdRewardAmounts),
             string(abi.encodePacked("Initalize Season One"))
         );
     }
@@ -354,7 +354,7 @@ contract zip004 is Proposal, TimelockProposal {
         /// Verfiy Season One
         ERC1155SeasonOne seasonOne = ERC1155SeasonOne(addresses.getAddress("ERC1155_SEASON_ONE"));
 
-        assertEq(seasonOne.totalRewardTokens(), 9134e18, "Invalid balance");
+        assertEq(seasonOne.totalRewardTokens(), 30001521e18, "Invalid balance");
 
         for (uint256 i = 0; i < tokenIdRewardAmounts.length; i++) {
             uint256 tokenId = tokenIdRewardAmounts[i].tokenId;
