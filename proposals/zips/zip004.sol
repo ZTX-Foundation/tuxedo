@@ -13,6 +13,8 @@ import {Roles} from "@protocol/core/Roles.sol";
 import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
+import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
+import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 
 contract zip004 is Proposal, TimelockProposal {
     string public name = "ZIP004";
@@ -25,6 +27,9 @@ contract zip004 is Proposal, TimelockProposal {
 
     TokenIDMaxSupplySettings[] public placeableTokenIDMaxSupplySettings;
     TokenIDMaxSupplySettings[] public wearableTokenIDMaxSupplySettings;
+    TokenIDMaxSupplySettings[] public consumableTokenIDMaxSupplySettings;
+
+    TokenIdRewardAmount[] public tokenIdRewardAmounts;
 
     function setAndConfirmPlaceableData() public {
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(1, 100_000));
@@ -166,9 +171,54 @@ contract zip004 is Proposal, TimelockProposal {
         assertEq(maxSupplyTotal, 360008, "Invalid maxSupplyTotal");
     }
 
+    function setAndConfirmConsumableData() public {
+        consumableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(1, 15_000));
+        consumableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(2, 5538));
+        consumableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(3, 2025));
+
+        // sanity checks
+        assertEq(consumableTokenIDMaxSupplySettings.length, 3, "Invalid consumableTokenIDMaxSupplySettings length");
+
+        uint tokenIDTotal = 0;
+        uint maxSupplyTotal = 0;
+
+        // sum numbers from requrements sheet
+        for (uint256 i = 0; i < consumableTokenIDMaxSupplySettings.length; i++) {
+            tokenIDTotal += consumableTokenIDMaxSupplySettings[i].tokenId;
+            maxSupplyTotal += consumableTokenIDMaxSupplySettings[i].maxSupply;
+        }
+
+        assertEq(tokenIDTotal, 6, "Invalid tokenIDTotal");
+        assertEq(maxSupplyTotal, 22_563, "Invalid maxSupplyTotal");
+    }
+
+    function setAndConfirmSeaonOneData() public {
+        // config the season distribution
+        tokenIdRewardAmounts.push(TokenIdRewardAmount({tokenId: 1, rewardAmount: 300e18}));
+        tokenIdRewardAmounts.push(TokenIdRewardAmount({tokenId: 2, rewardAmount: 2167e18}));
+        tokenIdRewardAmounts.push(TokenIdRewardAmount({tokenId: 3, rewardAmount: 6667e18}));
+
+        // sanity checks
+        assertEq(tokenIdRewardAmounts.length, 3, "Invalid tokenIdRewardAmounts length");
+
+        uint tokenIDTotal = 0;
+        uint rewardAmountTotal = 0;
+
+        // sum numbers from requrements sheet
+        for (uint256 i = 0; i < tokenIdRewardAmounts.length; i++) {
+            tokenIDTotal += tokenIdRewardAmounts[i].tokenId;
+            rewardAmountTotal += tokenIdRewardAmounts[i].rewardAmount;
+        }
+
+        assertEq(tokenIDTotal, 6, "Invalid tokenIDTotal");
+        assertEq(rewardAmountTotal, 9134e18, "Invalid rewardAmountTotal");
+    }
+
     function _beforeDeploy(Addresses, address deployer) internal override {
         setAndConfirmPlaceableData();
         setAndConfirmWearableData();
+        setAndConfirmConsumableData();
+        setAndConfirmSeaonOneData();
     }
 
     function _deploy(Addresses addresses, address) internal override {}
@@ -182,8 +232,6 @@ contract zip004 is Proposal, TimelockProposal {
     function _teardown(Addresses addresses, address deployer) internal override {}
 
     function _build(Addresses addresses, address) internal override {
-        // TODO Should we config the Season 1 contract here? IF so what's the go live config.
-
         /// Placeables config
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
             _pushTimelockAction(
@@ -223,6 +271,34 @@ contract zip004 is Proposal, TimelockProposal {
                 )
             );
         }
+
+        /// Consumables config
+        for (uint256 i = 0; i < consumableTokenIDMaxSupplySettings.length; i++) {
+            _pushTimelockAction(
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"),
+                abi.encodeWithSignature(
+                    "setSupplyCap(uint256,uint256)",
+                    consumableTokenIDMaxSupplySettings[i].tokenId,
+                    consumableTokenIDMaxSupplySettings[i].maxSupply
+                ),
+                string(
+                    abi.encodePacked(
+                        "Set consumable tokenId ",
+                        consumableTokenIDMaxSupplySettings[i].tokenId,
+                        " to max supply ",
+                        consumableTokenIDMaxSupplySettings[i].maxSupply
+                    )
+                )
+            );
+        }
+
+        /// Season One config
+        // TODO this code is reverting!!! no idea why?
+        _pushTimelockAction(
+            addresses.getAddress("ERC1155_SEASON_ONE"),
+            abi.encodeWithSignature("initalizeSeasonDistribution(TokenIdRewardAmount[])", tokenIdRewardAmounts),
+            string(abi.encodePacked("Initalize Season One"))
+        );
     }
 
     function _run(Addresses addresses, address) internal override {
@@ -260,6 +336,32 @@ contract zip004 is Proposal, TimelockProposal {
 
             assertEq(wearable.maxTokenSupply(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
             assertEq(wearable.getMintAmountLeft(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
+        }
+
+        /// Verfiy Consumable
+        for (uint256 i = 0; i < consumableTokenIDMaxSupplySettings.length; i++) {
+            uint256 tokenId = consumableTokenIDMaxSupplySettings[i].tokenId;
+            uint256 maxSupply = consumableTokenIDMaxSupplySettings[i].maxSupply;
+
+            ERC1155MaxSupplyMintable consumable = ERC1155MaxSupplyMintable(
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
+            );
+
+            assertEq(consumable.maxTokenSupply(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
+            assertEq(consumable.getMintAmountLeft(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
+        }
+
+        /// Verfiy Season One
+        ERC1155SeasonOne seasonOne = ERC1155SeasonOne(addresses.getAddress("ERC1155_SEASON_ONE"));
+
+        assertEq(seasonOne.totalRewardTokens(), 9134e18, "Invalid balance");
+
+        for (uint256 i = 0; i < tokenIdRewardAmounts.length; i++) {
+            uint256 tokenId = tokenIdRewardAmounts[i].tokenId;
+            uint256 rewardAmount = tokenIdRewardAmounts[i].rewardAmount;
+
+            assertEq(seasonOne.tokenIdRewardAmount(tokenId), rewardAmount, "Invalid tokenIdRewardAmount");
+            assertEq(seasonOne.tokenIdUsedAmount(tokenId), 0, "Invalid tokenIdUsedAmount");
         }
     }
 
