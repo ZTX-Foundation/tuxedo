@@ -293,7 +293,6 @@ contract zip004 is Proposal, TimelockProposal {
         }
 
         /// Season One config
-        // TODO this code is reverting!!! no idea why?
         _pushTimelockAction(
             addresses.getAddress("ERC1155_SEASON_ONE"),
             abi.encodeWithSignature("initalizeSeasonDistribution((uint256,uint256)[])", tokenIdRewardAmounts),
