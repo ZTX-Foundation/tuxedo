@@ -316,7 +316,7 @@ contract zip003 is Proposal, TimelockProposal {
                 Roles.GUARDIAN,
                 addresses.getAddress("GUARDIAN_MULTISIG")
             ),
-            "Grant protocol locker role to GUARDIAN_MULTISIG"
+            "Grant GUARDIAN role to GUARDIAN_MULTISIG"
         );
 
         /// grant protocol Locker role
