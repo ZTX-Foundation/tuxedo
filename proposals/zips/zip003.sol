@@ -255,6 +255,7 @@ contract zip003 is Proposal, TimelockProposal {
             );
             assertEq(minter.replenishRatePerSecond(), 3, "Verfiy minter replenish rate per second");
             assertEq(minter.bufferCap(), 250_000, "Verfiy minter max tokens per day");
+            assertEq(minter.buffer(), minter.bufferCap(), "Verfiy minter buffer == bufferCap");
             assertEq(minter.expiryTokenHoursValid(), 1, "Verfiy minter expiry timeout");
 
             assertEq(
@@ -390,7 +391,6 @@ contract zip003 is Proposal, TimelockProposal {
             ),
             "Grant registry operator role to ERC1155_SEASON_ONE"
         );
-
     }
 
     function _run(Addresses addresses, address) internal override {
