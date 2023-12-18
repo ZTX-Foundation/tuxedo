@@ -141,19 +141,6 @@ contract zip004 is Proposal, TimelockProposal {
         wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(10, 500));
         wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(11, 100_000));
         wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(12, 100_000));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(13, 4000));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(14, 4000));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(15, 4000));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(16, 4000));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(17, 4000));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(18, 4000));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(19, 4000));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(20, 120));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(21, 120));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(22, 120));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(23, 120));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(24, 14));
-        wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(25, 14));
 
         // sanity checks
         assertEq(wearableTokenIDMaxSupplySettings.length, 24, "Invalid wearableTokenIDMaxSupplySettings length");
