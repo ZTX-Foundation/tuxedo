@@ -355,6 +355,28 @@ contract zip003 is Proposal, TimelockProposal {
             ),
             "Grant registry operator role to ERC1155_SEASON_ONE"
         );
+
+        /// grant minter notary role
+        _pushTimelockAction(
+            addresses.getAddress("CORE"),
+            abi.encodeWithSignature(
+                "grantRole(bytes32,address)",
+                Roles.MINTER_NOTARY_PROTOCOL_ROLE,
+                addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET")
+            ),
+            "Grant minter notary role to AUTOGRAPH_SERVICE_KMS_WALLET"
+        );
+
+        /// grant minter notary role
+        _pushTimelockAction(
+            addresses.getAddress("CORE"),
+            abi.encodeWithSignature(
+                "grantRole(bytes32,address)",
+                Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE,
+                addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET")
+            ),
+            "Grant game consumer notary role to AUTOGRAPH_SERVICE_KMS_WALLET"
+        );
     }
 
     function _run(Addresses addresses, address) internal override {

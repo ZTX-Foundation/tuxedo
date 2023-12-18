@@ -94,6 +94,9 @@ contract Addresses is Test {
         _addAddress("REVENUE_WALLET_MULTISIG01", 42161, 0x8A8041eaA86aD43656420FB4b04dcBf66EbD6261); // TODO Naming
         _addAddress("REVENUE_WALLET_MULTISIG02", 42161, 0xC3Ae66c6a96Cb4737D95B7D3e8587992332304a1); // TODO Naming
 
+        // Autograph service KMS EOA
+        _addAddress("AUTOGRAPH_SERVICE_KMS_WALLET", 42161, 0xEE8b0f0708224FbB5832f90f0441A9BaDE417568);
+
         // 3rd party contract addresses
         _addAddress("WETH", 42161, 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
     }
