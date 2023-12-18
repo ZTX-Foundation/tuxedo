@@ -179,22 +179,6 @@ contract zip003 is Proposal, TimelockProposal {
 
             /// Verfiy MINTER role
             assertEq(
-                _core.hasRole(
-                    Roles.MINTER_PROTOCOL_ROLE,
-                    addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
-                ),
-                true,
-                "Verifying ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES has MINTER role"
-            );
-            assertEq(
-                _core.hasRole(
-                    Roles.MINTER_PROTOCOL_ROLE,
-                    addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
-                ),
-                true,
-                "Verifying ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES has MINTER role"
-            );
-            assertEq(
                 _core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")),
                 true,
                 "Verifying ERC1155_AUTO_GRAPH_MINTER has MINTER role"
@@ -213,7 +197,7 @@ contract zip003 is Proposal, TimelockProposal {
         /// Sum of Role counts to date
         {
             assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 5, "Locker role count is not 5");
-            assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 5, "Minter role count is not 5");
+            assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 3, "Minter role count is not 5");
         }
 
         /// Verfiy MULTISIGS have the correct roles
@@ -351,26 +335,6 @@ contract zip003 is Proposal, TimelockProposal {
         );
 
         /// grant protocol minter role
-        _pushTimelockAction(
-            addresses.getAddress("CORE"),
-            abi.encodeWithSignature(
-                "grantRole(bytes32,address)",
-                Roles.MINTER_PROTOCOL_ROLE,
-                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
-            ),
-            "Grant protocol minter role to ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"
-        );
-
-        _pushTimelockAction(
-            addresses.getAddress("CORE"),
-            abi.encodeWithSignature(
-                "grantRole(bytes32,address)",
-                Roles.MINTER_PROTOCOL_ROLE,
-                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
-            ),
-            "Grant protocol minter role to ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"
-        );
-
         _pushTimelockAction(
             addresses.getAddress("CORE"),
             abi.encodeWithSignature(

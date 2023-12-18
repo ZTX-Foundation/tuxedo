@@ -40,10 +40,8 @@ contract IntegrationTestERC1155SeasonOne is BaseTest {
 
         _erc1155Consumables = new ERC1155MaxSupplyMintable(address(_core), "http://blah.com", "blah", "BLAH");
 
-        vm.startPrank(addresses.getAddress("ADMIN_MULTISIG"));
+        vm.prank(addresses.getAddress("ADMIN_MULTISIG"));
         _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(_erc1155Consumables));
-        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, address(_erc1155Consumables));
-        vm.stopPrank();
 
         _registry = new SeasonsTokenIdRegistry(address(_core));
         _seasonOne = new ERC1155SeasonOne(

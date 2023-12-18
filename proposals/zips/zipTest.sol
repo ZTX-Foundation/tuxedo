@@ -258,7 +258,7 @@ contract zipTest is Proposal, TimelockProposal {
         );
         assertEq(
             _core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE),
-            8,
+            6,
             "MINTER_PROTOCOL_ROLE count is not equal to 8"
         );
 
