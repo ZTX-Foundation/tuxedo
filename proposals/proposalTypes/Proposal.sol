@@ -61,6 +61,8 @@ abstract contract Proposal is IProposal, Test {
     function validOnChain(Addresses addresses, uint256 privateKey) public {
         address deployer = address(0);
 
+        _beforeDeploy(addresses, deployer);
+
         _build(addresses, deployer);
         _run(addresses, deployer);
 

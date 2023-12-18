@@ -1,0 +1,35 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "functionSignature",
+        "type": "string"
+      }
+    ],
+    "name": "FunctionLocked",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "Singleton",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "doStuff",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
