@@ -95,7 +95,6 @@ contract Addresses is Test {
         _addAddress("REVENUE_WALLET_MULTISIG02", 42161, 0xC3Ae66c6a96Cb4737D95B7D3e8587992332304a1); // TODO Naming
 
         // 3rd party contract addresses
-        // TODO comfirm address
         _addAddress("WETH", 42161, 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
     }
 
