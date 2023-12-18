@@ -30,7 +30,7 @@ contract zip003 is Proposal, TimelockProposal {
 
         /// Confirm Timelock has been giving the ADMIN role correctly before we start the deployment
         assertEq(
-            _core.getRoleMember(Roles.ADMIN, 2),
+            _core.getRoleMember(Roles.ADMIN, 1),
             addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
             "Verifying ADMIN role is pointing to the correct address"
         );
