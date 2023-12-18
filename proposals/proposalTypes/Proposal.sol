@@ -25,13 +25,16 @@ abstract contract Proposal is IProposal, Test {
         _beforeDeploy(addresses, deployer);
         _deploy(addresses, deployer);
         _afterDeploy(addresses, deployer);
+        _aferDeployForTestingOnly(addresses, deployer);
+
+        vm.stopBroadcast();
+
         _build(addresses, deployer);
         _run(addresses, deployer);
+
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
         _validateForTestingOnly(addresses, deployer);
-
-        vm.stopBroadcast();
     }
 
     /// @notice run the deployment on-chain
@@ -41,22 +44,25 @@ abstract contract Proposal is IProposal, Test {
 
         // start broadcast
         vm.startBroadcast(privateKey);
-
         _beforeDeploy(addresses, deployer);
         _deploy(addresses, deployer);
         _afterDeploy(addresses, deployer);
-        _afterDeployOnChain(addresses, deployer); // revoke admin role from deployer
-
-        // stop broadcast
+        _afterDeployOnChain(addresses, deployer);
         vm.stopBroadcast();
 
         _build(addresses, deployer);
-
-        // start broadcast
-        vm.startBroadcast(privateKey);
         _run(addresses, deployer);
-        vm.stopBroadcast();
-        // stop broadcast
+
+        _teardown(addresses, deployer);
+        _validate(addresses, deployer);
+        _validateOnChain(addresses, deployer); // check admin role was revoked
+    }
+
+    function validOnChain(Addresses addresses, uint256 privateKey) public {
+        address deployer = address(0);
+
+        _build(addresses, deployer);
+        _run(addresses, deployer);
 
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
@@ -72,6 +78,10 @@ abstract contract Proposal is IProposal, Test {
 
     /// @notice runs after all deployments
     function _afterDeploy(Addresses addresses, address deployer) internal virtual;
+
+    /// @notice runs after all deployments for testing only
+    /// @dev as an example in testing mode we dont drop the admin role as its needed for further deployments in an automated test
+    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual;
 
     /// @notice runs after all deployments on-chain only and will ensure that admin role is revoked from deployer
     /// @dev Revoked admin role after all deployments and needs to added again before another deployment can be done.

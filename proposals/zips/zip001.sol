@@ -60,6 +60,8 @@ contract zip001 is Proposal {
         _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
     }
 
+    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
+
     function _afterDeployOnChain(Addresses, address deployer) internal override {
         // Revoke ADMIN role from deployer
         _core.revokeRole(Roles.ADMIN, deployer);

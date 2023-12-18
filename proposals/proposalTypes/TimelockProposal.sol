@@ -70,6 +70,11 @@ abstract contract TimelockProposal is Proposal {
 
         bytes32 proposalId = timelock.hashOperationBatch(targets, values, payloads, predecessor, salt);
 
+        if (DEBUG) {
+            console.log("proposalId: ");
+            emit log_bytes32(proposalId);
+        }
+
         if (!timelock.isOperationPending(proposalId) && !timelock.isOperation(proposalId)) {
             vm.prank(proposerAddress);
             timelock.scheduleBatch(targets, values, payloads, predecessor, salt, delay);
@@ -97,6 +102,7 @@ abstract contract TimelockProposal is Proposal {
             emit log_bytes32(proposalId);
         }
 
+        console.log("warping to", block.timestamp + delay);
         vm.warp(block.timestamp + delay);
 
         if (!timelock.isOperationDone(proposalId)) {
