@@ -1,0 +1,38 @@
+[
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardAmount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct TokenIdRewardAmount[]",
+        "name": "tokenIdRewardAmounts",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "contract ERC1155MaxSupplyMintable",
+        "name": "_capsuleNFT",
+        "type": "ERC1155MaxSupplyMintable"
+      }
+    ],
+    "name": "calulateTotalRewardAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
