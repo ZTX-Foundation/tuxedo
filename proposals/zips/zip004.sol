@@ -353,7 +353,9 @@ contract zip004 is Proposal, TimelockProposal {
         /// Verfiy Season One
         ERC1155SeasonOne seasonOne = ERC1155SeasonOne(addresses.getAddress("ERC1155_SEASON_ONE"));
 
-        assertEq(seasonOne.totalRewardTokens(), 30001521e18, "Invalid balance");
+        assertEq(seasonOne.totalRewardTokens(), 30001521e18, "Invalid totalRewardTokens");
+        assertEq(seasonOne.totalRewardTokensUsed(), 0, "Invalid totalRewardTokensUsed");
+        assertEq(seasonOne.totalClawedBack(), 0, "Invalid totalClawedBack");
 
         for (uint256 i = 0; i < tokenIdRewardAmounts.length; i++) {
             uint256 tokenId = tokenIdRewardAmounts[i].tokenId;
