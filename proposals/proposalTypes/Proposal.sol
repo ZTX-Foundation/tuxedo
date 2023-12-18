@@ -58,6 +58,17 @@ abstract contract Proposal is IProposal, Test {
         _validateOnChain(addresses, deployer); // check admin role was revoked
     }
 
+    function validOnChain(Addresses addresses, uint256 privateKey) public {
+        address deployer = address(0);
+
+        _build(addresses, deployer);
+        _run(addresses, deployer);
+
+        _teardown(addresses, deployer);
+        _validate(addresses, deployer);
+        _validateOnChain(addresses, deployer); // check admin role was revoked
+    }
+
     /// @notice runs before all deployments.
     /// @dev a place to put pre-deployment checks
     function _beforeDeploy(Addresses addresses, address deployer) internal virtual;

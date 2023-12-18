@@ -45,7 +45,8 @@
         "deploy:mainnet": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --rpc-url $MAINNET_RPC_URL --slow",
         "deploy:mainnet:broadcast": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $MAINNET_RPC_URL --slow",
         "deploy:mainnet:broadcast:verified": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $MAINNET_RPC_URL --slow --verify --etherscan-api-key $ARBISCAN_API_KEY --verifier-url https://api.arbiscan.io/api",
-        "deploy:mainnet:resume": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $MAINNET_RPC_URL --slow --resume"
+        "deploy:mainnet:resume": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $MAINNET_RPC_URL --slow --resume",
+        "valid:mainnet": "forge script ./script/valid/ValidProposal.s.sol -vvvv --rpc-url $MAINNET_RPC_URL --slow"
     },
     "repository": {
         "type": "git",
