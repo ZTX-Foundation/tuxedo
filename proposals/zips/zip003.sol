@@ -283,6 +283,27 @@ contract zip003 is Proposal, TimelockProposal {
                 "CONSUMABLE_SPLITTER is pointing to wrong core"
             );
         }
+
+        /// Verify notary roles
+        {
+            assertEq(
+                _core.hasRole(
+                    Roles.MINTER_NOTARY_PROTOCOL_ROLE,
+                    addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET")
+                ),
+                true,
+                "Verifying AUTOGRAPH_SERVICE_KMS_WALLET has MINTER_NOTARY role"
+            );
+
+            assertEq(
+                _core.hasRole(
+                    Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE,
+                    addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET")
+                ),
+                true,
+                "Verifying AUTOGRAPH_SERVICE_KMS_WALLET has GAME_CONSUMER_NOTARY role"
+            );
+        }
     }
 
     function _validateOnChain(Addresses, address deployer) internal override {}
