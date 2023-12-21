@@ -1,0 +1,656 @@
+| lib/openzeppelin-contracts/contracts/governance/TimelockController.sol:TimelockController contract |                 |         |        |         |         |
+|----------------------------------------------------------------------------------------------------|-----------------|---------|--------|---------|---------|
+| Deployment Cost                                                                                    | Deployment Size |         |        |         |         |
+| 1689607                                                                                            | 9152            |         |        |         |         |
+| Function Name                                                                                      | min             | avg     | median | max     | # calls |
+| CANCELLER_ROLE                                                                                     | 284             | 284     | 284    | 284     | 229     |
+| EXECUTOR_ROLE                                                                                      | 286             | 286     | 286    | 286     | 158     |
+| PROPOSER_ROLE                                                                                      | 285             | 285     | 285    | 285     | 158     |
+| TIMELOCK_ADMIN_ROLE                                                                                | 241             | 241     | 241    | 241     | 174     |
+| cancel                                                                                             | 3385            | 3385    | 3385   | 3385    | 1       |
+| executeBatch                                                                                       | 18027           | 1994368 | 659208 | 3384965 | 144     |
+| getMinDelay                                                                                        | 402             | 443     | 402    | 2402    | 145     |
+| grantRole                                                                                          | 25565           | 25565   | 25565  | 25565   | 419     |
+| hasRole                                                                                            | 696             | 696     | 696    | 696     | 213     |
+| hashOperationBatch                                                                                 | 2478            | 32679   | 6762   | 60724   | 147     |
+| isOperation                                                                                        | 507             | 507     | 507    | 507     | 142     |
+| isOperationDone                                                                                    | 513             | 513     | 513    | 513     | 151     |
+| isOperationPending                                                                                 | 562             | 2442    | 2562   | 2562    | 151     |
+| isOperationReady                                                                                   | 573             | 582     | 586    | 586     | 4       |
+| revokeRole                                                                                         | 2845            | 2845    | 2845   | 2845    | 87      |
+| scheduleBatch                                                                                      | 32017           | 295424  | 65920  | 536047  | 145     |
+
+
+| proposals/Addresses.sol:Addresses contract |                 |       |        |        |         |
+|--------------------------------------------|-----------------|-------|--------|--------|---------|
+| Deployment Cost                            | Deployment Size |       |        |        |         |
+| 2327750                                    | 9078            |       |        |        |         |
+| Function Name                              | min             | avg   | median | max    | # calls |
+| addAddress                                 | 43176           | 57709 | 47176  | 129507 | 1562    |
+| getAddress                                 | 1311            | 1395  | 1393   | 5311   | 24874   |
+| getCore                                    | 972             | 972   | 972    | 972    | 284     |
+| getRecordedAddresses                       | 1026            | 9143  | 6620   | 20585  | 426     |
+| resetRecordingAddresses                    | 519             | 2108  | 1735   | 4823   | 426     |
+
+
+| proposals/TestProposals.sol:TestProposals contract |                 |      |        |      |         |
+|----------------------------------------------------|-----------------|------|--------|------|---------|
+| Deployment Cost                                    | Deployment Size |      |        |      |         |
+| 58629734                                           | 291920          |      |        |      |         |
+| Function Name                                      | min             | avg  | median | max  | # calls |
+| addresses                                          | 370             | 370  | 370    | 370  | 70      |
+| setDebug                                           | 7365            | 7365 | 7365   | 7365 | 70      |
+
+
+| proposals/zips/zip000.sol:zip000 contract |                 |         |         |         |         |
+|-------------------------------------------|-----------------|---------|---------|---------|---------|
+| Deployment Cost                           | Deployment Size |         |         |         |         |
+| 3095670                                   | 15557           |         |         |         |         |
+| Function Name                             | min             | avg     | median  | max     | # calls |
+| deployForTestingOnly                      | 1882472         | 1882872 | 1882472 | 1910872 | 71      |
+| name                                      | 1232            | 1260    | 1232    | 3232    | 71      |
+| setDebug                                  | 428             | 428     | 428     | 428     | 70      |
+
+
+| proposals/zips/zip001.sol:zip001 contract |                 |         |         |         |         |
+|-------------------------------------------|-----------------|---------|---------|---------|---------|
+| Deployment Cost                           | Deployment Size |         |         |         |         |
+| 8981416                                   | 44757           |         |         |         |         |
+| Function Name                             | min             | avg     | median  | max     | # calls |
+| deployForTestingOnly                      | 7211524         | 7212264 | 7211524 | 7264124 | 71      |
+| name                                      | 1232            | 1260    | 1232    | 3232    | 71      |
+| setDebug                                  | 428             | 428     | 428     | 428     | 70      |
+
+
+| proposals/zips/zip002.sol:zip002 contract |                 |         |         |         |         |
+|-------------------------------------------|-----------------|---------|---------|---------|---------|
+| Deployment Cost                           | Deployment Size |         |         |         |         |
+| 3169888                                   | 15714           |         |         |         |         |
+| Function Name                             | min             | avg     | median  | max     | # calls |
+| deployForTestingOnly                      | 1949296         | 1949391 | 1949296 | 1956096 | 71      |
+| name                                      | 1232            | 1260    | 1232    | 3232    | 71      |
+| setDebug                                  | 428             | 428     | 428     | 428     | 70      |
+
+
+| proposals/zips/zip003.sol:zip003 contract |                 |          |          |          |         |
+|-------------------------------------------|-----------------|----------|----------|----------|---------|
+| Deployment Cost                           | Deployment Size |          |          |          |         |
+| 20711534                                  | 103456          |          |          |          |         |
+| Function Name                             | min             | avg      | median   | max      | # calls |
+| deployForTestingOnly                      | 20146936        | 20148966 | 20146936 | 20291136 | 71      |
+| name                                      | 1232            | 1260     | 1232     | 3232     | 71      |
+| setDebug                                  | 428             | 481      | 534      | 534      | 141     |
+
+
+| proposals/zips/zip004.sol:zip004 contract |                 |          |          |          |         |
+|-------------------------------------------|-----------------|----------|----------|----------|---------|
+| Deployment Cost                           | Deployment Size |          |          |          |         |
+| 3971300                                   | 19739           |          |          |          |         |
+| Function Name                             | min             | avg      | median   | max      | # calls |
+| deployForTestingOnly                      | 31951356        | 31969003 | 31969256 | 31969256 | 71      |
+| name                                      | 1255            | 1283     | 1255     | 3255     | 71      |
+| setDebug                                  | 446             | 10395    | 2557     | 20457    | 141     |
+
+
+| proposals/zips/zipTest.sol:zipTest contract |                 |          |          |          |         |
+|---------------------------------------------|-----------------|----------|----------|----------|---------|
+| Deployment Cost                             | Deployment Size |          |          |          |         |
+| 15788305                                    | 78699           |          |          |          |         |
+| Function Name                               | min             | avg      | median   | max      | # calls |
+| deployForTestingOnly                        | 20794871        | 20797434 | 20794871 | 20976871 | 71      |
+| name                                        | 1232            | 1260     | 1232     | 3232     | 71      |
+| setDebug                                    | 428             | 428      | 428      | 428      | 70      |
+
+
+| src/core/Core.sol:Core contract |                 |       |        |       |         |
+|---------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                 | Deployment Size |       |        |       |         |
+| 999836                          | 4465            |       |        |       |         |
+| Function Name                   | min             | avg   | median | max   | # calls |
+| createRole                      | 2962            | 5260  | 2962   | 32213 | 37      |
+| emergencyRevoke                 | 2973            | 19083 | 21957  | 32319 | 3       |
+| getRoleAdmin                    | 470             | 470   | 470    | 470   | 1       |
+| getRoleMember                   | 808             | 874   | 808    | 4808  | 361     |
+| getRoleMemberCount              | 559             | 589   | 559    | 2559  | 583     |
+| grantRole                       | 1697            | 79043 | 92407  | 92407 | 5191    |
+| hasRole                         | 696             | 839   | 696    | 2696  | 13516   |
+| lock                            | 425             | 803   | 425    | 2425  | 866     |
+| revokeRole                      | 3924            | 22069 | 22564  | 30954 | 7       |
+| setGlobalLock                   | 5132            | 24367 | 24406  | 28707 | 334     |
+
+
+| src/core/GlobalReentrancyLock.sol:GlobalReentrancyLock contract |                 |       |        |       |         |
+|-----------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                 | Deployment Size |       |        |       |         |
+| 1211652                                                         | 6237            |       |        |       |         |
+| Function Name                                                   | min             | avg   | median | max   | # calls |
+| adminEmergencyPause                                             | 8089            | 30318 | 31553  | 31553 | 19      |
+| adminEmergencyRecover                                           | 1861            | 3370  | 2724   | 10204 | 19      |
+| core                                                            | 425             | 438   | 425    | 2425  | 143     |
+| isLocked                                                        | 419             | 430   | 419    | 2419  | 169     |
+| isUnlocked                                                      | 416             | 796   | 416    | 2416  | 42      |
+| lastBlockEntered                                                | 420             | 420   | 420    | 420   | 28      |
+| lastSender                                                      | 372             | 372   | 372    | 372   | 32      |
+| lock                                                            | 1928            | 9174  | 3928   | 30834 | 726     |
+| lockLevel                                                       | 397             | 397   | 397    | 397   | 40      |
+| unlock                                                          | 1845            | 2319  | 2317   | 8147  | 482     |
+
+
+| src/finance/ERC20HoldingDeposit.sol:ERC20HoldingDeposit contract |                 |       |        |       |         |
+|------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                  | Deployment Size |       |        |       |         |
+| 1062130                                                          | 5703            |       |        |       |         |
+| Function Name                                                    | min             | avg   | median | max   | # calls |
+| balance                                                          | 1249            | 1249  | 1249   | 1249  | 1       |
+| balanceReportedIn                                                | 192             | 192   | 192    | 192   | 1       |
+| core                                                             | 403             | 416   | 403    | 2403  | 143     |
+| token                                                            | 315             | 315   | 315    | 315   | 2       |
+| withdraw                                                         | 8279            | 24611 | 27260  | 27704 | 7       |
+| withdrawERC20                                                    | 8337            | 18214 | 18214  | 28091 | 2       |
+
+
+| src/finance/ERC20Splitter.sol:ERC20Splitter contract |                 |       |        |       |         |
+|------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                      | Deployment Size |       |        |       |         |
+| 1531060                                              | 9838            |       |        |       |         |
+| Function Name                                        | min             | avg   | median | max   | # calls |
+| allocate()                                           | 33390           | 36077 | 33390  | 49516 | 6       |
+| allocate(address)                                    | 52844           | 52844 | 52844  | 52844 | 1       |
+| allocations                                          | 680             | 721   | 680    | 4680  | 144     |
+| checkAllocation                                      | 1635            | 1685  | 1685   | 1735  | 2       |
+| core                                                 | 392             | 510   | 392    | 2392  | 237     |
+| getAllocationAt                                      | 879             | 1879  | 879    | 4879  | 6       |
+| getAllocations                                       | 1591            | 1632  | 1591   | 7591  | 143     |
+| getNumberOfAllocations                               | 303             | 303   | 303    | 303   | 2       |
+| pause                                                | 8255            | 9921  | 10255  | 10255 | 18      |
+| paused                                               | 337             | 337   | 337    | 337   | 32      |
+| setAllocation                                        | 9239            | 18046 | 11506  | 33393 | 3       |
+| token                                                | 282             | 282   | 282    | 282   | 72      |
+| unpause                                              | 4364            | 4364  | 4364   | 4364  | 14      |
+
+
+| src/game/GameConsumer.sol:GameConsumer contract |                 |       |        |       |         |
+|-------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                 | Deployment Size |       |        |       |         |
+| 1842309                                         | 9819            |       |        |       |         |
+| Function Name                                   | min             | avg   | median | max   | # calls |
+| core                                            | 425             | 452   | 425    | 2425  | 72      |
+| getHash                                         | 907             | 907   | 907    | 907   | 22      |
+| proceedsRecipient                               | 393             | 793   | 393    | 2393  | 5       |
+| setProceedsCollector                            | 8292            | 11291 | 11291  | 14291 | 2       |
+| sweepUnclaimed                                  | 11797           | 17777 | 17777  | 23758 | 2       |
+| sweepUnclaimedWeth                              | 25350           | 25350 | 25350  | 25350 | 1       |
+| takePayment                                     | 1947            | 16529 | 3730   | 53081 | 12      |
+| takePaymentWithEth                              | 846             | 11878 | 3528   | 36870 | 12      |
+| token                                           | 337             | 337   | 337    | 337   | 1       |
+| usedHashes                                      | 561             | 561   | 561    | 561   | 2       |
+| weth                                            | 295             | 295   | 295    | 295   | 1       |
+| wrapEth                                         | 56280           | 56280 | 56280  | 56280 | 2       |
+
+
+| src/governance/GovernorDAO.sol:GovernorDAO contract |                 |       |        |       |         |
+|-----------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                     | Deployment Size |       |        |       |         |
+| 3541455                                             | 19162           |       |        |       |         |
+| Function Name                                       | min             | avg   | median | max   | # calls |
+| COUNTING_MODE                                       | 629             | 629   | 629    | 629   | 1       |
+| cancel                                              | 36766           | 36766 | 36766  | 36766 | 1       |
+| castVote                                            | 50889           | 51206 | 50921  | 52921 | 7       |
+| execute                                             | 69428           | 74946 | 74946  | 80464 | 2       |
+| hasVoted                                            | 738             | 738   | 738    | 738   | 2       |
+| name                                                | 3330            | 3330  | 3330   | 3330  | 1       |
+| proposalDeadline                                    | 692             | 692   | 692    | 692   | 2       |
+| proposalSnapshot                                    | 632             | 632   | 632    | 632   | 2       |
+| proposalThreshold                                   | 419             | 1752  | 2419   | 2419  | 3       |
+| proposalVotes                                       | 4841            | 4841  | 4841   | 4841  | 2       |
+| propose                                             | 65991           | 66207 | 65991  | 67289 | 6       |
+| queue                                               | 73161           | 76370 | 73161  | 82788 | 3       |
+| quorum                                              | 506             | 1839  | 2506   | 2506  | 3       |
+| relay                                               | 7464            | 7464  | 7464   | 7464  | 1       |
+| setProposalThreshold                                | 8188            | 11309 | 11309  | 14431 | 2       |
+| setQuorum                                           | 8277            | 10374 | 8303   | 14543 | 3       |
+| setVotingDelay                                      | 8255            | 19926 | 19926  | 31598 | 2       |
+| setVotingPeriod                                     | 8277            | 11410 | 11410  | 14543 | 2       |
+| state                                               | 871             | 4068  | 3557   | 6889  | 15      |
+| supportsInterface                                   | 641             | 641   | 641    | 641   | 1       |
+| timelock                                            | 2409            | 2409  | 2409   | 2409  | 1       |
+| token                                               | 370             | 370   | 370    | 370   | 1       |
+| version                                             | 566             | 566   | 566    | 566   | 1       |
+| votingDelay                                         | 426             | 1759  | 2426   | 2426  | 3       |
+| votingPeriod                                        | 350             | 1683  | 2350   | 2350  | 3       |
+
+
+| src/nfts/ERC1155AdminMinter.sol:ERC1155AdminMinter contract |                 |       |        |        |         |
+|-------------------------------------------------------------|-----------------|-------|--------|--------|---------|
+| Deployment Cost                                             | Deployment Size |       |        |        |         |
+| 1022859                                                     | 5294            |       |        |        |         |
+| Function Name                                               | min             | avg   | median | max    | # calls |
+| bulkMintTokens                                              | 5850            | 69538 | 55966  | 168978 | 8       |
+| core                                                        | 414             | 441   | 414    | 2414   | 72      |
+| mintToken                                                   | 8350            | 64843 | 61900  | 114054 | 8       |
+
+
+| src/nfts/ERC1155AutoGraphMinter.sol:ERC1155AutoGraphMinter contract |                 |        |        |         |         |
+|---------------------------------------------------------------------|-----------------|--------|--------|---------|---------|
+| Deployment Cost                                                     | Deployment Size |        |        |         |         |
+| 4321256                                                             | 22848           |        |        |         |         |
+| Function Name                                                       | min             | avg    | median | max     | # calls |
+| addWhitelistedContract                                              | 11633           | 51849  | 52279  | 61579   | 59      |
+| addWhitelistedContracts                                             | 11850           | 83745  | 83745  | 155640  | 2       |
+| buffer                                                              | 1234            | 1234   | 1234   | 1234    | 71      |
+| bufferCap                                                           | 412             | 412    | 412    | 412     | 142     |
+| core                                                                | 458             | 458    | 458    | 458     | 142     |
+| expiryTokenHoursValid                                               | 380             | 380    | 380    | 380     | 72      |
+| isWhitelistedAddress                                                | 739             | 765    | 739    | 2739    | 225     |
+| mintBatchForFree                                                    | 18412           | 494555 | 64197  | 1109637 | 17      |
+| mintBatchWithEthAsFee                                               | 18390           | 567753 | 620018 | 1146233 | 15      |
+| mintBatchWithPaymentTokenAsFee                                      | 18554           | 519921 | 54722  | 1175529 | 15      |
+| mintForFree                                                         | 7311            | 84109  | 46013  | 185407  | 27      |
+| mintWithEthAsFee                                                    | 7901            | 86156  | 44162  | 222619  | 20      |
+| mintWithPaymentTokenAsFee                                           | 8042            | 76764  | 44345  | 251876  | 19      |
+| paymentRecipient                                                    | 449             | 449    | 449    | 449     | 96      |
+| recoverSigner                                                       | 4630            | 4630   | 4630   | 4630    | 1       |
+| removeWhitelistedContract                                           | 11679           | 21900  | 21900  | 32122   | 2       |
+| removeWhitelistedContracts                                          | 11826           | 31917  | 31917  | 52008   | 2       |
+| replenishRatePerSecond                                              | 415             | 415    | 415    | 415     | 71      |
+| updateExpiryTokenHoursValid                                         | 8366            | 10025  | 8392   | 13317   | 3       |
+| updatePaymentRecipient                                              | 8297            | 9416   | 8329   | 11623   | 3       |
+
+
+| src/nfts/ERC1155MaxSupplyMintable.sol:ERC1155MaxSupplyMintable contract |                 |        |        |         |         |
+|-------------------------------------------------------------------------|-----------------|--------|--------|---------|---------|
+| Deployment Cost                                                         | Deployment Size |        |        |         |         |
+| 3018872                                                                 | 15952           |        |        |         |         |
+| Function Name                                                           | min             | avg    | median | max     | # calls |
+| balanceOf                                                               | 694             | 723    | 694    | 2694    | 602     |
+| burn                                                                    | 4012            | 4190   | 4262   | 4262    | 7       |
+| burnBatch                                                               | 7792            | 7792   | 7792   | 7792    | 1       |
+| core                                                                    | 436             | 443    | 436    | 2436    | 285     |
+| getMintAmountLeft                                                       | 776             | 776    | 776    | 4776    | 6698    |
+| maxTokenSupply                                                          | 495             | 515    | 495    | 2495    | 7231    |
+| mint                                                                    | 3997            | 47673  | 67516  | 80627   | 133     |
+| mintBatch                                                               | 4421            | 199159 | 113627 | 4498620 | 101     |
+| name                                                                    | 3329            | 3329   | 3329   | 3329    | 1       |
+| onERC1155Received                                                       | 211             | 211    | 211    | 211     | 1       |
+| pause                                                                   | 5861            | 10228  | 12361  | 14696   | 5       |
+| safeBatchTransferFrom                                                   | 23783           | 33340  | 33340  | 42897   | 2       |
+| safeTransferFrom                                                        | 21838           | 25052  | 25052  | 28266   | 2       |
+| setApprovalForAll                                                       | 2817            | 20337  | 24717  | 24717   | 5       |
+| setSupplyCap                                                            | 3732            | 26399  | 27632  | 34132   | 7885    |
+| setURI                                                                  | 8637            | 12226  | 12226  | 15816   | 2       |
+| symbol                                                                  | 3328            | 3328   | 3328   | 3328    | 1       |
+| totalSupply                                                             | 560             | 790    | 560    | 2560    | 26      |
+| uri                                                                     | 2430            | 2802   | 2785   | 4430    | 73      |
+
+
+| src/nfts/ERC721ZepetoUA.sol:ERC721ZepetoUA contract |                 |       |        |        |         |
+|-----------------------------------------------------|-----------------|-------|--------|--------|---------|
+| Deployment Cost                                     | Deployment Size |       |        |        |         |
+| 2555132                                             | 13100           |       |        |        |         |
+| Function Name                                       | min             | avg   | median | max    | # calls |
+| approve                                             | 25237           | 25237 | 25237  | 25237  | 1       |
+| balanceOf                                           | 656             | 656   | 656    | 656    | 4       |
+| burn                                                | 5596            | 5596  | 5596   | 5596   | 1       |
+| claim                                               | 1525            | 57167 | 67228  | 104959 | 12      |
+| getHash                                             | 1104            | 1104  | 1104   | 1104   | 15      |
+| isClaimable                                         | 421             | 1921  | 2421   | 2421   | 4       |
+| recoverSigner                                       | 4540            | 4540  | 4540   | 4540   | 1       |
+| safeTransferFrom                                    | 1564            | 1564  | 1564   | 1564   | 1       |
+| setClaimable                                        | 2601            | 5235  | 5553   | 7553   | 3       |
+| tokenURI                                            | 1837            | 1837  | 1837   | 1837   | 1       |
+
+
+| src/nfts/PlayTest.sol:PlayTest contract |                 |        |        |        |         |
+|-----------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                         | Deployment Size |        |        |        |         |
+| 1388480                                 | 7650            |        |        |        |         |
+| Function Name                           | min             | avg    | median | max    | # calls |
+| airdropNfts                             | 166695          | 166695 | 166695 | 166695 | 1       |
+| approve                                 | 25214           | 25214  | 25214  | 25214  | 1       |
+| balanceOf                               | 678             | 678    | 678    | 678    | 4       |
+| ownerOf                                 | 580             | 580    | 580    | 580    | 4       |
+| safeMint                                | 95207           | 95207  | 95207  | 95207  | 2       |
+| safeTransferFrom                        | 1498            | 1498   | 1498   | 1498   | 1       |
+| tokenURI                                | 1792            | 1792   | 1792   | 1792   | 4       |
+
+
+| src/nfts/seasons/ERC1155SeasonOne.sol:ERC1155SeasonOne contract |                 |        |        |        |         |
+|-----------------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                                 | Deployment Size |        |        |        |         |
+| 2178242                                                         | 11722           |        |        |        |         |
+| Function Name                                                   | min             | avg    | median | max    | # calls |
+| balance                                                         | 1250            | 3500   | 3500   | 5750   | 2       |
+| clawbackAll                                                     | 6999            | 32363  | 42956  | 47136  | 3       |
+| fund                                                            | 6195            | 21097  | 23715  | 23715  | 14      |
+| initalizeSeasonDistribution                                     | 3221            | 271672 | 283467 | 304967 | 101     |
+| nftContract                                                     | 305             | 305    | 305    | 305    | 1       |
+| pause                                                           | 5851            | 5851   | 5851   | 5851   | 4       |
+| reconfigSeasonDistribution                                      | 9653            | 10653  | 10653  | 11653  | 4       |
+| redeem                                                          | 542             | 47242  | 31390  | 126474 | 9       |
+| rewardToken                                                     | 326             | 326    | 326    | 326    | 1       |
+| solvent                                                         | 1357            | 2618   | 1423   | 5923   | 33      |
+| tokenIdRegistryContract                                         | 285             | 285    | 285    | 285    | 1       |
+| tokenIdRewardAmount                                             | 506             | 506    | 506    | 506    | 213     |
+| tokenIdUsedAmount                                               | 506             | 2460   | 2506   | 2506   | 221     |
+| totalClawedBack                                                 | 340             | 2260   | 2340   | 2340   | 75      |
+| totalRewardTokens                                               | 385             | 399    | 385    | 2385   | 140     |
+| totalRewardTokensUsed                                           | 340             | 2312   | 2340   | 2340   | 73      |
+| withdraw                                                        | 8279            | 26005  | 26005  | 43731  | 2       |
+
+
+| src/nfts/seasons/SeasonsTokenIdRegistry.sol:SeasonsTokenIdRegistry contract |                 |       |        |       |         |
+|-----------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                             | Deployment Size |       |        |       |         |
+| 899927                                                                      | 4680            |       |        |       |         |
+| Function Name                                                               | min             | avg   | median | max   | # calls |
+| register                                                                    | 2158            | 13062 | 8262   | 28768 | 3       |
+| registerBatch                                                               | 70248           | 71258 | 70248  | 74248 | 95      |
+| tokenIdSeasonContract                                                       | 499             | 524   | 499    | 2499  | 77      |
+
+
+| src/nfts/staking/ActualERC721Staking.sol:ActualERC721Staking contract |                 |        |        |         |         |
+|-----------------------------------------------------------------------|-----------------|--------|--------|---------|---------|
+| Deployment Cost                                                       | Deployment Size |        |        |         |         |
+| 2244168                                                               | 11495           |        |        |         |         |
+| Function Name                                                         | min             | avg    | median | max     | # calls |
+| REWARD_TIME                                                           | 231             | 231    | 231    | 231     | 4       |
+| core                                                                  | 458             | 1624   | 2458   | 2458    | 24      |
+| createNewEpoch                                                        | 2690            | 27504  | 26770  | 54417   | 695     |
+| epoch                                                                 | 371             | 373    | 371    | 2371    | 700     |
+| getClaimedRewardsAcrossAllEpochs                                      | 1105            | 23573  | 3105   | 141014  | 17      |
+| getCurrentEpoch                                                       | 1632            | 1632   | 1632   | 1632    | 3       |
+| getCurrentTimestampOrEpochEnd                                         | 2357            | 2357   | 2357   | 2357    | 2       |
+| getEpochInfo                                                          | 1135            | 1135   | 1135   | 1135    | 704     |
+| getStakedUserInfo                                                     | 740             | 740    | 740    | 740     | 35      |
+| getTotalRewards                                                       | 6067            | 378714 | 190579 | 1470738 | 20      |
+| getTotalUnclaimedRewards                                              | 2701            | 3653   | 4129   | 4129    | 3       |
+| getUserAmountStaked                                                   | 571             | 571    | 571    | 571     | 24      |
+| isActiveEpoch                                                         | 492             | 972    | 1092   | 1092    | 10      |
+| onERC721Received                                                      | 924             | 924    | 924    | 924     | 80      |
+| pause                                                                 | 8256            | 10161  | 10256  | 12308   | 20      |
+| paused                                                                | 405             | 405    | 405    | 405     | 32      |
+| rewardPoints                                                          | 641             | 653    | 641    | 2641    | 322     |
+| stake                                                                 | 6099            | 159233 | 132327 | 346715  | 31      |
+| stakedAssets                                                          | 544             | 544    | 544    | 544     | 100     |
+| stakingToken                                                          | 306             | 306    | 306    | 306     | 1       |
+| unpause                                                               | 4382            | 4382   | 4382   | 4382    | 14      |
+| unstake                                                               | 8013            | 409373 | 35538  | 3519152 | 13      |
+| updateUserReward                                                      | 9509            | 619958 | 31953  | 6839692 | 16      |
+
+
+| src/sale/ERC1155Sale.sol:ERC1155Sale contract |                 |        |        |         |         |
+|-----------------------------------------------|-----------------|--------|--------|---------|---------|
+| Deployment Cost                               | Deployment Size |        |        |         |         |
+| 2986724                                       | 15509           |        |        |         |         |
+| Function Name                                 | min             | avg    | median | max     | # calls |
+| MAX_FEE                                       | 229             | 229    | 229    | 229     | 3       |
+| buyToken                                      | 915             | 86199  | 143928 | 172328  | 82      |
+| buyTokenWithEth                               | 935             | 24081  | 33606  | 137140  | 71      |
+| buyTokens                                     | 1579            | 179304 | 125999 | 5888221 | 65      |
+| buyTokensWithEth                              | 1600            | 34673  | 42950  | 233555  | 65      |
+| core                                          | 458             | 758    | 458    | 2458    | 286     |
+| getBulkPurchaseTotal                          | 3625            | 7059   | 3625   | 15625   | 61      |
+| getMaxMintAmountOut                           | 1493            | 1493   | 1493   | 1493    | 6       |
+| getPurchasePrice                              | 1425            | 4298   | 1425   | 7425    | 71      |
+| getTokenInfo                                  | 1226            | 4875   | 7226   | 7226    | 114     |
+| getTokenRecipientsAndUnclaimed                | 1107            | 1964   | 1107   | 7107    | 14      |
+| isRootOverriden                               | 545             | 545    | 545    | 545     | 6       |
+| nft                                           | 306             | 306    | 306    | 306     | 1       |
+| pause                                         | 8365            | 12390  | 10365  | 18865   | 58      |
+| paused                                        | 360             | 360    | 360    | 360     | 96      |
+| purchased                                     | 672             | 1243   | 672    | 2672    | 7       |
+| setFee                                        | 10586           | 12776  | 12737  | 17028   | 8       |
+| setTokenConfig                                | 4638            | 67043  | 71697  | 78197   | 628     |
+| setTokenRecipients                            | 4152            | 32479  | 47952  | 47952   | 502     |
+| sweepUnclaimed                                | 801             | 22718  | 10946  | 46076   | 37      |
+| unpause                                       | 4434            | 4434   | 4434   | 4434    | 42      |
+| weth                                          | 306             | 306    | 306    | 306     | 227     |
+| withdrawERC20                                 | 8381            | 19083  | 19083  | 29785   | 2       |
+| wrapEth                                       | 10631           | 12366  | 10631  | 57654   | 34      |
+
+
+| src/token/Token.sol:Token contract |                 |       |        |        |         |
+|------------------------------------|-----------------|-------|--------|--------|---------|
+| Deployment Cost                    | Deployment Size |       |        |        |         |
+| 1687580                            | 10340           |       |        |        |         |
+| Function Name                      | min             | avg   | median | max    | # calls |
+| approve                            | 22551           | 23531 | 22551  | 24651  | 15      |
+| balanceOf                          | 563             | 738   | 563    | 2563   | 137     |
+| delegate                           | 7510            | 7510  | 7510   | 7510   | 1       |
+| delegates                          | 656             | 656   | 656    | 656    | 2       |
+| getVotes                           | 1198            | 1813  | 1198   | 5198   | 13      |
+| maxSupply                          | 280             | 280   | 280    | 280    | 1       |
+| name                               | 1201            | 1228  | 1201   | 3201   | 72      |
+| symbol                             | 3266            | 3266  | 3266   | 3266   | 1       |
+| totalSupply                        | 349             | 693   | 349    | 2349   | 29      |
+| transfer                           | 12597           | 82243 | 80325  | 113825 | 84      |
+| transferFrom                       | 9788            | 33665 | 9788   | 81421  | 12      |
+
+
+| src/utils/Strings.sol:StringUtils contract |                 |      |        |      |         |
+|--------------------------------------------|-----------------|------|--------|------|---------|
+| Deployment Cost                            | Deployment Size |      |        |      |         |
+| 110184                                     | 608             |      |        |      |         |
+| Function Name                              | min             | avg  | median | max  | # calls |
+| equals                                     | 1557            | 1557 | 1557   | 1557 | 1       |
+
+
+| test/fixtures/MerkleProof.sol:MerkleProof contract |                 |     |        |     |         |
+|----------------------------------------------------|-----------------|-----|--------|-----|---------|
+| Deployment Cost                                    | Deployment Size |     |        |     |         |
+| 306101                                             | 938             |     |        |     |         |
+| Function Name                                      | min             | avg | median | max | # calls |
+| beneficiaryOneProof                                | 450             | 450 | 450    | 450 | 212     |
+| root                                               | 205             | 205 | 205    | 205 | 53      |
+| userOneProof                                       | 406             | 406 | 406    | 406 | 328     |
+
+
+| test/helpers/ERC1155AutoGraphMinterHelper.sol:ERC1155AutoGraphMinterHelperLib contract |                 |      |        |      |         |
+|----------------------------------------------------------------------------------------|-----------------|------|--------|------|---------|
+| Deployment Cost                                                                        | Deployment Size |      |        |      |         |
+| 784443                                                                                 | 3976            |      |        |      |         |
+| Function Name                                                                          | min             | avg  | median | max  | # calls |
+| setupTx(Vm,uint256,address)                                                            | 6542            | 6542 | 6542   | 6542 | 14      |
+| setupTx(Vm,uint256,address,address,uint256,uint256)                                    | 6661            | 6661 | 6661   | 6661 | 16      |
+
+
+| test/integration/nfts/ERC1155AutoGraphMinter.sol:IntegrationTestERC1155AutoGraphMinter contract |                 |      |        |      |         |
+|-------------------------------------------------------------------------------------------------|-----------------|------|--------|------|---------|
+| Deployment Cost                                                                                 | Deployment Size |      |        |      |         |
+| 68864972                                                                                        | 342850          |      |        |      |         |
+| Function Name                                                                                   | min             | avg  | median | max  | # calls |
+| onERC1155BatchReceived                                                                          | 3364            | 3364 | 3364   | 3364 | 18      |
+| onERC1155Received                                                                               | 1085            | 1085 | 1085   | 1085 | 18      |
+
+
+| test/integration/nfts/ERC1155SeasonOne.sol:IntegrationTestERC1155SeasonOne contract |                 |      |        |      |         |
+|-------------------------------------------------------------------------------------|-----------------|------|--------|------|---------|
+| Deployment Cost                                                                     | Deployment Size |      |        |      |         |
+| 68214549                                                                            | 339591          |      |        |      |         |
+| Function Name                                                                       | min             | avg  | median | max  | # calls |
+| onERC1155Received                                                                   | 1050            | 1050 | 1050   | 1050 | 3       |
+
+
+| test/mock/CrossFunctionReentrancy.sol:CrossFunctionReentrancy contract |                 |        |        |        |         |
+|------------------------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                                        | Deployment Size |        |        |        |         |
+| 461864                                                                 | 2446            |        |        |        |         |
+| Function Name                                                          | min             | avg    | median | max    | # calls |
+| onERC1155BatchReceived                                                 | 26100           | 35784  | 35784  | 45468  | 2       |
+| onERC1155Received                                                      | 25677           | 25677  | 25677  | 25677  | 1       |
+| purchaseTokens                                                         | 172612          | 172612 | 172612 | 172612 | 1       |
+
+
+| test/mock/MockCoreRef.sol:MockCoreRef contract |                 |       |        |       |         |
+|------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                | Deployment Size |       |        |       |         |
+| 843475                                         | 4398            |       |        |       |         |
+| Function Name                                  | min             | avg   | median | max   | # calls |
+| core                                           | 436             | 1236  | 436    | 2436  | 5       |
+| emergencyAction                                | 8361            | 12674 | 12674  | 16987 | 2       |
+| pause                                          | 13597           | 14123 | 14123  | 14650 | 2       |
+| paused                                         | 304             | 1304  | 1304   | 2304  | 2       |
+| setCore                                        | 3368            | 8962  | 10212  | 12765 | 5       |
+
+
+| test/mock/MockERC20.sol:MockERC20 contract |                 |       |        |       |         |
+|--------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                            | Deployment Size |       |        |       |         |
+| 660994                                     | 3582            |       |        |       |         |
+| Function Name                              | min             | avg   | median | max   | # calls |
+| allowance                                  | 2848            | 2848  | 2848   | 2848  | 1       |
+| approve                                    | 22551           | 24553 | 24651  | 24651 | 43      |
+| balanceOf                                  | 629             | 933   | 629    | 2629  | 105     |
+| getPastVotes                               | 671             | 671   | 671    | 671   | 13      |
+| mint                                       | 2899            | 44963 | 46699  | 46699 | 39      |
+| mockSetVotes                               | 22572           | 22572 | 22572  | 22572 | 9       |
+| transfer                                   | 3138            | 19286 | 20031  | 25038 | 19      |
+| transferFrom                               | 4640            | 9322  | 5800   | 27700 | 127     |
+
+
+| test/mock/MockERC721.sol:MockERC721 contract |                 |       |        |       |         |
+|----------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                              | Deployment Size |       |        |       |         |
+| 1004137                                      | 5296            |       |        |       |         |
+| Function Name                                | min             | avg   | median | max   | # calls |
+| mint                                         | 25286           | 35934 | 25286  | 47186 | 109     |
+| safeTransferFrom                             | 3996            | 14509 | 9051   | 35751 | 103     |
+| setApprovalForAll                            | 2705            | 23822 | 24605  | 24605 | 28      |
+
+
+| test/mock/MockRateLimited.sol:MockRateLimited contract |                 |       |        |       |         |
+|--------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                        | Deployment Size |       |        |       |         |
+| 1184637                                                | 6956            |       |        |       |         |
+| Function Name                                          | min             | avg   | median | max   | # calls |
+| buffer                                                 | 1184            | 1524  | 1194   | 3194  | 6       |
+| bufferCap                                              | 389             | 1055  | 389    | 2389  | 3       |
+| depleteBuffer                                          | 1432            | 8096  | 10318  | 10318 | 4       |
+| lastBufferUsedTime                                     | 358             | 358   | 358    | 358   | 2       |
+| replenishRatePerSecond                                 | 393             | 393   | 393    | 393   | 5       |
+| setBufferCap                                           | 11475           | 16850 | 17926  | 21150 | 3       |
+| setReplenishRatePerSecond                              | 11473           | 17884 | 17875  | 21099 | 5       |
+
+
+| test/mock/MockReentrancyLock.sol:MockReentrancyLock contract |                 |      |        |      |         |
+|--------------------------------------------------------------|-----------------|------|--------|------|---------|
+| Deployment Cost                                              | Deployment Size |      |        |      |         |
+| 941773                                                       | 4889            |      |        |      |         |
+| Function Name                                                | min             | avg  | median | max  | # calls |
+| lastBlockNumber                                              | 364             | 1164 | 364    | 2364 | 5       |
+
+
+| test/mock/MockReentrancyLockFailure.sol:MockReentrancyLockFailure contract |                 |       |        |       |         |
+|----------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                            | Deployment Size |       |        |       |         |
+| 833922                                                                     | 4321            |       |        |       |         |
+| Function Name                                                              | min             | avg   | median | max   | # calls |
+| globalReentrancyFails                                                      | 43005           | 43005 | 43005  | 43005 | 1       |
+
+
+| test/mock/MockWeth.sol:MockWeth contract |                 |       |        |       |         |
+|------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                          | Deployment Size |       |        |       |         |
+| 730658                                   | 3930            |       |        |       |         |
+| Function Name                            | min             | avg   | median | max   | # calls |
+| balanceOf                                | 629             | 629   | 629    | 629   | 5       |
+| deposit                                  | 46556           | 46556 | 46556  | 46556 | 3       |
+| transfer                                 | 20031           | 20031 | 20031  | 20031 | 1       |
+
+
+| test/mock/SingleFunctionReentrancy.sol:SingleFunctionReentrancy contract |                 |        |        |        |         |
+|--------------------------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                                          | Deployment Size |        |        |        |         |
+| 405356                                                                   | 2190            |        |        |        |         |
+| Function Name                                                            | min             | avg    | median | max    | # calls |
+| isBuying                                                                 | 316             | 316    | 316    | 316    | 1       |
+| onERC1155Received                                                        | 4833            | 4833   | 4833   | 4833   | 1       |
+| purchaseTokens                                                           | 177343          | 177343 | 177343 | 177343 | 1       |
+| sale                                                                     | 2359            | 2359   | 2359   | 2359   | 1       |
+
+
+| test/unit/governance/GovernorDAO.t.sol:UnitTestGovernorDAO contract |                 |       |        |       |         |
+|---------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                     | Deployment Size |       |        |       |         |
+| 12375992                                                            | 61713           |       |        |       |         |
+| Function Name                                                       | min             | avg   | median | max   | # calls |
+| __dummyCall                                                         | 22401           | 22401 | 22401  | 22401 | 1       |
+| receive                                                             | 55              | 55    | 55     | 55    | 1       |
+
+
+| test/unit/nfts/ERC1155AutoGraphMinter.t.sol:UnitTestERC1155AutoGraphMinter contract |                 |      |        |      |         |
+|-------------------------------------------------------------------------------------|-----------------|------|--------|------|---------|
+| Deployment Cost                                                                     | Deployment Size |      |        |      |         |
+| 23565602                                                                            | 116767          |      |        |      |         |
+| Function Name                                                                       | min             | avg  | median | max  | # calls |
+| onERC1155BatchReceived                                                              | 3346            | 3346 | 3346   | 3346 | 3       |
+| onERC1155Received                                                                   | 1072            | 1072 | 1072   | 1072 | 5       |
+
+
+| test/unit/nfts/ERC1155MaxSupplyMintable.t.sol:UnitTestERC1155MaxSupplyMintable contract |                 |      |        |      |         |
+|-----------------------------------------------------------------------------------------|-----------------|------|--------|------|---------|
+| Deployment Cost                                                                         | Deployment Size |      |        |      |         |
+| 15408440                                                                                | 76850           |      |        |      |         |
+| Function Name                                                                           | min             | avg  | median | max  | # calls |
+| onERC1155BatchReceived                                                                  | 2133            | 2171 | 2133   | 2285 | 4       |
+| onERC1155Received                                                                       | 1005            | 1005 | 1005   | 1005 | 3       |
+
+
+| test/unit/nfts/seasons/ERC1155SeasonOne.t.sol:UnitTestERC1155SeasonOne contract |                 |      |        |      |         |
+|---------------------------------------------------------------------------------|-----------------|------|--------|------|---------|
+| Deployment Cost                                                                 | Deployment Size |      |        |      |         |
+| 20184963                                                                        | 100670          |      |        |      |         |
+| Function Name                                                                   | min             | avg  | median | max  | # calls |
+| onERC1155Received                                                               | 1018            | 1018 | 1018   | 1018 | 3       |
+
+
+| test/unit/nfts/staking/ActualERC721Staking.t.sol:UnitTestActualERC721Staking contract |                 |     |        |     |         |
+|---------------------------------------------------------------------------------------|-----------------|-----|--------|-----|---------|
+| Deployment Cost                                                                       | Deployment Size |     |        |     |         |
+| 21008354                                                                              | 104187          |     |        |     |         |
+| Function Name                                                                         | min             | avg | median | max | # calls |
+| onERC721Received                                                                      | 950             | 950 | 950    | 950 | 20      |
+
+
+| test/unit/refs/CoreRef.t.sol:CoreRefTest contract |                 |     |        |     |         |
+|---------------------------------------------------|-----------------|-----|--------|-----|---------|
+| Deployment Cost                                   | Deployment Size |     |        |     |         |
+| 4343514                                           | 21627           |     |        |     |         |
+| Function Name                                     | min             | avg | median | max | # calls |
+| receive                                           | 55              | 55  | 55     | 55  | 1       |
+
+
+| test/unit/sale/ERC1155Sale.t.sol:UnitTestERC1155Sale contract |                 |       |        |       |         |
+|---------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                               | Deployment Size |       |        |       |         |
+| 21065905                                                      | 105063          |       |        |       |         |
+| Function Name                                                 | min             | avg   | median | max   | # calls |
+| onERC1155BatchReceived                                        | 16950           | 16950 | 16950  | 16950 | 1       |
+| onERC1155Received                                             | 1040            | 1040  | 1040   | 1040  | 5       |
+
+
+| test/unit/utils/extenions/FunctionLocker.t.sol:dummy contract |                 |       |        |       |         |
+|---------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                               | Deployment Size |       |        |       |         |
+| 104953                                                        | 556             |       |        |       |         |
+| Function Name                                                 | min             | avg   | median | max   | # calls |
+| Singleton                                                     | 283             | 1283  | 1283   | 2283  | 2       |
+| doStuff                                                       | 705             | 22799 | 22799  | 44893 | 2       |
+
+
+| test/unit/utils/extenions/WhitelistedAddresses.t.sol:TestContract contract |                 |        |        |        |         |
+|----------------------------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                                            | Deployment Size |        |        |        |         |
+| 499522                                                                     | 2553            |        |        |        |         |
+| Function Name                                                              | min             | avg    | median | max    | # calls |
+| addWhitelistAddress                                                        | 51205           | 51205  | 51205  | 51205  | 1       |
+| addWhitelistAddresses                                                      | 144201          | 144201 | 144201 | 144201 | 1       |
+| getWhitelistedAddresses                                                    | 9596            | 9596   | 9596   | 9596   | 1       |
+| isWhitelistedAddress                                                       | 588             | 1254   | 588    | 2588   | 6       |
+| removeWhitelistAddress                                                     | 22194           | 22194  | 22194  | 22194  | 1       |
+| removeWhitelistAddresses                                                   | 34544           | 34544  | 34544  | 34544  | 1       |
+
+
+
+ 
+Ran 28 test suites: [32m426[0m tests passed, [31m0[0m failed, [33m0[0m skipped (426 total tests)
