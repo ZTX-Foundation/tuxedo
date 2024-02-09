@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 import {console} from "@forge-std/console.sol";
 import {zip004 as zip} from "@proposals/zips/zip004.sol";
 import {Script} from "@forge-std/Script.sol";
-import {Addresses, EnvVar} from "@proposals/Addresses.sol";
+import {Addresses} from "@proposals/Addresses.sol";
 
 /*
 How to use:
