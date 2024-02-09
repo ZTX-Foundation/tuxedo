@@ -41,7 +41,7 @@ contract TestProposals is Test {
     address public deployer = address(0x00000108);
 
     function setUp() public {
-        addresses = new Addresses(EnvVar.MainNet); // TODO change to ? 
+        addresses = new Addresses(); 
 
         // Load proposals
         proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal

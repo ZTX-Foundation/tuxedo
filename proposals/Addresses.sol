@@ -36,6 +36,26 @@ function getEnvVar(EnvVar env) pure returns (string memory) {
     }
 }
 
+function getEnvVar(uint256 chainId) pure returns (EnvVar) {
+    if (421614 == chainId) {
+        return EnvVar.SandPitNet;
+    } else if (31337 == chainId) {
+        return EnvVar.LocalNet;
+    } else if (421614 == chainId) {
+        return EnvVar.DevNet;
+    } else if (421614 == chainId) {
+        return EnvVar.TestNet;
+    } else if (421614 == chainId) {
+        return EnvVar.MixedNet;
+    } else if (421614 == chainId) {
+        return EnvVar.StageNet;
+    } else if (42161 == chainId) {
+        return EnvVar.MainNet;
+    } else {
+        return EnvVar.LocalNet;
+    }
+}
+
 function getChainId(EnvVar env) pure returns (uint256) {
     if (EnvVar.SandPitNet == env){
         return 421614; // Arbitrum (sepolia)
@@ -72,17 +92,17 @@ contract Addresses is Test {
     }
     RecordedAddress[] private recordedAddresses;
 
-    constructor(EnvVar env) {
+    constructor() {
         chainId = block.chainid;
-        envVar = env;
+        envVar = getEnvVar(chainId);
 
         console.log("chainId: ", chainId);
         console.log("envVar: ", getEnvVar(envVar));
 
-        setNetworkAddresses(env);
-        selectNetworkFork(env);
-    }
+        setNetworkAddresses(envVar);
+    } 
 
+    // TODO Write this to import addresses from a json file at some point
     function setNetworkAddresses(EnvVar env) public {
         console.log("Set pre-saved Network addresses");
         if (EnvVar.MainNet == envVar) {
@@ -97,6 +117,8 @@ contract Addresses is Test {
             setLocalNetAddresses();
         } else if (EnvVar.MixedNet == envVar) {
             setMixedNetAddresses();
+        } else if (EnvVar.SandPitNet == envVar) {
+            setSandPitNetAddresses();
         } else {
             console.log("Unknown env: ", getEnvVar(envVar));
             assert(false);
@@ -175,36 +197,41 @@ contract Addresses is Test {
         _addAddress("ADMIN_MULTISIG", 0x5Ec41e3a9c712D0BBC26d2CbA0E653c5d2cc982C);
     }
 
-    function selectNetworkFork(EnvVar env) private {
-        string memory fork;
+    /// @dev RnD set of contracts only used by the tuexdo team
+    function setSandPitNetAddresses() private {}
 
-        console.log("Select Network Fork");
-        if(EnvVar.LocalNet == env) {
-            console.log("LocalNet does not require fork");
-            return;
-        } else if (EnvVar.SandPitNet == env) {
-            fork = vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL");
-        } else if (EnvVar.DevNet == env) {
-            fork = vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL");
-        } else if (EnvVar.TestNet == env) {
-            fork = vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL");
-        } else if (EnvVar.MixedNet == env) {
-            fork = vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL");
-        } else if (EnvVar.StageNet == env) {
-            fork = vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL");
-        } else if (EnvVar.MainNet == env) {
-            fork = vm.envString("ARBITRUM_MAINNET_RPC_URL");
-        } else {
-            console.log("Unknown env: ", getEnvVar(env));
-            assert(false);
-        }
+    /// TODO possible remove? 
+    /// Seams like this really isnt needed. 
+    // function selectNetworkFork(EnvVar env) private {
+    //     string memory fork;
 
-        console.log("Fork RPC: ", fork);
-        // uint x = vm.createFork(fork); 
-        // vm.selectFork(x);
+    //     console.log("Select Network Fork");
+    //     if(EnvVar.LocalNet == env) {
+    //         console.log("LocalNet does not require fork");
+    //         return;
+    //     } else if (EnvVar.SandPitNet == env) {
+    //         fork = vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL");
+    //     } else if (EnvVar.DevNet == env) {
+    //         fork = vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL");
+    //     } else if (EnvVar.TestNet == env) {
+    //         fork = vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL");
+    //     } else if (EnvVar.MixedNet == env) {
+    //         fork = vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL");
+    //     } else if (EnvVar.StageNet == env) {
+    //         fork = vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL");
+    //     } else if (EnvVar.MainNet == env) {
+    //         fork = vm.envString("ARBITRUM_MAINNET_RPC_URL");
+    //     } else {
+    //         console.log("Unknown env: ", getEnvVar(env));
+    //         assert(false);
+    //     }
 
-        vm.createSelectFork(fork);
-    }
+    //     console.log("Fork RPC: ", fork);
+    //     // uint x = vm.createFork(fork); 
+    //     // vm.selectFork(x);
+
+    //     vm.createSelectFork(fork);
+    // }
 
     function _addAddress(string memory name, address addr) private {
         _addresses[envVar][name] = addr;

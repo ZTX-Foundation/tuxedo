@@ -37,7 +37,7 @@ contract DeployProposal is Script, zip {
     }
 
     function run() public {
-        Addresses addresses = new Addresses(EnvVar.MainNet);
+        Addresses addresses = new Addresses();
         addresses.resetRecordingAddresses();
 
         /// Run the deploy OnChain workflow
