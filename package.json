@@ -78,7 +78,7 @@
     },
     "dependencies": {
         "@ethersproject/keccak256": "^5.7.0",
-        "@moralisweb3/common-evm-utils": "^2.23.2",
+        "@moralisweb3/common-evm-utils": "^2.24.2",
         "@openzeppelin/merkle-tree": "^1.0.5",
         "axios": "^1.6.7",
         "commander": "^11.1.0",
