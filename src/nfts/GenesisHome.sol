@@ -6,7 +6,7 @@ import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-/// @title PlayTest contract for controlling access to the play test builds
+/// @title Genesis homes (testnet only!)
 contract GenesisHome is ERC721, ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
 
