@@ -6,7 +6,7 @@ import {Addresses} from "@proposals/Addresses.sol";
 import {TestProposals} from "@proposals/TestProposals.sol";
 import "@forge-std/Test.sol";
 
-contract BaseTest is Test, ERC1155Holder {
+contract BaseIntegrationTest is Test, ERC1155Holder {
     Addresses addresses;
     uint256 preProposalsSnapshot;
     uint256 postProposalsSnapshot;
@@ -21,7 +21,6 @@ contract BaseTest is Test, ERC1155Holder {
         // Run all pending proposals first
         TestProposals proposals = new TestProposals();
         proposals.setUp();
-        proposals.setDebug(false);
         proposals.testProposals();
         addresses = proposals.addresses();
 

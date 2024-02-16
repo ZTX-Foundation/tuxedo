@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 import {console} from "@forge-std/console.sol";
 import {Test} from "@forge-std/Test.sol";
 
-import {Addresses} from "@proposals/Addresses.sol";
+import {Addresses, EnvVar} from "@proposals/Addresses.sol";
 import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 
 import {zip000} from "@proposals/zips/zip000.sol";
@@ -41,7 +41,7 @@ contract TestProposals is Test {
     address public deployer = address(0x00000108);
 
     function setUp() public {
-        addresses = new Addresses(); 
+        addresses = new Addresses(EnvVar.MainNet); // TODO how do I make this configurable from the fork in use?
 
         // Load proposals
         proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
@@ -54,13 +54,6 @@ contract TestProposals is Test {
         nProposals = proposals.length;
 
         vm.warp(block.timestamp + 1); /// required for timelock to work
-    }
-
-    function setDebug(bool value) public {
-        debug = value;
-        for (uint256 i = 0; i < proposals.length; i++) {
-            proposals[i].setDebug(value);
-        }
     }
 
     function testProposals() public returns (uint256[] memory postProposalVmSnapshots) {

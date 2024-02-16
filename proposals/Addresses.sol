@@ -8,10 +8,10 @@ import {console} from "@forge-std/console.sol";
 
 enum EnvVar {
     LocalNet,
+    SandPitNet, // Tuxedo's team env for localized testing on sepolia
     DevNet,     // dev env
     TestNet,    // qa env
     MixedNet,   // TODO to be removed. Only used for contracts getting used in devNet and testNet
-    SandPitNet, // Tuxedo's team env for localized testing on sepolia
     StageNet,   // staging env
     MainNet     // prod env
 }
@@ -77,8 +77,8 @@ function getChainId(EnvVar env) pure returns (uint256) {
 }
 
 contract Addresses is Test {
-    uint256 private chainId;
-    EnvVar private envVar;
+    uint256 private immutable chainId;
+    EnvVar private immutable envVar;
 
     /// @notice mapping of Envirnment to contract name to address
     /// @dev example: _addresses[EnvVar.MainNet]["CORE"] = 0xb2F009749260ddbEFe5E1687895f0A0E411613EA
@@ -92,9 +92,9 @@ contract Addresses is Test {
     }
     RecordedAddress[] private recordedAddresses;
 
-    constructor() {
+    constructor(EnvVar _env) {
         chainId = block.chainid;
-        envVar = getEnvVar(chainId);
+        envVar = _env; 
 
         console.log("chainId: ", chainId);
         console.log("envVar: ", getEnvVar(envVar));
@@ -104,7 +104,7 @@ contract Addresses is Test {
 
     // TODO Write this to import addresses from a json file at some point
     function setNetworkAddresses(EnvVar env) public {
-        console.log("Set pre-saved Network addresses");
+        console.log("Set pre-saved Network addresses: ", getEnvVar(env));
         if (EnvVar.MainNet == envVar) {
             setMainNetAddresses();
         } else if (EnvVar.StageNet == envVar) {
@@ -198,7 +198,9 @@ contract Addresses is Test {
     }
 
     /// @dev RnD set of contracts only used by the tuexdo team
-    function setSandPitNetAddresses() private {}
+    function setSandPitNetAddresses() private {
+        _addAddress("ADMIN_MULTISIG", 0x5Ec41e3a9c712D0BBC26d2CbA0E653c5d2cc982C);
+    }
 
     /// TODO possible remove? 
     /// Seams like this really isnt needed. 
@@ -259,6 +261,12 @@ contract Addresses is Test {
         for (uint256 i = 0; i < recordedAddresses.length; i++) {
             names[i] = recordedAddresses[i].name;
             addresses[i] = recordedAddresses[i].addr;
+        }
+    }
+
+    function printRecordedAddresses() external {
+        for (uint256 i = 0; i < recordedAddresses.length; i++) {
+            console.log("Recorded", recordedAddresses[i].addr, recordedAddresses[i].name);
         }
     }
 

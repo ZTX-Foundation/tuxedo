@@ -8,7 +8,7 @@ import {TimelockController} from "@openzeppelin/contracts/governance/TimelockCon
 
 import {Addresses} from "@proposals/Addresses.sol";
 import {TestProposals} from "@proposals/TestProposals.sol";
-import {BaseTest} from "@test/integration/BaseTest.sol";
+import {BaseIntegrationTest} from "@test/integration/BaseIntegrationTest.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
@@ -17,7 +17,7 @@ import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 import {Token} from "@protocol/token/Token.sol";
 
 /// @title Integration test for GovernorDAO
-contract IntegrationTestGovernorDAO is BaseTest {
+contract IntegrationTestGovernorDAO is BaseIntegrationTest {
     enum VoteType {
         Against,
         For,

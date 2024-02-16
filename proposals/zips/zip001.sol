@@ -14,7 +14,9 @@ contract zip001 is Proposal {
     string public name = "ZIP001";
     string public description = "The ZTX wearable, Core & GlobalReentrancyLock contract proposal";
 
-    function _beforeDeploy(Addresses addresses, address deployer) internal override {}
+    function _beforeDeploy(Addresses addresses, address deployer) internal override {
+        assertEq(addresses.getAddress("ADMIN_MULTISIG"), address(0), "admin multisig not set"); // TODO this needs to be not equals. However ds-test needs updating first.  
+    }
 
     function _deploy(Addresses addresses, address) internal override {
         /// Deploy Core

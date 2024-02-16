@@ -6,11 +6,11 @@ import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol"
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
-import {BaseTest} from "@test/integration/BaseTest.sol";
+import {BaseIntegrationTest} from "@test/integration/BaseIntegrationTest.sol";
 
 import {Token} from "@protocol/token/Token.sol";
 
-contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
+contract IntegrationTestERC1155AutoGraphMinter is BaseIntegrationTest {
     /// @notice ZTX ERC20
     Token token;
 

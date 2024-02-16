@@ -7,15 +7,10 @@ import {IProposal} from "@proposals/proposalTypes/IProposal.sol";
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {Addresses} from "@proposals/Addresses.sol";
+import {Config} from "@config/Config.sol";
 
-abstract contract Proposal is IProposal, Test {
-    bool public DEBUG = true;
-
+abstract contract Proposal is IProposal, Config, Test {
     Core _core;
-
-    function setDebug(bool value) external {
-        DEBUG = value;
-    }
 
     /// @notice run the deployment for testing only. ie intergration testing with foundry
     /// @dev this is not run on-chain, and is only used with the foundry `forge test` command

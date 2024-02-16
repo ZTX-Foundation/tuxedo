@@ -8,8 +8,7 @@ import {Addresses} from "@proposals/Addresses.sol";
 import {MerkleProof} from "@test/fixtures/MerkleProof.sol";
 import {TestAddresses as testAddresses} from "@test/fixtures/TestAddresses.sol";
 import {configureSale, setSupplyCap} from "@test/fixtures/Fixtures.sol";
-import {BaseTest} from "@test/integration/BaseTest.sol";
-
+import {BaseIntegrationTest} from "./BaseIntegrationTest.sol";
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {Constants} from "@protocol/Constants.sol";
@@ -22,7 +21,7 @@ import {ActualERC721Staking} from "@protocol/nfts/staking/ActualERC721Staking.so
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
 /// @title Parent contract for running integration tests
-contract BasePauseSystem is BaseTest {
+contract BasePauseSystem is BaseIntegrationTest {
     /// @dev NFT/AMM
     ERC1155MaxSupplyMintable erc1155MaxSupplyMintableConsumable;
     ERC1155MaxSupplyMintable erc1155MaxSupplyMintablePlaceable;

@@ -8,8 +8,4 @@ interface IProposal {
 
     // Proposal description, e.g. "Add a new capsule"
     function description() external view returns (string memory);
-
-    // Used to explicitly enable or disable debug logs from
-    // another solidity file that calls this proposal.
-    function setDebug(bool) external;
 }
