@@ -13,9 +13,10 @@ import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 
 contract zipTemplate is Proposal, TimelockProposal {
-    string public name = "ZIPTEMPLATE";
-    string public description = "Template proposal";
-
+    constructor() {
+        name = "ZIPTEMPLATE";
+        description = "Template proposal";
+    }
     function _beforeDeploy(Addresses, address deployer) internal override {}
 
     function _deploy(Addresses addresses, address) internal override {}

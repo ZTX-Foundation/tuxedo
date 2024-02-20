@@ -2,19 +2,18 @@
 pragma solidity 0.8.18;
 
 import {console} from "@forge-std/console.sol";
-import {zip000 as zip} from "@proposals/zips/zip000.sol"; // TODO Not sure where this EnvVar is at?
+import {zip001 as zip} from "@proposals/zips/zip001.sol";
 import {Script} from "@forge-std/Script.sol";
 import {Addresses, EnvVar} from "@proposals/Addresses.sol";
 import {BaseValidProposal} from "@script/deploy/BaseValidProposal.s.sol";
 
-contract DeployProposal is Script, BaseValidProposal,zip {
-
+contract DeployProposal is Script, BaseValidProposal, zip {
     function setUp() public override {
         super.setUp();
     }
 
     function run() public {
-        Addresses addresses = new Addresses(EnvVar.MixedNet);
+        Addresses addresses = new Addresses(EnvVar.SandPitNet);
         addresses.resetRecordingAddresses();
 
         // /// Run the deploy OnChain workflow

@@ -26,10 +26,12 @@ import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegis
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 
 contract zipTest is Proposal, TimelockProposal {
-    string public name = "ZIPTest";
-    string public description = "The Last ZTX Proposal (For Testing only)";
-
     address[] public whitelistAddresses;
+
+    constructor() {
+        name = "ZIPTest";
+        description = "The Last ZTX Proposal (For Testing only)";
+    }
 
     function _beforeDeploy(Addresses addresses, address) internal override {
         _core = Core(addresses.getCore());

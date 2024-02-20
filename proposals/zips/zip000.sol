@@ -13,11 +13,13 @@ import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 
 contract zip000 is Proposal, TimelockProposal {
-    string public name = "ZIP000";
-    string public description = "The ZTX Genesis Proposal";
+    constructor() {
+        name = "ZIP000";
+        description = "The ZTX Genesis Proposal";
+    }
 
-    function _beforeDeploy(Addresses, address deployer) internal override {
-        // first deployment. Nothing to check
+    function _beforeDeploy(Addresses addresses, address deployer) internal override {
+        assertNotEq(addresses.getAddress("TREASURY_WALLET_MULTISIG"), address(0), "treasury wallet not set");
     }
 
     function _deploy(Addresses addresses, address) internal override {

@@ -21,8 +21,10 @@ import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegis
 import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 
 contract zip003 is Proposal, TimelockProposal {
-    string public name = "ZIP003";
-    string public description = "ZTX CGv1 contracts proposal";
+    constructor() {
+        name = "ZIP003";
+        description = "ZTX CGv1 contracts proposal";
+    }
 
     function _beforeDeploy(Addresses addresses, address deployer) internal override {
         /// Get Core Address
@@ -287,10 +289,7 @@ contract zip003 is Proposal, TimelockProposal {
         /// Verify notary roles
         {
             assertEq(
-                _core.hasRole(
-                    Roles.MINTER_NOTARY_PROTOCOL_ROLE,
-                    addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET")
-                ),
+                _core.hasRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET")),
                 true,
                 "Verifying AUTOGRAPH_SERVICE_KMS_WALLET has MINTER_NOTARY role"
             );

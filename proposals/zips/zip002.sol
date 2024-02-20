@@ -15,10 +15,12 @@ import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
 
 contract zip002 is Proposal, TimelockProposal {
-    string public name = "ZIP002";
-    string public description = "The ZTX TimeLock contract proposal";
-
     TimelockController private _adminTimelock;
+
+    constructor() {
+        name = "ZIP002";
+        description = "The ZTX TimeLock contract proposal";
+    }
 
     function _beforeDeploy(Addresses addresses, address) internal override {
         /// Get Core Address

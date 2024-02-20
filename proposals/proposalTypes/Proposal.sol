@@ -8,9 +8,12 @@ import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {Addresses} from "@proposals/Addresses.sol";
 import {Config} from "@config/Config.sol";
+import {console} from "@forge-std/console.sol";
 
 abstract contract Proposal is IProposal, Config, Test {
     Core _core;
+    string public name = "Proposal";
+    string public description = "Proposal";
 
     /// @notice run the deployment for testing only. ie intergration testing with foundry
     /// @dev this is not run on-chain, and is only used with the foundry `forge test` command
@@ -39,6 +42,7 @@ abstract contract Proposal is IProposal, Config, Test {
 
         // start broadcast
         vm.startBroadcast(privateKey);
+        console.log("Deploying: ", name);
         _beforeDeploy(addresses, deployer);
         _deploy(addresses, deployer);
         _afterDeploy(addresses, deployer);
@@ -56,12 +60,11 @@ abstract contract Proposal is IProposal, Config, Test {
     function validOnChain(Addresses addresses, uint256 privateKey) public {
         address deployer = address(0);
 
-        _beforeDeploy(addresses, deployer);
+        console.log("Validating: ", name);
 
         _build(addresses, deployer);
         _run(addresses, deployer);
 
-        _teardown(addresses, deployer);
         _validate(addresses, deployer);
         _validateOnChain(addresses, deployer); // check admin role was revoked
     }

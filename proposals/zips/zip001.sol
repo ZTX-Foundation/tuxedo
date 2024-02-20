@@ -11,11 +11,13 @@ import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
 contract zip001 is Proposal {
-    string public name = "ZIP001";
-    string public description = "The ZTX wearable, Core & GlobalReentrancyLock contract proposal";
+    constructor() {
+        name = "ZIP001";
+        description = "The ZTX wearable, Core & GlobalReentrancyLock contract proposal";
+    }
 
     function _beforeDeploy(Addresses addresses, address deployer) internal override {
-        assertEq(addresses.getAddress("ADMIN_MULTISIG"), address(0), "admin multisig not set"); // TODO this needs to be not equals. However ds-test needs updating first.  
+        assertNotEq(addresses.getAddress("ADMIN_MULTISIG"), address(0), "admin multisig not set");
     }
 
     function _deploy(Addresses addresses, address) internal override {
@@ -70,8 +72,10 @@ contract zip001 is Proposal {
     }
 
     function _validate(Addresses addresses, address) internal override {
+        _core = Core(addresses.getCore());
+
         /// Check Roles
-        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true, "incorrect admin role");
+        assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true, "admin role missing");
 
         /// Verfiy all contracts are pointing to the correct core address
         assertEq(

@@ -17,8 +17,10 @@ import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 
 contract zip004 is Proposal, TimelockProposal {
-    string public name = "ZIP004";
-    string public description = "ZTX CGv1 tokenIds, MaxSupply and Capsules config proposal";
+    constructor() {
+        name = "ZIP004";
+        description = "ZTX CGv1 tokenIds, MaxSupply and Capsules config proposal";
+    }
 
     struct TokenIDMaxSupplySettings {
         uint256 tokenId;

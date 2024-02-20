@@ -9,11 +9,11 @@ import {console} from "@forge-std/console.sol";
 enum EnvVar {
     LocalNet,
     SandPitNet, // Tuxedo's team env for localized testing on sepolia
-    DevNet,     // dev env
-    TestNet,    // qa env
-    MixedNet,   // TODO to be removed. Only used for contracts getting used in devNet and testNet
-    StageNet,   // staging env
-    MainNet     // prod env
+    DevNet, // dev env
+    TestNet, // qa env
+    MixedNet, // TODO to be removed. Only used for contracts getting used in devNet and testNet
+    StageNet, // staging env
+    MainNet // prod env
 }
 
 function getEnvVar(EnvVar env) pure returns (string memory) {
@@ -57,7 +57,7 @@ function getEnvVar(uint256 chainId) pure returns (EnvVar) {
 }
 
 function getChainId(EnvVar env) pure returns (uint256) {
-    if (EnvVar.SandPitNet == env){
+    if (EnvVar.SandPitNet == env) {
         return 421614; // Arbitrum (sepolia)
     } else if (EnvVar.LocalNet == env) {
         return 31337;
@@ -72,7 +72,7 @@ function getChainId(EnvVar env) pure returns (uint256) {
     } else if (EnvVar.MainNet == env) {
         return 42161; // Arbitrum (mainNet)
     } else {
-        return 0; // invalid 
+        return 0; // invalid
     }
 }
 
@@ -84,8 +84,8 @@ contract Addresses is Test {
     /// @dev example: _addresses[EnvVar.MainNet]["CORE"] = 0xb2F009749260ddbEFe5E1687895f0A0E411613EA
     mapping(EnvVar env => mapping(string contractName => address contractAddr)) private _addresses;
 
-    /// @notice RecordedAddress array for contract name and address of the current zip saved in memory 
-    /// @dev These addresses are to be saved post deployment to this file. 
+    /// @notice RecordedAddress array for contract name and address of the current zip saved in memory
+    /// @dev These addresses are to be saved post deployment to this file.
     struct RecordedAddress {
         string name;
         address addr;
@@ -94,17 +94,17 @@ contract Addresses is Test {
 
     constructor(EnvVar _env) {
         chainId = block.chainid;
-        envVar = _env; 
+        envVar = _env;
 
         console.log("chainId: ", chainId);
         console.log("envVar: ", getEnvVar(envVar));
 
         setNetworkAddresses(envVar);
-    } 
+    }
 
     // TODO Write this to import addresses from a json file at some point
     function setNetworkAddresses(EnvVar env) public {
-        console.log("Set pre-saved Network addresses: ", getEnvVar(env));
+        console.log("Load pre-saved Network addresses: ", getEnvVar(env));
         if (EnvVar.MainNet == envVar) {
             setMainNetAddresses();
         } else if (EnvVar.StageNet == envVar) {
@@ -126,11 +126,11 @@ contract Addresses is Test {
     }
 
     /// 42161: Arbitrum  mainNet
-    function setMainNetAddresses() private{
+    function setMainNetAddresses() private {
         _addAddress("CORE", 0xb2F009749260ddbEFe5E1687895f0A0E411613EA);
         _addAddress("GLOBAL_REENTRANCY_LOCK", 0x90eAa68fAe4703ff5328f2E86982e77EBc10539a);
         _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", 0x792E36c772f6dA6280fa43159792F89e7444CF18);
-        _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES",0x163b2E7696F661F86DBB39Ce4b03e38Bfe22a1C9);
+        _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES", 0x163b2E7696F661F86DBB39Ce4b03e38Bfe22a1C9);
         _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES", 0x2C154Ae907652A1a9939DBe0622915111816942C);
         _addAddress("SEASONS_TOKEN_ID_REGISTRY", 0x5cb7431a545523F25AbD3948c648329636a4b1E5);
         _addAddress("ERC1155_SEASON_ONE", 0x59AFA38214C9CCCFB56f72DE7f9a2B47fA17C270);
@@ -156,17 +156,14 @@ contract Addresses is Test {
 
         // 3rd party contract addresses
         _addAddress("WETH", 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
-    } 
-    function setStageNetAddresses() private{
     }
+    function setStageNetAddresses() private {}
 
-    function setTestNetAddresses() private{
-    }
-    function setDevNetAddresses() private{
-    }
+    function setTestNetAddresses() private {}
+    function setDevNetAddresses() private {}
 
     /// 31337: LocalNet
-    function setLocalNetAddresses() private{
+    function setLocalNetAddresses() private {
         _addAddress("WETH", 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
         _addAddress("TREASURY_WALLET_MULTISIG", 0x0000000000000000000000000000000000000101);
         _addAddress("ADMIN_MULTISIG", 0x2145cc1cc05690eBa6eAD2782B3fD547CE66C29C);
@@ -179,7 +176,7 @@ contract Addresses is Test {
 
     /// @dev to be decommissioned
     /// 421614: Arbitrum  testNet (sepolia)
-    function setMixedNetAddresses() private{
+    function setMixedNetAddresses() private {
         _addAddress("CORE", 0x68D6B4af6668A62Fc1B21ABF3DbfA366DD1d8eC7);
         _addAddress("GLOBAL_REENTRANCY_LOCK", 0x87D7b991540747522404c86b281E4880Cd6dE7f2);
         _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", 0x27564B8cf86aba79b398A39B75898fe8AFf30627);
@@ -199,11 +196,17 @@ contract Addresses is Test {
 
     /// @dev RnD set of contracts only used by the tuexdo team
     function setSandPitNetAddresses() private {
-        _addAddress("ADMIN_MULTISIG", 0x5Ec41e3a9c712D0BBC26d2CbA0E653c5d2cc982C);
+        _addAddress("TREASURY_WALLET_MULTISIG", 0xa8d0Fc249A1927D5D718Ee0a1F2A98fe72B10049); // utx0's wallet address
+        _addAddress("ADMIN_MULTISIG", 0xa8d0Fc249A1927D5D718Ee0a1F2A98fe72B10049); // utx0's wallet address
+        _addAddress("TOKEN", 0x0CF950b4e2C939916E595070eC460BeFFA9A572a);
+        _addAddress("CORE", 0xd12C55c429a34b35beE50257fc7Dd1A74e4C90eF);
+        _addAddress("GLOBAL_REENTRANCY_LOCK", 0x966bbCd9E3277D8e43a208D8A67086f1974BE3Fe);
+        _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", 0x6dc465F8F2FeF5E5088752713573eAf4Bd976223);
+        _addAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER", 0xE0B7a1795616b852374DF153dDa7aadCC6a53FB8);
     }
 
-    /// TODO possible remove? 
-    /// Seams like this really isnt needed. 
+    /// TODO possible remove?
+    /// Seams like this really isnt needed.
     // function selectNetworkFork(EnvVar env) private {
     //     string memory fork;
 
@@ -229,7 +232,7 @@ contract Addresses is Test {
     //     }
 
     //     console.log("Fork RPC: ", fork);
-    //     // uint x = vm.createFork(fork); 
+    //     // uint x = vm.createFork(fork);
     //     // vm.selectFork(x);
 
     //     vm.createSelectFork(fork);
@@ -244,7 +247,7 @@ contract Addresses is Test {
         return _addresses[envVar][name];
     }
 
-    /// @notice Added an address to the in memory addresses array 
+    /// @notice Added an address to the in memory addresses array
     function addAddress(string memory name, address addr) public {
         _addAddress(name, addr);
 
