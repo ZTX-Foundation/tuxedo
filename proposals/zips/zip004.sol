@@ -203,7 +203,7 @@ contract zip004 is Proposal, TimelockProposal {
         assertEq(rewardAmountTotal, 9134e18, "Invalid rewardAmountTotal"); // numbers from santiy check sheet
     }
 
-    function _beforeDeploy(Addresses, address deployer) internal override {
+    function _beforeDeploy(Addresses, address) internal override {
         setAndConfirmPlaceableData();
         setAndConfirmWearableData();
         setAndConfirmConsumableData();
@@ -214,7 +214,7 @@ contract zip004 is Proposal, TimelockProposal {
 
     function _afterDeploy(Addresses addresses, address) internal override {}
 
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
+    function _afterDeployOnMainNet(Addresses, address deployer) internal virtual override {}
 
     function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
 
@@ -353,7 +353,8 @@ contract zip004 is Proposal, TimelockProposal {
         }
     }
 
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
+    function _validateOnMainNet(Addresses, address deployer) internal virtual override {}
+    function _validateOnTestNet(Addresses, address deployer) internal virtual override {}
 
     function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
 }

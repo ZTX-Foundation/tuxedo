@@ -37,7 +37,7 @@ abstract contract Proposal is IProposal, Config, Test {
 
     /// @notice run the deployment on-chain
     /// @dev this is run on-chain and is used with the foundry `forge script` command
-    function deployOnChain(Addresses addresses, uint256 privateKey) public {
+    function deployOnMainNet(Addresses addresses, uint256 privateKey) public {
         address deployer = vm.addr(privateKey);
 
         // start broadcast
@@ -46,7 +46,7 @@ abstract contract Proposal is IProposal, Config, Test {
         _beforeDeploy(addresses, deployer);
         _deploy(addresses, deployer);
         _afterDeploy(addresses, deployer);
-        _afterDeployOnChain(addresses, deployer);
+        _afterDeployOnMainNet(addresses, deployer);
         vm.stopBroadcast();
 
         _build(addresses, deployer);
@@ -54,10 +54,29 @@ abstract contract Proposal is IProposal, Config, Test {
 
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
-        _validateOnChain(addresses, deployer); // check admin role was revoked
+        _validateOnMainNet(addresses, deployer); // check admin role was revoked
     }
 
-    function validOnChain(Addresses addresses, uint256 privateKey) public {
+    function deployOnTestNet(Addresses addresses, uint256 privateKey) public {
+        address deployer = vm.addr(privateKey);
+
+        // start broadcast
+        vm.startBroadcast(privateKey);
+        console.log("Deploying: ", name);
+        _beforeDeploy(addresses, deployer);
+        _deploy(addresses, deployer);
+        _afterDeploy(addresses, deployer);
+        vm.stopBroadcast();
+
+        _build(addresses, deployer);
+        _run(addresses, deployer);
+
+        _teardown(addresses, deployer);
+        _validate(addresses, deployer);
+        _validateOnTestNet(addresses, deployer); // check admin role was revoked
+    }
+
+    function validateOnMainNet(Addresses addresses) public {
         address deployer = address(0);
 
         console.log("Validating: ", name);
@@ -66,8 +85,22 @@ abstract contract Proposal is IProposal, Config, Test {
         _run(addresses, deployer);
 
         _validate(addresses, deployer);
-        _validateOnChain(addresses, deployer); // check admin role was revoked
+        _validateOnMainNet(addresses, deployer); // check admin role was revoked
     }
+
+    function validateOnTestNet(Addresses addresses) public {
+        address deployer = address(0);
+
+        console.log("Validating: ", name);
+
+        _build(addresses, deployer);
+        _run(addresses, deployer);
+
+        _validate(addresses, deployer);
+        _validateOnTestNet(addresses, deployer);
+    }
+
+    // function validateOnTestNet() {}
 
     /// @notice runs before all deployments.
     /// @dev a place to put pre-deployment checks
@@ -85,7 +118,7 @@ abstract contract Proposal is IProposal, Config, Test {
 
     /// @notice runs after all deployments on-chain only and will ensure that admin role is revoked from deployer
     /// @dev Revoked admin role after all deployments and needs to added again before another deployment can be done.
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual;
+    function _afterDeployOnMainNet(Addresses, address deployer) internal virtual;
 
     /// @notice build governance proposal
     function _build(Addresses addresses, address deployer) internal virtual;
@@ -104,5 +137,7 @@ abstract contract Proposal is IProposal, Config, Test {
     function _validateForTestingOnly(Addresses, address deployer) internal virtual;
 
     /// @notice validate the deployment on-chain only
-    function _validateOnChain(Addresses, address deployer) internal virtual;
+    function _validateOnMainNet(Addresses, address deployer) internal virtual;
+
+    function _validateOnTestNet(Addresses, address deployer) internal virtual;
 }

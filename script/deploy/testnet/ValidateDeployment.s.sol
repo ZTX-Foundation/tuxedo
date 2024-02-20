@@ -17,7 +17,7 @@ contract DeployProposal is Script, BaseValidProposal, zip {
         addresses.resetRecordingAddresses();
 
         // /// Run the deploy OnChain workflow
-        validOnChain(addresses, privateKey);
+        validateOnTestNet(addresses);
 
         addresses.printRecordedAddresses();
     }

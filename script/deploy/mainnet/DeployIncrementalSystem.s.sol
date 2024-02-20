@@ -8,7 +8,6 @@ import {Addresses, EnvVar} from "@proposals/Addresses.sol";
 import {BaseIncrementalSystem} from "@script/deploy/BaseIncrementalSystem.s.sol";
 
 contract DeployIncrementalSystem is Script, BaseIncrementalSystem, zip {
-
     function setUp() public override {
         super.setUp();
     }
@@ -18,7 +17,7 @@ contract DeployIncrementalSystem is Script, BaseIncrementalSystem, zip {
         addresses.resetRecordingAddresses();
 
         /// Run the deploy OnChain workflow
-        deployOnChain(addresses, privateKey);
+        deployOnMainNet(addresses, privateKey);
 
         // Print the recorded addresses
         addresses.printRecordedAddresses();

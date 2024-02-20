@@ -17,7 +17,7 @@ contract DeployIncrementalSystem is Script, BaseIncrementalSystem, zip {
         addresses.resetRecordingAddresses();
 
         /// Run the deploy OnChain workflow
-        deployOnChain(addresses, privateKey);
+        deployOnTestNet(addresses, privateKey);
 
         // Print the recorded addresses
         addresses.printRecordedAddresses();

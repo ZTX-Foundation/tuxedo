@@ -26,7 +26,7 @@ contract zip003 is Proposal, TimelockProposal {
         description = "ZTX CGv1 contracts proposal";
     }
 
-    function _beforeDeploy(Addresses addresses, address deployer) internal override {
+    function _beforeDeploy(Addresses addresses, address) internal override {
         /// Get Core Address
         _core = Core(addresses.getCore());
 
@@ -123,7 +123,7 @@ contract zip003 is Proposal, TimelockProposal {
 
     function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
 
-    function _afterDeployOnChain(Addresses, address deployer) internal override {}
+    function _afterDeployOnMainNet(Addresses, address deployer) internal override {}
 
     function _validate(Addresses addresses, address) internal override {
         /// Verfiy all contracts are pointing to the correct core address
@@ -305,9 +305,11 @@ contract zip003 is Proposal, TimelockProposal {
         }
     }
 
-    function _validateOnChain(Addresses, address deployer) internal override {}
+    function _validateOnMainNet(Addresses, address deployer) internal override {}
 
     function _validateForTestingOnly(Addresses, address deployer) internal override {}
+
+    function _validateOnTestNet(Addresses, address deployer) internal override {}
 
     function _teardown(Addresses addresses, address deployer) internal override {}
 

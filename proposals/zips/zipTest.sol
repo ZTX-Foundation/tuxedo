@@ -179,7 +179,7 @@ contract zipTest is Proposal, TimelockProposal {
 
     function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
 
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
+    function _afterDeployOnMainNet(Addresses, address deployer) internal virtual override {}
 
     function _build(Addresses addresses, address deployer) internal override {}
 
@@ -283,5 +283,7 @@ contract zipTest is Proposal, TimelockProposal {
 
     function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
 
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
+    function _validateOnMainNet(Addresses, address deployer) internal virtual override {}
+
+    function _validateOnTestNet(Addresses, address deployer) internal virtual override {}
 }

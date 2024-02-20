@@ -194,15 +194,15 @@ contract Addresses is Test {
         _addAddress("ADMIN_MULTISIG", 0x5Ec41e3a9c712D0BBC26d2CbA0E653c5d2cc982C);
     }
 
-    /// @dev RnD set of contracts only used by the tuexdo team
+    /// @dev utx0's RnD set of contracts
     function setSandPitNetAddresses() private {
         _addAddress("TREASURY_WALLET_MULTISIG", 0xa8d0Fc249A1927D5D718Ee0a1F2A98fe72B10049); // utx0's wallet address
         _addAddress("ADMIN_MULTISIG", 0xa8d0Fc249A1927D5D718Ee0a1F2A98fe72B10049); // utx0's wallet address
         _addAddress("TOKEN", 0x0CF950b4e2C939916E595070eC460BeFFA9A572a);
-        _addAddress("CORE", 0xd12C55c429a34b35beE50257fc7Dd1A74e4C90eF);
-        _addAddress("GLOBAL_REENTRANCY_LOCK", 0x966bbCd9E3277D8e43a208D8A67086f1974BE3Fe);
-        _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", 0x6dc465F8F2FeF5E5088752713573eAf4Bd976223);
-        _addAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER", 0xE0B7a1795616b852374DF153dDa7aadCC6a53FB8);
+        _addAddress("CORE", 0xCe97fB8A1afbc3A0095AF633040D215f9EdF1831);
+        _addAddress("GLOBAL_REENTRANCY_LOCK", 0xAae39744f77D422BdfBf922D67707173014eebdd);
+        _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", 0x6bC6eAd87Dc24d7C8466424Dc8e3AC40701e7053);
+        _addAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER", 0xB30f4d4c2044567AEEBBb6bC0542579600832fFc);
     }
 
     /// TODO possible remove?
@@ -267,7 +267,7 @@ contract Addresses is Test {
         }
     }
 
-    function printRecordedAddresses() external {
+    function printRecordedAddresses() external view {
         for (uint256 i = 0; i < recordedAddresses.length; i++) {
             console.log("Recorded", recordedAddresses[i].addr, recordedAddresses[i].name);
         }

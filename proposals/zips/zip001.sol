@@ -16,7 +16,7 @@ contract zip001 is Proposal {
         description = "The ZTX wearable, Core & GlobalReentrancyLock contract proposal";
     }
 
-    function _beforeDeploy(Addresses addresses, address deployer) internal override {
+    function _beforeDeploy(Addresses addresses, address) internal override {
         assertNotEq(addresses.getAddress("ADMIN_MULTISIG"), address(0), "admin multisig not set");
     }
 
@@ -66,7 +66,7 @@ contract zip001 is Proposal {
 
     function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
 
-    function _afterDeployOnChain(Addresses, address deployer) internal override {
+    function _afterDeployOnMainNet(Addresses, address deployer) internal override {
         // Revoke ADMIN role from deployer
         _core.revokeRole(Roles.ADMIN, deployer);
     }
@@ -152,7 +152,7 @@ contract zip001 is Proposal {
         assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 2, "incorrect minter count");
     }
 
-    function _validateOnChain(Addresses, address deployer) internal override {
+    function _validateOnMainNet(Addresses, address deployer) internal override {
         /// Verify ADMIN role has been revoked from deployer
         assertEq(_core.hasRole(Roles.ADMIN, deployer), false, "deployer should not have admin role");
 
@@ -161,6 +161,8 @@ contract zip001 is Proposal {
     }
 
     function _validateForTestingOnly(Addresses, address deployer) internal override {}
+
+    function _validateOnTestNet(Addresses, address deployer) internal override {}
 
     function _teardown(Addresses addresses, address deployer) internal override {}
 

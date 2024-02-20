@@ -43,13 +43,13 @@ contract zip002 is Proposal, TimelockProposal {
 
     function _afterDeploy(Addresses addresses, address) internal override {}
 
-    function _aferDeployForTestingOnly(Addresses addresses, address deployer) internal virtual override {
+    function _aferDeployForTestingOnly(Addresses addresses, address) internal virtual override {
         /// For the sake of testing, give the ADMIN role to the ADMIN_TIMELOCK_CONTROLLER.
         /// This is not possible onchain as the deployer is not an Admin
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
     }
 
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {
+    function _afterDeployOnMainNet(Addresses, address) internal virtual override {
         /// The ADMIN_MULTISIG now needs to give the ADMIN role to the ADMIN_TIMELOCK_CONTROLLER
         console.log("Please give Roles.Admin to the ADMIN_TIMELOCK_CONTROLLER from the ADMIN_MULTISIG");
     }
@@ -77,9 +77,11 @@ contract zip002 is Proposal, TimelockProposal {
         );
     }
 
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
+    function _validateOnMainNet(Addresses, address deployer) internal virtual override {}
 
     function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
+
+    function _validateOnTestNet(Addresses, address deployer) internal virtual override {}
 
     function _teardown(Addresses addresses, address deployer) internal override {}
 
