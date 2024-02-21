@@ -23,11 +23,12 @@ contract zipTemplate is Proposal, TimelockProposal {
 
     function _afterDeploy(Addresses addresses, address) internal override {}
 
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
+    function _afterDeployOnMainNet(Addresses, address deployer) internal virtual override {}
 
     function _validate(Addresses addresses, address) internal override {}
 
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
+    function _validateOnMainNet(Addresses, address deployer) internal virtual override {}
+    function _afterDeployOnTestNet(Addresses, address) internal virtual override {}
 
     function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
 

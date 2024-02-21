@@ -124,6 +124,7 @@ contract zip003 is Proposal, TimelockProposal {
     function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
 
     function _afterDeployOnMainNet(Addresses, address deployer) internal override {}
+    function _afterDeployOnTestNet(Addresses, address) internal virtual override {}
 
     function _validate(Addresses addresses, address) internal override {
         /// Verfiy all contracts are pointing to the correct core address

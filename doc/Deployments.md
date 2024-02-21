@@ -9,6 +9,7 @@
 
 1. Run: `npm run deploy:[EnvVar]:dryrun` to confirm everything will run ok
 2. Run: `npm run deploy:[EnvVar]:boardcast` deploy and boardcast onchain
+3. Update `Addresses.sol`
 3. Run: `npm run deploy:[EnvVar]:validate` validate everything has worked onchain (Optional step)  
 
 ## Deploy (MainNet)

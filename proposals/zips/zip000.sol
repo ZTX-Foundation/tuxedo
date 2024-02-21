@@ -42,6 +42,8 @@ contract zip000 is Proposal, TimelockProposal {
 
     function _afterDeployOnMainNet(Addresses, address) internal virtual override {}
 
+    function _afterDeployOnTestNet(Addresses, address) internal virtual override {}
+
     function _validate(Addresses addresses, address) internal override {
         /// Check Treasury balance
         assertEq(

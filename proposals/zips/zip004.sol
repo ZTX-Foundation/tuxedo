@@ -215,6 +215,7 @@ contract zip004 is Proposal, TimelockProposal {
     function _afterDeploy(Addresses addresses, address) internal override {}
 
     function _afterDeployOnMainNet(Addresses, address deployer) internal virtual override {}
+    function _afterDeployOnTestNet(Addresses, address) internal virtual override {}
 
     function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
 

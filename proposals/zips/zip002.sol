@@ -15,7 +15,7 @@ import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
 
 contract zip002 is Proposal, TimelockProposal {
-    TimelockController private _adminTimelock;
+    // TimelockController private _adminTimelock;
 
     constructor() {
         name = "ZIP002";
@@ -32,7 +32,7 @@ contract zip002 is Proposal, TimelockProposal {
         address[] memory adminTimelockProposersExecutors = new address[](1);
 
         adminTimelockProposersExecutors[0] = address(addresses.getAddress("ADMIN_MULTISIG"));
-        _adminTimelock = new TimelockController(
+        TimelockController _adminTimelock = new TimelockController(
             0, // zero delay
             adminTimelockProposersExecutors,
             adminTimelockProposersExecutors,
@@ -54,7 +54,15 @@ contract zip002 is Proposal, TimelockProposal {
         console.log("Please give Roles.Admin to the ADMIN_TIMELOCK_CONTROLLER from the ADMIN_MULTISIG");
     }
 
+    function _afterDeployOnTestNet(Addresses addresses, address) internal override {
+        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+    }
+
     function _validate(Addresses addresses, address) internal override {
+        TimelockController _adminTimelock = TimelockController(
+            payable(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"))
+        );
+
         /// Check that the ADMIN_MULTISIG has the PROPOSER role
         assertEq(
             _adminTimelock.hasRole(_adminTimelock.PROPOSER_ROLE(), addresses.getAddress("ADMIN_MULTISIG")),

@@ -1,5 +1,6 @@
 # TODO
 
+* feat: add a role debugger output for deployment scripts
 * fix: localnet deployments
 * fix: Remove Mixnet from Addresses.sol
 * fest: Make integration tests run on against any EnvVar

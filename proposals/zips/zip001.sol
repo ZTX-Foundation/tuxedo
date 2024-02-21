@@ -64,6 +64,7 @@ contract zip001 is Proposal {
         _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
     }
 
+    function _afterDeployOnTestNet(Addresses, address) internal virtual override {}
     function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
 
     function _afterDeployOnMainNet(Addresses, address deployer) internal override {

@@ -66,6 +66,7 @@ abstract contract Proposal is IProposal, Config, Test {
         _beforeDeploy(addresses, deployer);
         _deploy(addresses, deployer);
         _afterDeploy(addresses, deployer);
+        _afterDeployOnTestNet(addresses, deployer);
         vm.stopBroadcast();
 
         _build(addresses, deployer);
@@ -100,8 +101,6 @@ abstract contract Proposal is IProposal, Config, Test {
         _validateOnTestNet(addresses, deployer);
     }
 
-    // function validateOnTestNet() {}
-
     /// @notice runs before all deployments.
     /// @dev a place to put pre-deployment checks
     function _beforeDeploy(Addresses addresses, address deployer) internal virtual;
@@ -119,6 +118,8 @@ abstract contract Proposal is IProposal, Config, Test {
     /// @notice runs after all deployments on-chain only and will ensure that admin role is revoked from deployer
     /// @dev Revoked admin role after all deployments and needs to added again before another deployment can be done.
     function _afterDeployOnMainNet(Addresses, address deployer) internal virtual;
+
+    function _afterDeployOnTestNet(Addresses, address deployer) internal virtual;
 
     /// @notice build governance proposal
     function _build(Addresses addresses, address deployer) internal virtual;
