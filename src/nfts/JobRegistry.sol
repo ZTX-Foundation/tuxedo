@@ -67,7 +67,7 @@ contract JobRegistry is CoreRef {
     /// @param contractAddress the address of the NFT contract
     /// @param tokenId the tokenId
     /// @return bool
-    function isCompleted(address contractAddress, uint256 tokenId, uint256 jobId) external returns (bool) {
+    function isCompleted(address contractAddress, uint256 tokenId, uint256 jobId) external view returns (bool) {
         return _isCompleted(contractAddress, tokenId, jobId);
     }
 
