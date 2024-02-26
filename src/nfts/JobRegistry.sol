@@ -59,7 +59,7 @@ contract JobRegistry is CoreRef {
     /// @param contractAddress the address of the NFT contract
     /// @param tokenId the tokenId
     /// @return bool
-    function isPending(address contractAddress, uint256 tokenId, uint256 jobId) external returns (bool) {
+    function isPending(address contractAddress, uint256 tokenId, uint256 jobId) external view returns (bool) {
         return _isPending(contractAddress, tokenId, jobId);
     }
 
@@ -84,7 +84,7 @@ contract JobRegistry is CoreRef {
     /// @param contractAddress the address of the NFT contract
     /// @param tokenId the tokenId
     /// @param jobId the job Id to search for
-    function _isPending(address contractAddress, uint256 tokenId, uint256 jobId) private returns (bool) {
+    function _isPending(address contractAddress, uint256 tokenId, uint256 jobId) private view returns (bool) {
         uint256[] memory _pendingJobs = pendingJobs[contractAddress][tokenId];
         return _searchForJob(jobId, _pendingJobs);
     }
