@@ -173,7 +173,7 @@ contract JobRegistry is CoreRef {
         uint256 currentSupply = nftContract.totalSupply(tokenId);
         uint256 maxTokenSupply = nftContract.maxTokenSupply(tokenId);
 
-        require(pendingJobCount + completedJobCount + currentSupply <= maxTokenSupply);
+        require(pendingJobCount + completedJobCount + currentSupply <= maxTokenSupply, "JobRegistry: supply exhausted");
 
         return (maxTokenSupply - (pendingJobCount + completedJobCount + currentSupply));
     }
