@@ -26,6 +26,7 @@ contract JobRegistry is CoreRef {
     /// @param jobId the job Id to register
     function registerJob(address contractAddress, uint256 tokenId, uint256 jobId)
         external
+        whenNotPaused
         hasAnyOfTwoRoles(Roles.ADMIN, Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE)
     {
         require(!_isPending(contractAddress, tokenId, jobId), "JobRegistry: job is already pending");
@@ -44,6 +45,7 @@ contract JobRegistry is CoreRef {
     /// @param jobId the job Id to set as completed
     function completeJob(address contractAddress, uint256 tokenId, uint256 jobId)
         external
+        whenNotPaused
         hasAnyOfTwoRoles(Roles.ADMIN, Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE)
     {
         require(!_isCompleted(contractAddress, tokenId, jobId), "JobRegistry: job is already completed");
