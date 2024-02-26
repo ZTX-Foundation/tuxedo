@@ -13,6 +13,7 @@ contract JobRegistry is CoreRef {
     event CompletedJob(address indexed contractAddress, uint256 indexed tokenId, uint256 indexed jobId);
 
     /// @notice pending jobs
+    /// @dev only pending jobs may be removed
     mapping(address contractAddress => mapping(uint256 tokenId => uint256[] jobId)) public pendingJobs;
 
     /// @notice completed jobs
