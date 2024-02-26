@@ -75,7 +75,7 @@ contract JobRegistry is CoreRef {
     /// @param contractAddress the address of the NFT contract
     /// @param tokenId the tokenId
     /// @return the remaining supply
-    function remainingSupplyOf(address contractAddress, uint256 tokenId) external returns (uint256) {
+    function remainingSupplyOf(address contractAddress, uint256 tokenId) external view returns (uint256) {
         uint256 remainingSupply = _remainingSupplyOf(contractAddress, tokenId);
         return remainingSupply;
     }
@@ -93,7 +93,7 @@ contract JobRegistry is CoreRef {
     /// @param contractAddress the address of the NFT contract
     /// @param tokenId the tokenId
     /// @param jobId the job Id to search for
-    function _isCompleted(address contractAddress, uint256 tokenId, uint256 jobId) private returns (bool) {
+    function _isCompleted(address contractAddress, uint256 tokenId, uint256 jobId) private view returns (bool) {
         uint256[] memory _completedJobs = completedJobs[contractAddress][tokenId];
         return _searchForJob(jobId, _completedJobs);
     }
@@ -101,7 +101,7 @@ contract JobRegistry is CoreRef {
     /// @notice search for a given job
     /// @param jobId the job Id to search for
     /// @param jobList the list of jobs to search
-    function _searchForJob(uint256 jobId, uint256[] memory jobList) private returns (bool) {
+    function _searchForJob(uint256 jobId, uint256[] memory jobList) private view returns (bool) {
         for (uint256 i = 0; i < jobList.length; ) {
             if (jobList[i] == jobId) {
                 return true;
@@ -128,7 +128,7 @@ contract JobRegistry is CoreRef {
     /// @notice get index of a job Id
     /// @param jobId job Id to get the index of
     /// @param jobList the list of jobs to remove from
-    function _indexOfJob(uint256 jobId, uint256[] memory jobList) private returns (uint256 _index) {
+    function _indexOfJob(uint256 jobId, uint256[] memory jobList) private view returns (uint256 _index) {
         for (uint256 i = 0; i < jobList.length; ) {
             if (jobList[i] == jobId) {
                 return i;                
@@ -162,7 +162,7 @@ contract JobRegistry is CoreRef {
     /// @param contractAddress the address of the NFT contract
     /// @param tokenId the tokenId
     /// @return the remaining supply
-    function _remainingSupplyOf(address contractAddress, uint256 tokenId) private returns (uint256) {
+    function _remainingSupplyOf(address contractAddress, uint256 tokenId) private view returns (uint256) {
         ERC1155MaxSupplyMintable nftContract = ERC1155MaxSupplyMintable(contractAddress);
 
         uint256 pendingJobCount = pendingJobs[contractAddress][tokenId].length;
