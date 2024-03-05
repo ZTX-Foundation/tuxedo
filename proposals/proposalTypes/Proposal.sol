@@ -28,7 +28,7 @@ abstract contract Proposal is IProposal, Config, Test {
         vm.stopBroadcast();
 
         _build(addresses, deployer);
-        _run(addresses, deployer);
+        // _run(addresses, deployer); // TODO come back to this
 
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
@@ -50,7 +50,7 @@ abstract contract Proposal is IProposal, Config, Test {
         vm.stopBroadcast();
 
         _build(addresses, deployer);
-        _run(addresses, deployer);
+        _runOnMainNet(addresses, deployer);
 
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
@@ -70,7 +70,10 @@ abstract contract Proposal is IProposal, Config, Test {
         vm.stopBroadcast();
 
         _build(addresses, deployer);
-        _run(addresses, deployer);
+
+        vm.startBroadcast(privateKey);
+        _runOnTestNet(addresses, deployer);
+        vm.stopBroadcast();
 
         _teardown(addresses, deployer);
         _validate(addresses, deployer);
@@ -83,7 +86,7 @@ abstract contract Proposal is IProposal, Config, Test {
         console.log("Validating: ", name);
 
         _build(addresses, deployer);
-        _run(addresses, deployer);
+        _runOnMainNet(addresses, deployer);
 
         _validate(addresses, deployer);
         _validateOnMainNet(addresses, deployer); // check admin role was revoked
@@ -95,7 +98,7 @@ abstract contract Proposal is IProposal, Config, Test {
         console.log("Validating: ", name);
 
         _build(addresses, deployer);
-        _run(addresses, deployer);
+        _runOnTestNet(addresses, deployer);
 
         _validate(addresses, deployer);
         _validateOnTestNet(addresses, deployer);
@@ -125,7 +128,8 @@ abstract contract Proposal is IProposal, Config, Test {
     function _build(Addresses addresses, address deployer) internal virtual;
 
     /// @notice run governance proposal onchain
-    function _run(Addresses addresses, address deployer) internal virtual;
+    function _runOnMainNet(Addresses addresses, address deployer) internal virtual;
+    function _runOnTestNet(Addresses addresses, address deployer) internal virtual;
 
     /// @notice teardown anything required
     function _teardown(Addresses addresses, address deployer) internal virtual;

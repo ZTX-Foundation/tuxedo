@@ -291,10 +291,11 @@ contract zip004 is Proposal, TimelockProposal {
     }
 
     function _run(Addresses addresses, address) internal override {
-        _simulateTimelockActions(
+        _runTimelockActions(
             addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
             addresses.getAddress("ADMIN_MULTISIG"),
-            addresses.getAddress("ADMIN_MULTISIG")
+            addresses.getAddress("ADMIN_MULTISIG"),
+            false
         );
     }
 

@@ -1,5 +1,7 @@
 # TODO
 
+* fix: splitter contract allows zero addresses
+* fix: Do we want different token symbols per EnvVar?
 * feat: add a role debugger output for deployment scripts
 * fix: localnet deployments
 * fix: Remove Mixnet from Addresses.sol

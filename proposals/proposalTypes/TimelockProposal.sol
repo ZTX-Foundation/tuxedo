@@ -1,8 +1,7 @@
 pragma solidity 0.8.18;
 
 import {console} from "@forge-std/console.sol";
-
-import {ITimelockController} from "@proposals/proposalTypes/ITimelockController.sol";
+import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
 import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 
 abstract contract TimelockProposal is Proposal {
@@ -16,27 +15,33 @@ abstract contract TimelockProposal is Proposal {
     TimelockAction[] public actions;
 
     /// @notice push an action to the Timelock proposal
-    function _pushTimelockAction(uint256 value, address target, bytes memory data, string memory description) internal {
-        actions.push(TimelockAction({value: value, target: target, arguments: data, description: description}));
+    function _pushTimelockAction(
+        uint256 value,
+        address target,
+        bytes memory data,
+        string memory _description
+    ) internal {
+        actions.push(TimelockAction({value: value, target: target, arguments: data, description: _description}));
     }
 
     /// @notice push an action to the Timelock proposal with a value of 0
-    function _pushTimelockAction(address target, bytes memory data, string memory description) internal {
-        _pushTimelockAction(0, target, data, description);
+    function _pushTimelockAction(address target, bytes memory data, string memory _description) internal {
+        _pushTimelockAction(0, target, data, _description);
     }
 
     /// @notice simulate timelock proposal
     /// @param timelockAddress to execute the proposal against
     /// @param proposerAddress account to propose the proposal to the timelock
     /// @param executorAddress account to execute the proposal on the timelock
-    function _simulateTimelockActions(
+    function _runTimelockActions(
         address timelockAddress,
         address proposerAddress,
-        address executorAddress
+        address executorAddress,
+        bool simulate
     ) internal {
         require(actions.length > 0, "Empty timelock operation");
 
-        ITimelockController timelock = ITimelockController(payable(timelockAddress));
+        TimelockController timelock = TimelockController(payable(timelockAddress));
         uint256 delay = timelock.getMinDelay();
         bytes32 salt = keccak256(abi.encode(actions[0].description));
 
@@ -76,7 +81,9 @@ abstract contract TimelockProposal is Proposal {
         }
 
         if (!timelock.isOperationPending(proposalId) && !timelock.isOperation(proposalId)) {
-            vm.prank(proposerAddress);
+            if (simulate) {
+                vm.prank(proposerAddress);
+            }
             timelock.scheduleBatch(targets, values, payloads, predecessor, salt, delay);
 
             if (DEBUG) {
@@ -103,10 +110,14 @@ abstract contract TimelockProposal is Proposal {
         }
 
         console.log("warping to", block.timestamp + delay);
-        vm.warp(block.timestamp + delay);
+        if (simulate) {
+            vm.warp(block.timestamp + delay);
+        }
 
         if (!timelock.isOperationDone(proposalId)) {
-            vm.prank(executorAddress);
+            if (simulate) {
+                vm.prank(executorAddress);
+            }
             timelock.executeBatch(targets, values, payloads, predecessor, salt);
 
             if (DEBUG) {

@@ -2,12 +2,11 @@
 pragma solidity 0.8.18;
 
 import {console} from "@forge-std/console.sol";
-import {zip000 as zip} from "@proposals/zips/zip000.sol";
 import {Script} from "@forge-std/Script.sol";
 import {Addresses, EnvVar} from "@proposals/Addresses.sol";
-import {BaseIncrementalSystem} from "@script/deploy/BaseIncrementalSystem.s.sol";
+import {BaseDeployCompleteSystem} from "@script/deploy/BaseDeployCompleteSystem.s.sol";
 
-contract DeployIncrementalSystem is Script, BaseIncrementalSystem, zip {
+contract DeployCompleteSystem is Script, BaseDeployCompleteSystem {
     function setUp() public override {
         super.setUp();
     }
@@ -16,8 +15,7 @@ contract DeployIncrementalSystem is Script, BaseIncrementalSystem, zip {
         Addresses addresses = new Addresses(EnvVar.SandPitNet);
         addresses.resetRecordingAddresses();
 
-        /// Run the deploy OnChain workflow
-        deployOnTestNet(addresses, privateKey);
+        super.deployOnTestNet(addresses);
 
         // Print the recorded addresses
         addresses.printRecordedAddresses();

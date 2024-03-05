@@ -197,13 +197,22 @@ contract Addresses is Test {
     /// @dev utx0's RnD set of contracts
     function setSandPitNetAddresses() private {
         _addAddress("TREASURY_WALLET_MULTISIG", 0xa8d0Fc249A1927D5D718Ee0a1F2A98fe72B10049); // utx0's wallet address
-        _addAddress("ADMIN_MULTISIG", 0xa8d0Fc249A1927D5D718Ee0a1F2A98fe72B10049); // utx0's wallet address
-        _addAddress("TOKEN", 0x0CF950b4e2C939916E595070eC460BeFFA9A572a);
-        _addAddress("CORE", 0xCe97fB8A1afbc3A0095AF633040D215f9EdF1831);
-        _addAddress("GLOBAL_REENTRANCY_LOCK", 0xAae39744f77D422BdfBf922D67707173014eebdd);
-        _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", 0x6bC6eAd87Dc24d7C8466424Dc8e3AC40701e7053);
-        _addAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER", 0xB30f4d4c2044567AEEBBb6bC0542579600832fFc);
-        _addAddress("ADMIN_TIMELOCK_CONTROLLER", 0xA557032c70ed5Ae46B76Be855901f863DA1Cf8e0);
+        _addAddress("ADMIN_MULTISIG", 0x023ae071B954eE69c88Dbc179Cc33c15E7A0B42f); // deployer wallet
+        _addAddress("REVENUE_WALLET_MULTISIG01", 0xA8d0FC249a1927d5d718eE0A1f2A98fE72B10048); // dummy address
+        _addAddress("REVENUE_WALLET_MULTISIG02", 0xA8d0fc249A1927D5d718eE0a1f2a98fe72B10047); // dummy address
+        _addAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT", 0xa8D0fC249a1927D5d718eE0a1F2a98fe72b10046); // utx0's wallet address
+
+        // zip000
+        // _addAddress("TOKEN", 0x0CF950b4e2C939916E595070eC460BeFFA9A572a);
+
+        // zip001
+        // _addAddress("CORE", 0x0C4925EbeA9C6b8D993479f40024639f7b53fb41);
+        // _addAddress("GLOBAL_REENTRANCY_LOCK", 0x5E85A17D48d016c61F01BA4fe822EDbFF0C35f5c);
+        // _addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", 0x8bbaAe38e31E5bf9d73C5DF8E2aC4DeF061Ec7F8);
+        // _addAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER", 0x28229aC48381c9219B8A58FaD00401A620a2B12b);
+
+        // zip002
+        // _addAddress("ADMIN_TIMELOCK_CONTROLLER", 0xA557032c70ed5Ae46B76Be855901f863DA1Cf8e0);
     }
 
     /// TODO possible remove?
@@ -269,6 +278,7 @@ contract Addresses is Test {
     }
 
     function printRecordedAddresses() external view {
+        console.log("Recorded Addresses:");
         for (uint256 i = 0; i < recordedAddresses.length; i++) {
             console.log("Recorded", recordedAddresses[i].addr, recordedAddresses[i].name);
         }

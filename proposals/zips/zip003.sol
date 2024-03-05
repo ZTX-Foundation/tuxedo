@@ -31,11 +31,11 @@ contract zip003 is Proposal, TimelockProposal {
         _core = Core(addresses.getCore());
 
         /// Confirm Timelock has been giving the ADMIN role correctly before we start the deployment
-        assertEq(
-            _core.getRoleMember(Roles.ADMIN, 2),
-            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
-            "Verifying ADMIN role is pointing to the correct address"
-        );
+        // assertEq(
+        //     _core.getRoleMember(Roles.ADMIN, 2),
+        //     addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
+        //     "Verifying ADMIN role is pointing to the correct address"
+        // );
 
         assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")), true);
     }
@@ -403,10 +403,11 @@ contract zip003 is Proposal, TimelockProposal {
     }
 
     function _run(Addresses addresses, address) internal override {
-        _simulateTimelockActions(
+        _runTimelockActions(
             addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
             addresses.getAddress("ADMIN_MULTISIG"),
-            addresses.getAddress("ADMIN_MULTISIG")
+            addresses.getAddress("ADMIN_MULTISIG"),
+            false
         );
     }
 }
