@@ -65,7 +65,7 @@
     },
     "homepage": "https://github.com/ZTX-Foundation/tuxedo#README.md",
     "devDependencies": {
-        "@types/node": "^20.11.20",
+        "@types/node": "^20.11.24",
         "@typescript-eslint/eslint-plugin": "^7.1.1",
         "dotenv": "^16.4.4",
         "eslint": "^8.56.0",
