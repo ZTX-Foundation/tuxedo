@@ -7,8 +7,8 @@ import { ethers } from "ethers";
 import {hashMessage} from "@ethersproject/hash";
 
 program
-    .name("dele.ts")
-    .description("Delegate and NFT to another address.")
+    .name("delegate.ts")
+    .description("Delegate an NFT")
     .requiredOption(
         "-i, --abi-path <path>",
         "Path to the ABI file",
@@ -33,7 +33,10 @@ program.parse();
 
 const abi = JSON.parse(fs.readFileSync(program.opts().abiPath, "utf-8"));
 const provider = new ethers.providers.JsonRpcProvider(program.opts().rpcUrl);
+
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || "", provider);
+console.log(`Wallet address: ${wallet.address}`);
+
 const contract = new ethers.Contract(
     program.opts().contractAddress,
     abi,
