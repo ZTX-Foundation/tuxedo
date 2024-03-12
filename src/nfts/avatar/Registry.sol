@@ -5,8 +5,8 @@ import "@openzeppelin/contracts/utils/Create2.sol";
 
 import {Roles} from "@protocol/core/Roles.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
-import {Bytecode} from "@protocol/nfts/lib/Bytecode.sol";
-import {IRegistry} from "@protocol/nfts/registry/IRegistry.sol";
+import {Bytecode} from "@protocol/nfts/avatar/lib/Bytecode.sol";
+import {IRegistry} from "@protocol/nfts/avatar/registry/IRegistry.sol";
 
 /// @title Registry contract
 contract Registry is CoreRef, IRegistry {

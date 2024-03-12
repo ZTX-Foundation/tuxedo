@@ -8,8 +8,8 @@ import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 import {Roles} from "@protocol/core/Roles.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
-import {IAccount} from "@protocol/nfts/account/IAccount.sol";
-import {IExecutable} from "@protocol/nfts/executable/IExecutable.sol";
+import {IAccount} from "@protocol/nfts/avatar/account/IAccount.sol";
+import {IExecutable} from "@protocol/nfts/avatar/executable/IExecutable.sol";
 
 /// @title Account contract
 contract Account is CoreRef, IERC165, IERC1271, IAccount, IExecutable {
