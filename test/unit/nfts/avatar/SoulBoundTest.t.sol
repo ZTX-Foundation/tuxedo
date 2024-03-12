@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 import "@forge-std/Test.sol";
 
 import {BaseTest} from "@test/BaseTest.sol";
-import {SoulBound} from "@protocol/nfts/avatar/SoulBound.sol";
+import {SoulBound} from "@protocol/nfts/SoulBound.sol";
 
 
 contract SoulBoundTest is BaseTest {
