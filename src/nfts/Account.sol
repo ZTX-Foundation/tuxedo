@@ -6,14 +6,18 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC1271.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
+import {Roles} from "@protocol/core/Roles.sol";
+import {CoreRef} from "@protocol/refs/CoreRef.sol";
 import {IAccount} from "@protocol/nfts/account/IAccount.sol";
 import {IExecutable} from "@protocol/nfts/executable/IExecutable.sol";
 
 /// @title Account contract
-contract Account is IERC165, IERC1271, IAccount, IExecutable {
+contract Account is CoreRef, IERC165, IERC1271, IAccount, IExecutable {
     uint256 public state;
 
     receive() external payable {}
+
+    constructor(address _core) CoreRef(_core) {}
 
     /// @notice execute a low-level operation
     /// @param to The target address of the operation
