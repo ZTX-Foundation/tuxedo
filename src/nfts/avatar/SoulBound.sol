@@ -71,4 +71,12 @@ contract SoulBound is ERC1155, CoreRef {
     ) public pure override {
         revert("SoulBound tokens cannot be transferred");
     }
+
+    /// @notice Gets the owner of a specific token ID
+    /// @param tokenId The token ID to query for ownership
+    /// @return The address of the owner of the specified token ID
+    function ownerOf(uint256 tokenId) public view returns (address) {
+        require(_owners[tokenId] != address(0), "Token does not exist");
+        return _owners[tokenId];
+    }
 }
