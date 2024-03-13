@@ -2,13 +2,13 @@
 pragma solidity ^0.8.18;
 
 import {ERC1155} from  "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 
 /// @title SoulBound ERC1155 Token
 /// @dev Implementation of a SoulBound token using the ERC1155 standard, where tokens are non-transferable.
-contract SoulBound is ERC1155, CoreRef {
+contract SoulBound is ERC1155, CoreRef, Ownable {
     /// @dev Mapping from token ID to owner's address
     mapping(uint256 => address) private _owners;
 
@@ -31,10 +31,11 @@ contract SoulBound is ERC1155, CoreRef {
     /// @dev Mints a token and assigns it to an owner, tokens are non-transferable
     /// @param to The address that will own the minted token
     /// @param id The token ID to mint
-    function mint(address to, uint256 id) public {
+    function mint(address to, uint256 id) public onlyOwner {
         require(to != address(0), "ERC1155: mint to the zero address");
         require(_owners[id] == address(0), "Token is already owned");
         _owners[id] = to;
+        _mint(to, id, 1, "");
         emit TransferSingle(msg.sender, address(0), to, id, 1);
     }
 
