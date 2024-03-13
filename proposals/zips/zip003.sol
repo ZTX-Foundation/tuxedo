@@ -402,12 +402,18 @@ contract zip003 is Proposal, TimelockProposal {
         );
     }
 
-    function _run(Addresses addresses, address) internal override {
+    function _runOnMainNet(Addresses addresses, address) internal override {
+        _simulateTimelockActions(
+            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
+            addresses.getAddress("ADMIN_MULTISIG"),
+            addresses.getAddress("ADMIN_MULTISIG")
+        );
+    }
+    function _runOnTestNet(Addresses addresses, address) internal override {
         _runTimelockActions(
             addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
             addresses.getAddress("ADMIN_MULTISIG"),
-            addresses.getAddress("ADMIN_MULTISIG"),
-            false
+            addresses.getAddress("ADMIN_MULTISIG")
         );
     }
 }

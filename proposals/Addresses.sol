@@ -36,26 +36,6 @@ function getEnvVar(EnvVar env) pure returns (string memory) {
     }
 }
 
-function getEnvVar(uint256 chainId) pure returns (EnvVar) {
-    if (421614 == chainId) {
-        return EnvVar.SandPitNet;
-    } else if (31337 == chainId) {
-        return EnvVar.LocalNet;
-    } else if (421614 == chainId) {
-        return EnvVar.DevNet;
-    } else if (421614 == chainId) {
-        return EnvVar.TestNet;
-    } else if (421614 == chainId) {
-        return EnvVar.MixedNet;
-    } else if (421614 == chainId) {
-        return EnvVar.StageNet;
-    } else if (42161 == chainId) {
-        return EnvVar.MainNet;
-    } else {
-        return EnvVar.LocalNet;
-    }
-}
-
 function getChainId(EnvVar env) pure returns (uint256) {
     if (EnvVar.SandPitNet == env) {
         return 421614; // Arbitrum (sepolia)
@@ -201,6 +181,8 @@ contract Addresses is Test {
         _addAddress("REVENUE_WALLET_MULTISIG01", 0xA8d0FC249a1927d5d718eE0A1f2A98fE72B10048); // dummy address
         _addAddress("REVENUE_WALLET_MULTISIG02", 0xA8d0fc249A1927D5d718eE0a1f2a98fe72B10047); // dummy address
         _addAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT", 0xa8D0fC249a1927D5d718eE0a1F2a98fe72b10046); // utx0's wallet address
+        _addAddress("AUTOGRAPH_SERVICE_KMS_WALLET", 0xEE8b0f0708224FbB5832f90f0441A9BaDE417568); // TODO change to real address
+        _addAddress("GUARDIAN_MULTISIG", 0xa8d0Fc249A1927D5D718Ee0a1F2A98fe72B10049);
 
         // zip000
         // _addAddress("TOKEN", 0x0CF950b4e2C939916E595070eC460BeFFA9A572a);

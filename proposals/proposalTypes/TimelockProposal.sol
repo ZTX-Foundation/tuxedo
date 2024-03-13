@@ -29,11 +29,23 @@ abstract contract TimelockProposal is Proposal {
         _pushTimelockAction(0, target, data, _description);
     }
 
+    function _simulateTimelockActions(
+        address timelockAddress,
+        address proposerAddress,
+        address executorAddress
+    ) internal {
+        _executeTimeLockActions(timelockAddress, proposerAddress, executorAddress, true);
+    }
+
     /// @notice simulate timelock proposal
     /// @param timelockAddress to execute the proposal against
     /// @param proposerAddress account to propose the proposal to the timelock
     /// @param executorAddress account to execute the proposal on the timelock
-    function _runTimelockActions(
+    function _runTimelockActions(address timelockAddress, address proposerAddress, address executorAddress) internal {
+        _executeTimeLockActions(timelockAddress, proposerAddress, executorAddress, false);
+    }
+
+    function _executeTimeLockActions(
         address timelockAddress,
         address proposerAddress,
         address executorAddress,

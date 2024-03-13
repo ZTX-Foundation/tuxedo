@@ -184,7 +184,8 @@ contract zipTest is Proposal, TimelockProposal {
 
     function _build(Addresses addresses, address deployer) internal override {}
 
-    function _run(Addresses addresses, address deployer) internal override {}
+    function _runOnMainNet(Addresses addresses, address) internal override {}
+    function _runOnTestNet(Addresses addresses, address) internal override {}
 
     function _teardown(Addresses addresses, address deployer) internal override {}
 

@@ -95,5 +95,6 @@ contract zip002 is Proposal, TimelockProposal {
 
     function _build(Addresses addresses, address deployer) internal override {}
 
-    function _run(Addresses addresses, address deployer) internal override {}
+    function _runOnMainNet(Addresses, address) internal override {}
+    function _runOnTestNet(Addresses, address) internal override {}
 }
