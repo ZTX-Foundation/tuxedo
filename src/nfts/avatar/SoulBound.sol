@@ -31,13 +31,14 @@ contract SoulBound is ERC1155, CoreRef, Ownable {
     /// @dev Mints a token and assigns it to an owner, tokens are non-transferable
     /// @param to The address that will own the minted token
     /// @param id The token ID to mint
-    function mint(address to, uint256 id) public onlyOwner {
+    function mint(address to, uint256 id) external onlyRole(Roles.MINTER_PROTOCOL_ROLE) whenNotPaused globalLock(1) {
         require(to != address(0), "ERC1155: mint to the zero address");
         require(_owners[id] == address(0), "Token is already owned");
         _owners[id] = to;
         _mint(to, id, 1, "");
         emit TransferSingle(msg.sender, address(0), to, id, 1);
     }
+
 
     /// @notice Prevents the transfer of SoulBound tokens
     /// @dev Overrides the ERC1155 safeTransferFrom function to block token transfers

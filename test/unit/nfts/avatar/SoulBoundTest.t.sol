@@ -1,27 +1,40 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@forge-std/Test.sol";
-
 import {BaseTest} from "@test/BaseTest.sol";
 import {SoulBound} from "@protocol/nfts/avatar/SoulBound.sol";
-
+import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
+import {Roles} from "@protocol/core/Roles.sol";
 
 contract SoulBoundTest is BaseTest {
     SoulBound soulBound;
-    address mockCore = address(this); // Simplified CoreRef address for testing
-
-    function setUp() public override {
-        super.setUp();
-        soulBound = new SoulBound("ipfs://metadata/", mockCore);
-    }
+    uint256 public privateKey;
+    address public notary;
 
     function testMintSuccess() public {
         address recipient = address(1);
         uint256 tokenId = 1;
+        vm.startPrank(notary);
         soulBound.mint(recipient, tokenId);
+        vm.stopPrank();
         assertEq(soulBound.balanceOf(recipient, tokenId), 1);
     }
+
+    function setUp() public override {
+        super.setUp();
+        soulBound = new SoulBound("ipfs://metadata/", address(core));
+        string memory mnemonic = "test test test test test test test test test test test junk";
+        privateKey = vm.deriveKey(mnemonic, "m/44'/60'/0'/1/", 0);
+
+        notary = vm.addr(privateKey);
+
+        vm.startPrank(addresses.adminAddress);
+        core.grantRole(Roles.MINTER_PROTOCOL_ROLE, notary);
+        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(soulBound));
+        vm.stopPrank();
+
+    }
+
 
     function testFailMintToZeroAddress() public {
         uint256 tokenId = 1;
