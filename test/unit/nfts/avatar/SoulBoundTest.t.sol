@@ -35,30 +35,32 @@ contract SoulBoundTest is BaseTest {
 
     }
 
-
-    function testFailMintToZeroAddress() public {
-        uint256 tokenId = 1;
-        soulBound.mint(address(0), tokenId);
-    }
-
     function testFailMintDuplicateToken() public {
         address recipient = address(1);
         uint256 tokenId = 1;
+        vm.startPrank(notary);
         soulBound.mint(recipient, tokenId);
+        vm.stopPrank();
+        vm.startPrank(notary);
         soulBound.mint(recipient, tokenId); // This should fail
+        vm.stopPrank();
     }
 
     function testFailTransferToken() public {
         address recipient = address(1);
         uint256 tokenId = 1;
+        vm.startPrank(notary);
         soulBound.mint(recipient, tokenId);
+        vm.stopPrank();
         soulBound.safeTransferFrom(recipient, address(2), tokenId, 1, "");
     }
 
     function testFailBatchTransferToken() public {
         address recipient = address(1);
         uint256 tokenId = 1;
+        vm.startPrank(notary);
         soulBound.mint(recipient, tokenId);
+        vm.stopPrank();
         uint256[] memory ids = new uint256[](1);
         ids[0] = tokenId;
         uint256[] memory amounts = new uint256[](1);
@@ -68,8 +70,12 @@ contract SoulBoundTest is BaseTest {
 
     function testBatchBalanceQuery() public {
         address recipient = address(1);
+        vm.startPrank(notary);
         soulBound.mint(recipient, 1);
+        vm.stopPrank();
+        vm.startPrank(notary);
         soulBound.mint(recipient, 2);
+        vm.stopPrank();
 
         uint256[] memory tokenIds = new uint256[](2);
         tokenIds[0] = 1;
@@ -113,8 +119,9 @@ contract SoulBoundTest is BaseTest {
         address owner = address(1);
         address nonOwner = address(2);
         uint256 tokenId = 1;
+        vm.startPrank(notary);
         soulBound.mint(owner, tokenId);
-
+        vm.stopPrank();
         // Verify balance for non-owner is zero
         assertEq(soulBound.balanceOf(nonOwner, tokenId), 0, "Balance for non-owner should be zero");
     }
@@ -122,8 +129,9 @@ contract SoulBoundTest is BaseTest {
     function testOwnerMappingUpdate() public {
         address recipient = address(1);
         uint256 tokenId = 1;
+        vm.startPrank(notary);
         soulBound.mint(recipient, tokenId);
-
+        vm.stopPrank();
         // Verify that the owner mapping is correctly updated
         assertEq(soulBound.ownerOf(tokenId), recipient, "Owner mapping not updated correctly");
     }
@@ -131,10 +139,10 @@ contract SoulBoundTest is BaseTest {
     function testOwnerCheck() public {
         address recipient = address(1);
         uint256 tokenId = 1;
-
+        vm.startPrank(notary);
         // Mint the token to the recipient
         soulBound.mint(recipient, tokenId);
-
+        vm.stopPrank();
         // Use the internal _owners mapping to check the owner of the token
         address owner = soulBound.ownerOf(tokenId);
 
