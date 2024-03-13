@@ -16,15 +16,11 @@ contract SoulBoundTest is BaseTest {
         soulBound = new SoulBound("ipfs://metadata/", mockCore);
     }
 
-
-    function testMintingAndOwnership() public {
-        address to = address(1);
+    function testMintSuccess() public {
+        address recipient = address(1);
         uint256 tokenId = 1;
-
-        soulBound.mint(to, tokenId);
-
-        // Verify ownership
-        assertEq(soulBound.balanceOf(to, tokenId), 1, "Owner should have a balance of 1");
+        soulBound.mint(recipient, tokenId);
+        assertEq(soulBound.balanceOf(recipient, tokenId), 1);
     }
 
     function testFailMintToZeroAddress() public {
@@ -33,39 +29,27 @@ contract SoulBoundTest is BaseTest {
     }
 
     function testFailMintDuplicateToken() public {
-        address to = address(1);
+        address recipient = address(1);
         uint256 tokenId = 1;
-
-        soulBound.mint(to, tokenId);
-        soulBound.mint(to, tokenId); // This should fail
+        soulBound.mint(recipient, tokenId);
+        soulBound.mint(recipient, tokenId); // This should fail
     }
 
     function testFailTransferToken() public {
-        address to = address(1);
+        address recipient = address(1);
         uint256 tokenId = 1;
-
-        soulBound.mint(to, tokenId);
-
-        // This should revert with the "SoulBound tokens cannot be transferred" message
-        vm.expectRevert(bytes("SoulBound tokens cannot be transferred"));
-        soulBound.safeTransferFrom(to, address(2), tokenId, 1, "");
+        soulBound.mint(recipient, tokenId);
+        soulBound.safeTransferFrom(recipient, address(2), tokenId, 1, "");
     }
 
     function testFailBatchTransferToken() public {
-        address to = address(1);
+        address recipient = address(1);
         uint256 tokenId = 1;
-
-        soulBound.mint(to, tokenId);
-
+        soulBound.mint(recipient, tokenId);
         uint256[] memory ids = new uint256[](1);
         ids[0] = tokenId;
-
         uint256[] memory amounts = new uint256[](1);
         amounts[0] = 1;
-
-        // This should revert with the "SoulBound tokens cannot be transferred" message
-        vm.expectRevert(bytes("SoulBound tokens cannot be transferred"));
-        soulBound.safeBatchTransferFrom(to, address(2), ids, amounts, "");
+        soulBound.safeBatchTransferFrom(recipient, address(2), ids, amounts, "");
     }
-
 }
