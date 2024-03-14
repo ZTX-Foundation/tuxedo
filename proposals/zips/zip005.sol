@@ -1,14 +1,12 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
-import {console} from "@forge-std/console.sol";
-
 import {Addresses} from "@proposals/Addresses.sol";
 import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-contract zip004 is Proposal, TimelockProposal {
+contract zip005 is Proposal, TimelockProposal {
     string public name = "ZIP005";
     string public description = "ZTX CGv1.2 MaxSupply updates for placeables";
 
