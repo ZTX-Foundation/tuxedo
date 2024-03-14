@@ -167,9 +167,10 @@ contract zip005 is Proposal, TimelockProposal {
 
     function _build(Addresses addresses, address) internal override {
         /// Placeables config
+        address placeables = addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES");
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
             _pushTimelockAction(
-                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
+                placeables,
                 abi.encodeWithSignature(
                     "setSupplyCap(uint256,uint256)",
                     placeableTokenIDMaxSupplySettings[i].tokenId,
