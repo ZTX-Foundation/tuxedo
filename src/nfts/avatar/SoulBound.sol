@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 import {ERC1155} from  "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 
 /// @title SoulBound ERC1155 Token
@@ -81,4 +82,11 @@ contract SoulBound is ERC1155, CoreRef, Ownable {
         require(_owners[tokenId] != address(0), "Token does not exist");
         return _owners[tokenId];
     }
+
+    /// @dev Override the `uri` function to append the token ID to the base URI
+
+    function uri(uint256 _tokenId) public view override returns (string memory) {
+        return string(abi.encodePacked(super.uri(_tokenId), Strings.toString(_tokenId)));
+    }
+
 }
