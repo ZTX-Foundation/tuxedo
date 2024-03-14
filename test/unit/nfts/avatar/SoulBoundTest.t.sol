@@ -149,4 +149,45 @@ contract SoulBoundTest is BaseTest {
         // Assert that the owner recorded in the _owners mapping is the recipient
         assertEq(owner, recipient, "The owner is not correctly set after minting");
     }
+
+    function testTokenURI() public {
+        address recipient = address(1);
+        uint256 tokenId = 1;
+        string memory expectedURI = "ipfs://metadata/";
+        vm.startPrank(notary);
+        soulBound.mint(recipient, tokenId);
+        vm.stopPrank();
+        string memory actualURI = soulBound.uri(tokenId);
+        assertEq(actualURI, expectedURI, "Token URI does not match expected URI");
+    }
+
+    function testFailUnauthorizedMint() public {
+        address unauthorized = address(3);
+        uint256 tokenId = 1;
+        vm.prank(unauthorized);
+        vm.expectRevert("Unauthorized");
+        soulBound.mint(address(1), tokenId);
+        vm.stopPrank();
+    }
+
+    function testFailMintZeroAmount() public {
+        address recipient = address(1);
+        uint256 tokenId = 1;
+        uint256 amount = 0;
+        vm.startPrank(notary);
+        vm.expectRevert("Amount must be greater than 0");
+        soulBound.mint(recipient, tokenId);
+        vm.stopPrank();
+    }
+
+    function testFailOwnershipTransfer() public {
+        address recipient = address(1);
+        uint256 tokenId = 1;
+        vm.startPrank(notary);
+        soulBound.mint(recipient, tokenId);
+        vm.stopPrank();
+        address newOwner = address(2);
+        vm.expectRevert("SoulBound tokens cannot be transferred");
+        soulBound.transferOwnership(newOwner);
+    }
 }
