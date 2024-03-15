@@ -15,9 +15,9 @@ contract zip005 is Proposal, TimelockProposal {
         uint256 maxSupply;
     }
 
-    TokenIDMaxSupplySettings[] public placeableTokenIDMaxSupplySettings;
+    TokenIDMaxSupplySettings[] private placeableTokenIDMaxSupplySettings;
 
-    function setAndConfirmPlaceableData() public {
+    function setAndConfirmPlaceableData() private {
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(2, 6000));
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(3, 6000));
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(5, 100000));
