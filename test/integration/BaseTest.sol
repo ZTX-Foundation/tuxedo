@@ -14,7 +14,6 @@ contract BaseTest is Test, ERC1155Holder {
     uint256 arbitrumFork;
 
     function setUp() public virtual {
-        // TODO had to switch this back to goerli. This needs to be fixed at a later date.
         arbitrumFork = vm.createFork(vm.envString("ARBITRUM_TESTNET_SEPOLIA_RPC_URL"));
         vm.selectFork(arbitrumFork);
 

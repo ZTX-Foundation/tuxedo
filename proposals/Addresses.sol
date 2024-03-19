@@ -75,6 +75,7 @@ contract Addresses is Test {
         _addAddress("GAME_CONSUMER_PAYMENT_RECIPIENT", 421614, 0xF11cE4b4f8ba5bBf2B6eEbB4DB9099E7CF7ABa04);
         _addAddress("TREASURY_WALLET_MULTISIG", 421614, 0x122cE5b2D6711cEac9A6dfCB424846da3f22eaa2);
         _addAddress("TOKEN", 421614, 0x5422a3De80BA3891d663fa4EC7506A7f263c1Fd9);
+        _addAddress("WETH", 421614, 0x980B62Da83eFf3D4576C647993b0c1D7faf17c73);
         _addAddress("ADMIN_MULTISIG", 421614, 0x5Ec41e3a9c712D0BBC26d2CbA0E653c5d2cc982C);
 
         // 42161: Arbitrum  mainNet
