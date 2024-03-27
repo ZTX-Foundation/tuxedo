@@ -22,7 +22,7 @@
         "build": "forge build --extra-output-files abi",
         "test": "forge test -vvv",
         "test:unit": "forge test -vvv --match-contract UnitTest",
-        "test:integration": "forge test --match-contract IntegrationTest -vvvv",
+        "test:integration": "forge test --match-contract IntegrationTest",
         "test:watch": "git ls-files | entr -c -s 'forge test -vv'",
         "test:watch:debug": "git ls-files | entr -c -s 'forge test -vvv'",
         "test:proposals:mainnet": "forge t --fork-url $MAINNET_RPC_URL --match-contract TestProposals -vvv",
