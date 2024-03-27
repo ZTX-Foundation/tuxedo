@@ -33,7 +33,12 @@ contract zip006 is Proposal, TimelockProposal {
         );
 
         for (uint256 i = 0; i < wearablesDecoded.length; i++) {
-            wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(wearablesDecoded[i].maxSupply, wearablesDecoded[i].tokenId));
+            wearableTokenIDMaxSupplySettings.push(
+                TokenIDMaxSupplySettings(
+                    wearablesDecoded[i].maxSupply,
+                    wearablesDecoded[i].tokenId
+                )
+            );
         }
 
         // sanity checks
