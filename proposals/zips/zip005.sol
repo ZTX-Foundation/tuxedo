@@ -112,7 +112,7 @@ contract zip005 is Proposal, TimelockProposal {
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(353, 100000));
 
         // sanity checks
-        assertEq(placeableTokenIDMaxSupplySettings.length, 116, "Invalid placeableTokenIDMaxSupplySettings length");
+        assertEq(placeableTokenIDMaxSupplySettings.length, 92, "Invalid placeableTokenIDMaxSupplySettings length");
 
         uint tokenIDTotal = 0;
         uint maxSupplyTotal = 0;
@@ -123,8 +123,8 @@ contract zip005 is Proposal, TimelockProposal {
             maxSupplyTotal += placeableTokenIDMaxSupplySettings[i].maxSupply;
         }
 
-        assertEq(tokenIDTotal, 10_268, "Invalid tokenIDTotal");
-        assertEq(maxSupplyTotal, 7_934_000, "Invalid maxSupplyTotal");
+        assertEq(tokenIDTotal, 8_227, "Invalid tokenIDTotal");
+        assertEq(maxSupplyTotal, 6_380_000, "Invalid maxSupplyTotal");
     }
 
     function _beforeDeploy(Addresses, address deployer) internal override {
