@@ -12,6 +12,8 @@ import {zip001} from "@proposals/zips/zip001.sol";
 import {zip002} from "@proposals/zips/zip002.sol";
 import {zip003} from "@proposals/zips/zip003.sol";
 import {zip004} from "@proposals/zips/zip004.sol";
+import {zip005} from "@proposals/zips/zip005.sol";
+import {zip006} from "@proposals/zips/zip006.sol";
 import {zipTest} from "@proposals/zips/zipTest.sol";
 
 /*
@@ -49,6 +51,8 @@ contract TestProposals is Test {
         proposals.push(Proposal(address(new zip002()))); /// Timelock proposal
         proposals.push(Proposal(address(new zip003()))); /// CGv1 proposal
         proposals.push(Proposal(address(new zip004()))); /// TokenIds, MaxSupply and Capsule settings proposal
+        proposals.push(Proposal(address(new zip005()))); /// MaxSupply settings proposal
+        proposals.push(Proposal(address(new zip006()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zipTest()))); /// RnD/testing only proposal
 
         nProposals = proposals.length;
