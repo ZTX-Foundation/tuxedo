@@ -30,6 +30,7 @@ Or, from another Solidity file (for post-proposal integration testing):
 */
 
 contract TestProposals is Test {
+    string private ADDRESS_PATH = "proposals/Addresses.json";
     Addresses public addresses;
     Proposal[] public proposals;
     uint256 public nProposals;
@@ -44,7 +45,7 @@ contract TestProposals is Test {
     address public deployer = address(0x00000108);
 
     function setUp() public {
-        addresses = new Addresses();
+        addresses = new Addresses(ADDRESS_PATH);
 
         // Load proposals
         proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
@@ -86,7 +87,7 @@ contract TestProposals is Test {
             proposals[i].deployForTestingOnly(addresses, deployer);
 
             /// output deployed contract addresses and names
-            (string[] memory recordedNames, address[] memory recordedAddresses) = addresses.getRecordedAddresses();
+            (string[] memory recordedNames, , address[] memory recordedAddresses) = addresses.getRecordedAddresses();
             for (uint256 j = 0; j < recordedNames.length; j++) {
                 console.log("  Deployed", recordedAddresses[j], recordedNames[j]);
             }

@@ -21,6 +21,7 @@ contract DeployProposal is Script, zip {
     bool public doAfterdeploy;
     bool public doValidate;
     bool public doTeardown;
+    string constant ADDRESSES_PATH = "proposals/Addresses.json";
 
     function setUp() public {
         // Default behavior: do debug prints
@@ -37,13 +38,13 @@ contract DeployProposal is Script, zip {
     }
 
     function run() public {
-        Addresses addresses = new Addresses();
+        Addresses addresses = new Addresses(ADDRESSES_PATH);
         addresses.resetRecordingAddresses();
 
         /// Run the deploy OnChain workflow
         deployOnChain(addresses, privateKey);
 
-        (string[] memory recordedNames, address[] memory recordedAddresses) = addresses.getRecordedAddresses();
+        (string[] memory recordedNames, , address[] memory recordedAddresses) = addresses.getRecordedAddresses();
         for (uint256 i = 0; i < recordedNames.length; i++) {
             // solhint-disable-next-line
             console.log("Deployed", recordedAddresses[i], recordedNames[i]);
