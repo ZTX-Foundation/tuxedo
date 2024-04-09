@@ -21,7 +21,7 @@ contract DeployProposal is Script, zip {
     bool public doAfterdeploy;
     bool public doValidate;
     bool public doTeardown;
-    string constant ADDRESSES_PATH = "proposals/Addresses.json";
+    string constant ADDRESSES_PATH = "proposals/Addresses/mainnet.json";
 
     function setUp() public {
         // Default behavior: do debug prints

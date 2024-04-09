@@ -123,18 +123,18 @@ contract Addresses is IAddresses, Test {
 
         require(chainId != 0, "ChainId cannot be 0");
 
-        // require(
-        //     data.addr != address(0),
-        //     string(
-        //         abi.encodePacked(
-        //             "Address: ",
-        //             name,
-        //             " doesn't exist on chain: ",
-        //             chainId.toString(),
-        //             ". Use addAddress instead"
-        //         )
-        //     )
-        // );
+        require(
+            data.addr != address(0),
+            string(
+                abi.encodePacked(
+                    "Address: ",
+                    name,
+                    " doesn't exist on chain: ",
+                    chainId.toString(),
+                    ". Use addAddress instead"
+                )
+            )
+        );
 
         require(
             data.addr != _addr,
