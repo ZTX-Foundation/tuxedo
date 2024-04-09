@@ -36,7 +36,7 @@ contract zip002 is Proposal, TimelockProposal {
             adminTimelockProposersExecutors,
             address(0) // No admin requried
         );
-        addresses.changeAddress("ADMIN_TIMELOCK_CONTROLLER", address(_adminTimelock), true);
+        addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(_adminTimelock), true);
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {}

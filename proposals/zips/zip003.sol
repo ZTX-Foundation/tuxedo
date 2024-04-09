@@ -52,7 +52,7 @@ contract zip003 is Proposal, TimelockProposal {
             "ZTX Consumables",
             "ZTXC"
         );
-        addresses.changeAddress(
+        addresses.addAddress(
             "ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES",
             address(erc1155Consumables),
             block.chainid,
@@ -66,12 +66,7 @@ contract zip003 is Proposal, TimelockProposal {
             "ZTX Placeables",
             "ZTXP"
         );
-        addresses.changeAddress(
-            "ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES",
-            address(erc1155Placeables),
-            block.chainid,
-            true
-        );
+        addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES", address(erc1155Placeables), block.chainid, true);
 
         /// ERC20Splitter allocation settings
         ERC20Splitter.Allocation[] memory allocations = new ERC20Splitter.Allocation[](2);
@@ -86,7 +81,7 @@ contract zip003 is Proposal, TimelockProposal {
             addresses.getAddress("TOKEN"),
             allocations
         );
-        addresses.changeAddress("CONSUMABLE_SPLITTER", address(consumableSplitter), true);
+        addresses.addAddress("CONSUMABLE_SPLITTER", address(consumableSplitter), true);
 
         /// AutoGraphMinter contract
         address[] memory nftContractAddresses = new address[](3);
@@ -102,7 +97,7 @@ contract zip003 is Proposal, TimelockProposal {
             addresses.getAddress("AUTOGRAPH_MINTER_PAYMENT_RECIPIENT"),
             1 // 1 hour expiry token timeout
         );
-        addresses.changeAddress("ERC1155_AUTO_GRAPH_MINTER", address(erc1155AutoGraphMinter), true);
+        addresses.addAddress("ERC1155_AUTO_GRAPH_MINTER", address(erc1155AutoGraphMinter), true);
 
         /// Game consumer
         GameConsumer gameConsumer = new GameConsumer(
@@ -111,11 +106,11 @@ contract zip003 is Proposal, TimelockProposal {
             addresses.getAddress("CONSUMABLE_SPLITTER"),
             addresses.getAddress("WETH")
         );
-        addresses.changeAddress("GAME_CONSUMABLE", address(gameConsumer), true);
+        addresses.addAddress("GAME_CONSUMABLE", address(gameConsumer), true);
 
         /// SeasonsTokenIdRegistry contract
         SeasonsTokenIdRegistry seasonsTokenIdRegistry = new SeasonsTokenIdRegistry(address(_core));
-        addresses.changeAddress("SEASONS_TOKEN_ID_REGISTRY", address(seasonsTokenIdRegistry), true);
+        addresses.addAddress("SEASONS_TOKEN_ID_REGISTRY", address(seasonsTokenIdRegistry), true);
 
         /// Season contracts (Season 1)
         ERC1155SeasonOne erc1155SeasonOne = new ERC1155SeasonOne(
@@ -124,7 +119,7 @@ contract zip003 is Proposal, TimelockProposal {
             address(addresses.getAddress("TOKEN")),
             address(seasonsTokenIdRegistry)
         );
-        addresses.changeAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne), true);
+        addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne), true);
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {}

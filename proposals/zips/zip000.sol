@@ -27,7 +27,7 @@ contract zip000 is Proposal, TimelockProposal {
                 string(abi.encodePacked(vm.envString("TOKEN_NAME"))),
                 string(abi.encodePacked(vm.envString("TOKEN_SYMBOL")))
             );
-            addresses.changeAddress("TOKEN", address(token), block.chainid, true);
+            addresses.addAddress("TOKEN", address(token), true);
         }
     }
 
