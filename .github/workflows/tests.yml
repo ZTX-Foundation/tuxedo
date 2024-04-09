@@ -11,7 +11,7 @@ jobs:
             DOMAIN: ztx.io
             TOKEN_NAME: "XTZ Token"
             TOKEN_SYMBOL: XTZ
-            RPC_URL: ${{ vars.RPC_URL }}
+            RPC_URL: https://rpc.ankr.com/arbitrum
         steps:
             - uses: actions/checkout@v3
               with:
