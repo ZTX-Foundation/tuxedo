@@ -22,7 +22,9 @@ program
     .requiredOption("-d, --delegatee <address>", "Delegatee address")
     .requiredOption("-t, --token-id <tokenId>", "NFT token ID")
     .requiredOption("-a, --amount <amount>", "Number of NFTs to delegate")
-    .requiredOption("-p, --nft-type <type>", "NFT type (ERC1155|ERC721)", "ERC1155")
+    .requiredOption("-p, --nft-type <type>", "NFT type (ERC1155|ERC721)", "ERC721")
+    .requiredOption("-r, --rights <rights>", "Rights (see delegate.xyx docs for more information)", "1")
+    .requiredOption("-o, --operation <operation>", "Assign or revoke a delegation (assign|revoke)", "assign")
     .requiredOption(
         "-u, --rpc-url <url>",
         "RPC URL",
@@ -48,8 +50,8 @@ if (program.opts().nftType === "ERC1155") {
         program.opts().delegatee,
         program.opts().nftContractAddress,
         program.opts().tokenId,
-        ethers.utils.formatBytes32String(""),
-        program.opts().amount
+        ethers.utils.formatBytes32String(program.opts().rights),
+        (program.opts().operation == "assign") ? program.opts().amount : 0
     ).then((tx: any) => {
         console.log("SUCCESS");
         console.log(tx);
@@ -62,8 +64,8 @@ if (program.opts().nftType === "ERC1155") {
         program.opts().delegatee,
         program.opts().nftContractAddress,
         program.opts().tokenId,
-        ethers.utils.formatBytes32String(""),
-        false
+        ethers.utils.formatBytes32String(program.opts().rights),
+        (program.opts().operation == "assign") ? true : false
     ).then((tx: any) => {
         console.log("SUCCESS");
         console.log(tx);
