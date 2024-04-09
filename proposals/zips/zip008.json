@@ -1,10 +1,6 @@
 [
     {
         "maxSupply": 100000,
-        "tokenId": 50
-    },
-    {
-        "maxSupply": 100000,
         "tokenId": 51
     },
     {

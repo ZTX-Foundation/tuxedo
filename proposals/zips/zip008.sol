@@ -42,7 +42,7 @@ contract zip008 is Proposal, TimelockProposal {
         }
 
         // sanity checks
-        assertEq(wearableTokenIDMaxSupplySettings.length, 25, "Invalid wearableTokenIDMaxSupplySettings length");
+        assertEq(wearableTokenIDMaxSupplySettings.length, 24, "Invalid wearableTokenIDMaxSupplySettings length");
 
         uint maxSupplyTotal = 0;
 
@@ -51,7 +51,7 @@ contract zip008 is Proposal, TimelockProposal {
             maxSupplyTotal += wearableTokenIDMaxSupplySettings[i].maxSupply;
         }
 
-        assertEq(maxSupplyTotal, 2_406_000, "Invalid maxSupplyTotal");
+        assertEq(maxSupplyTotal, 2_306_000, "Invalid maxSupplyTotal");
     }
 
     function _beforeDeploy(Addresses, address deployer) internal override {
