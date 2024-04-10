@@ -49,8 +49,6 @@ contract TestProposals is Test {
         string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
         addresses = new Addresses(addressPath);
 
-        bool bootstrap = vm.envOr("BOOTSTRAP", false);
-
         // Admin access for deployer(ZTX_DEPLOYER) is revoked on mainnet
         if (block.chainid == 42161) {
             deployer = addresses.getAddress("ADMIN_MULTISIG");
@@ -58,7 +56,7 @@ contract TestProposals is Test {
             deployer = addresses.getAddress("DEPLOYER");
         }
 
-        if (block.chainid == 31337 || bootstrap) {
+        if (block.chainid == 31337) {
             // Load proposals
             proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
             proposals.push(Proposal(address(new zip001()))); /// Wearables, Core, ADMIN_MULTISIG proposal
