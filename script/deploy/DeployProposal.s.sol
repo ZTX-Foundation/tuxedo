@@ -21,7 +21,6 @@ contract DeployProposal is Script, zip {
     bool public doAfterdeploy;
     bool public doValidate;
     bool public doTeardown;
-    string constant ADDRESSES_PATH = "proposals/Addresses/mainnet.json";
 
     function setUp() public {
         // Default behavior: do debug prints
@@ -38,7 +37,9 @@ contract DeployProposal is Script, zip {
     }
 
     function run() public {
-        Addresses addresses = new Addresses(ADDRESSES_PATH);
+        string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
+        string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
+        Addresses addresses = new Addresses(addressPath);
         addresses.resetRecordingAddresses();
 
         /// Run the deploy OnChain workflow
