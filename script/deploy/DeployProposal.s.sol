@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 import {console} from "@forge-std/console.sol";
-import {zip008 as zip} from "@proposals/zips/zip008.sol";
+import {zip009 as zip} from "@proposals/zips/zip009.sol";
 import {Script} from "@forge-std/Script.sol";
 import {Addresses} from "@proposals/Addresses.sol";
 
