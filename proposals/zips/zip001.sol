@@ -38,7 +38,7 @@ contract zip001 is Proposal {
             "ZTX Wearables",
             "ZTXW"
         );
-        addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", address(erc1155Wearables), block.chainid, true);
+        addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES", address(erc1155Wearables), true);
 
         ERC1155AdminMinter minter = new ERC1155AdminMinter(address(_core));
         addresses.addAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER", address(minter), true);

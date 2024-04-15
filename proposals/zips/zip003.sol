@@ -52,12 +52,7 @@ contract zip003 is Proposal, TimelockProposal {
             "ZTX Consumables",
             "ZTXC"
         );
-        addresses.addAddress(
-            "ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES",
-            address(erc1155Consumables),
-            block.chainid,
-            true
-        );
+        addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES", address(erc1155Consumables), true);
 
         /// Placeables NFT contract
         ERC1155MaxSupplyMintable erc1155Placeables = new ERC1155MaxSupplyMintable(
@@ -66,7 +61,7 @@ contract zip003 is Proposal, TimelockProposal {
             "ZTX Placeables",
             "ZTXP"
         );
-        addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES", address(erc1155Placeables), block.chainid, true);
+        addresses.addAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES", address(erc1155Placeables), true);
 
         /// ERC20Splitter allocation settings
         ERC20Splitter.Allocation[] memory allocations = new ERC20Splitter.Allocation[](2);
