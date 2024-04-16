@@ -15,10 +15,11 @@ import {zip005} from "@proposals/zips/zip005.sol";
 import {zip006} from "@proposals/zips/zip006.sol";
 import {zip007} from "@proposals/zips/zip007.sol";
 import {zip008} from "@proposals/zips/zip008.sol";
+import {zip009} from "@proposals/zips/zip009.sol";
 
 /*
 How to use:
-forge script script/deploy/DeployTestnet.s.sol:DeployTestnet \
+forge script script/deploy/BootstrapTestnet.s.sol:BootstrapTestnet \
     -vvvv \
     --rpc-url $ETH_RPC_URL \
     --broadcast \
@@ -26,7 +27,7 @@ forge script script/deploy/DeployTestnet.s.sol:DeployTestnet \
 Remove --broadcast and --private-key if you want to try locally first, without paying any gas.
 */
 
-contract DeployTestnet is Script {
+contract BootstrapTestnet is Script {
     uint256 public privateKey;
 
     Addresses addresses;
@@ -50,6 +51,7 @@ contract DeployTestnet is Script {
         proposals.push(Proposal(address(new zip006()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip007()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip008()))); /// MaxSupply settings proposal
+        proposals.push(Proposal(address(new zip009()))); /// MaxSupply settings proposal
     }
 
     function run() public {
