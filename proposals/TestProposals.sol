@@ -17,6 +17,7 @@ import {zip006} from "@proposals/zips/zip006.sol";
 import {zip007} from "@proposals/zips/zip007.sol";
 import {zip008} from "@proposals/zips/zip008.sol";
 import {zip009} from "@proposals/zips/zip009.sol";
+import {zip010} from "@proposals/zips/zip010.sol";
 import {zipTest} from "@proposals/zips/zipTest.sol";
 
 /*
@@ -59,6 +60,7 @@ contract TestProposals is Test {
         proposals.push(Proposal(address(new zip007()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip008()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip009()))); /// MaxSupply settings proposal
+        proposals.push(Proposal(address(new zip010()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zipTest()))); /// RnD/testing only proposal
 
         nProposals = proposals.length;
