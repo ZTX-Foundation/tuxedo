@@ -1,110 +1,300 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
-import {Test} from "@forge-std/Test.sol";
-import {IProposal} from "@proposals/proposalTypes/IProposal.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-import {Core} from "@protocol/core/Core.sol";
-import {Roles} from "@protocol/core/Roles.sol";
+import {Test} from "@forge-std/Test.sol";
+import {VmSafe} from "@forge-std/Vm.sol";
+import {console} from "@forge-std/console.sol";
+
+import {Script} from "@forge-std/Script.sol";
+import {IProposal} from "./IProposal.sol";
 import {Addresses} from "@proposals/Addresses.sol";
 
-abstract contract Proposal is IProposal, Test {
-    bool public DEBUG = true;
+abstract contract Proposal is Test, Script, IProposal {
+    using Strings for *;
 
-    Core _core;
-
-    function setDebug(bool value) external {
-        DEBUG = value;
+    struct Action {
+        address target;
+        uint256 value;
+        bytes arguments;
+        string description;
     }
 
-    /// @notice run the deployment for testing only. ie intergration testing with foundry
-    /// @dev this is not run on-chain, and is only used with the foundry `forge test` command
-    function deployForTestingOnly(Addresses addresses, address deployer) public {
+    /// @notice starting snapshot of the contract state before the calls are made
+    uint256 private _startSnapshot;
+
+    /// @notice list of actions to be executed, regardless of proposal type
+    /// they all follow the same structure
+    Action[] public actions;
+
+    /// @notice debug flag to print proposal actions, calldata, new addresses and changed addresses
+    /// @dev default is true
+    bool internal DEBUG = true;
+
+    /// @notice Addresses contract
+    Addresses public addresses;
+
+    /// @notice the actions caller name in the Addresses JSON
+    string public caller;
+
+    constructor(string memory _caller) {
+        string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
+        string memory addressesPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
+        addresses = new Addresses(addressesPath);
+        caller = _caller;
+    }
+
+    /// @notice override this to set the proposal name
+    function name() public view virtual returns (string memory);
+
+    /// @notice override this to set the proposal description
+    function description() public view virtual returns (string memory);
+
+    /// @notice main function
+    /// @dev do not override
+    function run() external {
+        address deployer = addresses.getAddress("DEPLOYER");
+
         vm.startBroadcast(deployer);
-
-        _beforeDeploy(addresses, deployer);
-        _deploy(addresses, deployer);
-        _afterDeploy(addresses, deployer);
-        _aferDeployForTestingOnly(addresses, deployer);
-
+        _beforeDeploy();
+        _deploy();
         vm.stopBroadcast();
 
-        _build(addresses, deployer);
-        _run(addresses, deployer);
-
-        _teardown(addresses, deployer);
-        _validate(addresses, deployer);
-        _validateForTestingOnly(addresses, deployer);
-    }
-
-    /// @notice run the deployment on-chain
-    /// @dev this is run on-chain and is used with the foundry `forge script` command
-    function deployOnChain(Addresses addresses, uint256 privateKey) public {
-        address deployer = vm.addr(privateKey);
-
-        // start broadcast
-        vm.startBroadcast(privateKey);
-        _beforeDeploy(addresses, deployer);
-        _deploy(addresses, deployer);
-        _afterDeploy(addresses, deployer);
-        _afterDeployOnChain(addresses, deployer);
+        address afterDeployCaller = addresses.getAddress("AFTER_DEPLOY_CALLER");
+        vm.startBroadcast(afterDeployCaller);
+        _afterDeploy();
         vm.stopBroadcast();
 
-        _build(addresses, deployer);
-        _run(addresses, deployer);
+        _outerBuild();
+        _run();
+        _teardown();
+        _validate();
 
-        _teardown(addresses, deployer);
-        _validate(addresses, deployer);
-        _validateOnChain(addresses, deployer); // check admin role was revoked
+        if (DEBUG) {
+            _printRecordedAddresses();
+            _printActions();
+            _printCalldata();
+        }
     }
 
-    function validOnChain(Addresses addresses, uint256 privateKey) public {
-        address deployer = address(0);
+    function _outerBuild() private {
+        _startBuild();
 
-        _beforeDeploy(addresses, deployer);
+        _build();
 
-        _build(addresses, deployer);
-        _run(addresses, deployer);
-
-        _teardown(addresses, deployer);
-        _validate(addresses, deployer);
-        _validateOnChain(addresses, deployer); // check admin role was revoked
+        _endBuild();
     }
+
+    /// @dev set the debug flag
+    function setDebug(bool debug) public {
+        DEBUG = debug;
+    }
+
+    /// @dev set Addresses
+    function setAddresses(Addresses addresses_) public {
+        addresses = addresses_;
+    }
+
+    /// @notice Print proposal calldata
+    function getCalldata() public virtual returns (bytes memory data);
+
+    /// @notice get proposal actions
+    /// @dev do not override
+    function getProposalActions()
+        public
+        view
+        override
+        returns (address[] memory targets, uint256[] memory values, bytes[] memory arguments)
+    {
+        uint256 actionsLength = actions.length;
+        require(actionsLength > 0, "No actions found");
+
+        targets = new address[](actionsLength);
+        values = new uint256[](actionsLength);
+        arguments = new bytes[](actionsLength);
+
+        for (uint256 i; i < actionsLength; i++) {
+            require(actions[i].target != address(0), "Invalid target for proposal");
+            /// if there are no args and no eth, the action is not valid
+            require(
+                (actions[i].arguments.length == 0 && actions[i].value > 0) || actions[i].arguments.length > 0,
+                "Invalid arguments for proposal"
+            );
+            targets[i] = actions[i].target;
+            arguments[i] = actions[i].arguments;
+            values[i] = actions[i].value;
+        }
+    }
+
+    /// --------------------------------------------------------------------
+    /// --------------------------------------------------------------------
+    /// ------------------ Internal functions to override ------------------
+    /// --------------------------------------------------------------------
+    /// --------------------------------------------------------------------
 
     /// @notice runs before all deployments.
     /// @dev a place to put pre-deployment checks
-    function _beforeDeploy(Addresses addresses, address deployer) internal virtual;
+    function _beforeDeploy() internal virtual {}
 
-    /// @notice deployment of zip's contracts/features
-    function _deploy(Addresses addresses, address deployer) internal virtual;
+    /// @dev Deploy contracts and add them to list of addresses
+    function _deploy() internal virtual {}
 
-    /// @notice runs after all deployments
-    function _afterDeploy(Addresses addresses, address deployer) internal virtual;
+    /// @dev After deploying, call initializers and link contracts together
+    function _afterDeploy() internal virtual {}
 
-    /// @notice runs after all deployments for testing only
-    /// @dev as an example in testing mode we dont drop the admin role as its needed for further deployments in an automated test
-    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual;
+    /// @dev After finishing deploy and deploy cleanup, build the proposal
+    function _build() internal virtual {}
 
-    /// @notice runs after all deployments on-chain only and will ensure that admin role is revoked from deployer
-    /// @dev Revoked admin role after all deployments and needs to added again before another deployment can be done.
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual;
+    /// @dev Actually run the proposal (e.g. queue actions in the Timelock,
+    /// or execute a serie of Multisig calls...).
+    /// See proposals for helper contracts.
+    /// address param is the address of the proposal executor
+    function _run() internal virtual {
+        /// Check if there are actions to run
+        uint256 actionsLength = actions.length;
+        // require(actionsLength > 0, "No actions found");
+    }
 
-    /// @notice build governance proposal
-    function _build(Addresses addresses, address deployer) internal virtual;
+    /// @dev After a proposal executed, if you mocked some behavior in the
+    /// afterDeploy step, you might want to tear down the mocks here.
+    /// For instance, in afterDeploy() you could impersonate the multisig
+    /// of another protocol to do actions in their protocol (in anticipation
+    /// of changes that must happen before your proposal execution), and here
+    /// you could revert these changes, to make sure the integration tests
+    /// run on a state that is as close to mainnet as possible.
+    function _teardown() internal virtual {}
 
-    /// @notice run governance proposal onchain
-    function _run(Addresses addresses, address deployer) internal virtual;
+    /// @dev For small post-proposal checks, e.g. read state variables of the
+    /// contracts you deployed, to make sure your deploy() and afterDeploy()
+    /// steps have deployed contracts in a correct configuration, or read
+    /// states that are expected to have change during your run() step.
+    function _validate() internal virtual {}
 
-    /// @notice teardown anything required
-    function _teardown(Addresses addresses, address deployer) internal virtual;
+    /// @dev Print proposal calldata
+    function _printCalldata() internal virtual {
+        console.log("\n\n------------------ Proposal Calldata ------------------");
+        console.logBytes(getCalldata());
+    }
 
-    /// @notice validate the deployment
-    function _validate(Addresses addresses, address deployer) internal virtual;
+    /// --------------------------------------------------------------------
+    /// --------------------------------------------------------------------
+    /// -------------------------- Private functions -------------------------
+    /// --------------------------------------------------------------------
+    /// --------------------------------------------------------------------
 
-    /// @notice validate the deployment for testing only
-    /// @dev as an example in testing mode we dont drop the admin role as its needed for further deployments in an automated test
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual;
+    /// @dev Print proposal actions
+    function _printActions() private view {
+        console.log("\n\n---------------- Proposal Description ----------------");
+        console.log(description());
+        console.log("\n\n------------------ Proposal Actions ------------------");
+        for (uint256 i; i < actions.length; i++) {
+            console.log("%d). %s", i + 1, actions[i].description);
+            console.log("target: %s\npayload", actions[i].target);
+            console.logBytes(actions[i].arguments);
+            console.log("\n");
+        }
+    }
 
-    /// @notice validate the deployment on-chain only
-    function _validateOnChain(Addresses, address deployer) internal virtual;
+    /// @dev Print recorded addresses
+    function _printRecordedAddresses() private view {
+        (string[] memory recordedNames, , address[] memory recordedAddresses) = addresses.getRecordedAddresses();
+
+        if (recordedNames.length > 0) {
+            console.log("\n\n--------- Addresses added after running proposal ---------");
+            for (uint256 j = 0; j < recordedNames.length; j++) {
+                console.log("{\n          'addr': '%s', ", recordedAddresses[j]);
+                console.log("        'chainId': %d,", block.chainid);
+                console.log("        'isContract': %s", true, ",");
+                console.log("        'name': '%s'\n}%s", recordedNames[j], j < recordedNames.length - 1 ? "," : "");
+            }
+        }
+
+        (string[] memory changedNames, , , address[] memory changedAddresses) = addresses.getChangedAddresses();
+
+        if (changedNames.length > 0) {
+            console.log("\n\n-------- Addresses changed after running proposal --------");
+
+            for (uint256 j = 0; j < changedNames.length; j++) {
+                console.log("{\n          'addr': '%s', ", changedAddresses[j]);
+                console.log("        'chainId': %d,", block.chainid);
+                console.log("        'isContract': %s", true, ",");
+                console.log("        'name': '%s'\n}%s", changedNames[j], j < changedNames.length - 1 ? "," : "");
+            }
+        }
+    }
+
+    /// @notice to be used by the build function to create a governance proposal
+    /// kick off the process of creating a governance proposal by:
+    ///  1). taking a snapshot of the current state of the contract
+    ///  2). starting prank as the caller
+    ///  3). starting a $recording of all calls created during the proposal
+    function _startBuild() private {
+        _startSnapshot = vm.snapshot();
+        vm.startPrank(addresses.getAddress(caller));
+        vm.startStateDiffRecording();
+    }
+
+    /// @notice to be used at the end of the build function to snapshot
+    /// the actions performed by the proposal and revert these changes
+    /// then, stop the prank and record the actions that were taken by the proposal.
+    function _endBuild() private {
+        vm.stopPrank();
+        VmSafe.AccountAccess[] memory accountAccesses = vm.stopAndReturnStateDiff();
+
+        /// roll back all state changes made during the governance proposal
+        require(vm.revertTo(_startSnapshot), "failed to revert back to snapshot, unsafe state to run proposal");
+
+        for (uint256 i = 0; i < accountAccesses.length; i++) {
+            /// only care about calls from the original caller,
+            /// static calls are ignored,
+            /// calls to and from Addresses and the vm contract are ignored
+            if (
+                accountAccesses[i].account != address(addresses) &&
+                accountAccesses[i].account != address(vm) && /// ignore calls to vm in the build function
+                accountAccesses[i].accessor != address(addresses) &&
+                accountAccesses[i].kind == VmSafe.AccountAccessKind.Call &&
+                accountAccesses[i].accessor == addresses.getAddress(caller) /// caller is correct, not a subcall
+            ) {
+                actions.push(
+                    Action({
+                        value: accountAccesses[i].value,
+                        target: accountAccesses[i].account,
+                        arguments: accountAccesses[i].data,
+                        description: string(
+                                abi.encodePacked(
+                                    "calling ",
+                                    accountAccesses[i].account.toHexString(),
+                                    " with ",
+                                    accountAccesses[i].value.toString(),
+                                    " eth and ",
+                                    _bytesToString(accountAccesses[i].data),
+                                    " data."
+                                )
+                            )
+                    })
+                );
+            }
+        }
+    }
+
+    /// @notice convert bytes to a string
+    /// @param data the bytes to convert to a human readable string
+    function _bytesToString(bytes memory data) private pure returns (string memory) {
+        /// Initialize an array of characters twice the length of data,
+        /// since each byte will be represented by two hexadecimal characters
+        bytes memory buffer = new bytes(data.length * 2);
+
+        /// Characters for conversion
+        bytes memory characters = "0123456789abcdef";
+
+        for (uint256 i = 0; i < data.length; i++) {
+            /// For each byte, find the corresponding hexadecimal characters
+            buffer[i * 2] = characters[uint256(uint8(data[i] >> 4))];
+            buffer[i * 2 + 1] = characters[uint256(uint8(data[i] & 0x0f))];
+        }
+
+        /// Convert the bytes array to a string and return
+        return string(buffer);
+    }
 }
