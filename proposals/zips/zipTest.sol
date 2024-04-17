@@ -32,7 +32,7 @@ contract zipTest is Proposal, TimelockProposal {
     address[] public whitelistAddresses;
 
     function _beforeDeploy(Addresses addresses, address) internal override {
-        _core = Core(addresses.getCore());
+        _core = Core(addresses.getAddress("CORE"));
     }
 
     function _deploy(Addresses addresses, address deployer) internal override {
@@ -42,7 +42,7 @@ contract zipTest is Proposal, TimelockProposal {
                 addresses.getAddress("WETH")
             );
 
-            addresses.addAddress("WETH_ERC20_HOLDING_DEPOSIT", address(wethErc20HoldingDeposit));
+            addresses.addAddress("WETH_ERC20_HOLDING_DEPOSIT", address(wethErc20HoldingDeposit), true);
         }
 
         {
@@ -52,21 +52,21 @@ contract zipTest is Proposal, TimelockProposal {
                 addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"),
                 addresses.getAddress("WETH")
             );
-            addresses.addAddress("ERC1155_SALE_CONSUMABLES", address(consumablesERC1155Sale));
+            addresses.addAddress("ERC1155_SALE_CONSUMABLES", address(consumablesERC1155Sale), true);
 
             ERC1155Sale placeablesERC1155Sale = new ERC1155Sale(
                 address(_core),
                 addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
                 addresses.getAddress("WETH")
             );
-            addresses.addAddress("ERC1155_SALE_PLACEABLES", address(placeablesERC1155Sale));
+            addresses.addAddress("ERC1155_SALE_PLACEABLES", address(placeablesERC1155Sale), true);
 
             ERC1155Sale wearablesERC1155Sale = new ERC1155Sale(
                 address(_core),
                 addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"),
                 addresses.getAddress("WETH")
             );
-            addresses.addAddress("ERC1155_SALE_WEARABLES", address(wearablesERC1155Sale));
+            addresses.addAddress("ERC1155_SALE_WEARABLES", address(wearablesERC1155Sale), true);
         }
 
         {
@@ -92,8 +92,8 @@ contract zipTest is Proposal, TimelockProposal {
                 100_000_000e18,
                 200_000_000e18
             );
-            addresses.addAddress("GOVERNOR_DAO", address(governorDAO));
-            addresses.addAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER", address(governorDAOTimelock));
+            addresses.addAddress("GOVERNOR_DAO", address(governorDAO), true);
+            addresses.addAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER", address(governorDAOTimelock), true);
             governorDAOTimelock.grantRole(
                 governorDAOTimelock.TIMELOCK_ADMIN_ROLE(),
                 addresses.getAddress("GOVERNOR_DAO")
@@ -116,13 +116,13 @@ contract zipTest is Proposal, TimelockProposal {
                 address(_core),
                 addresses.getAddress("TOKEN")
             );
-            addresses.addAddress("BURNER_HOLDING_DEPOSIT", address(burnHoldingDeposit));
+            addresses.addAddress("BURNER_HOLDING_DEPOSIT", address(burnHoldingDeposit), true);
 
             ERC20HoldingDeposit wethTreasuryHoldingDeposit = new ERC20HoldingDeposit(
                 address(_core),
                 addresses.getAddress("WETH")
             );
-            addresses.addAddress("WETH_TREASURY_HOLDING_DEPOSIT", address(wethTreasuryHoldingDeposit));
+            addresses.addAddress("WETH_TREASURY_HOLDING_DEPOSIT", address(wethTreasuryHoldingDeposit), true);
 
             /// ERC1155Sale Splitter
             ERC20Splitter.Allocation[] memory wethAllocations = new ERC20Splitter.Allocation[](2);
@@ -136,7 +136,7 @@ contract zipTest is Proposal, TimelockProposal {
                 addresses.getAddress("WETH"),
                 wethAllocations
             );
-            addresses.addAddress("ERC1155_SALE_SPLITTER", address(erc1155SaleSplitter));
+            addresses.addAddress("ERC1155_SALE_SPLITTER", address(erc1155SaleSplitter), true);
         }
     }
 

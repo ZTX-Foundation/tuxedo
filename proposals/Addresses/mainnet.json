@@ -1,0 +1,140 @@
+[
+    {
+        "name": "CORE",
+        "addr": "0xb2F009749260ddbEFe5E1687895f0A0E411613EA",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "GLOBAL_REENTRANCY_LOCK",
+        "addr": "0x90eAa68fAe4703ff5328f2E86982e77EBc10539a",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES",
+        "addr": "0x792E36c772f6dA6280fa43159792F89e7444CF18",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES",
+        "addr": "0x163b2E7696F661F86DBB39Ce4b03e38Bfe22a1C9",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES",
+        "addr": "0x2C154Ae907652A1a9939DBe0622915111816942C",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "SEASONS_TOKEN_ID_REGISTRY",
+        "addr": "0x5cb7431a545523F25AbD3948c648329636a4b1E5",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_SEASON_ONE",
+        "addr": "0x59AFA38214C9CCCFB56f72DE7f9a2B47fA17C270",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_MAX_SUPPLY_ADMIN_MINTABLE",
+        "addr": "0xd778a415A3AB81eF27da61218c71a5F31A4D10BE",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_AUTO_GRAPH_MINTER",
+        "addr": "0xD031aD02aD4bADFc06b64ec64eBA32cFc781FB9b",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "GAME_CONSUMABLE",
+        "addr": "0xeD3ed10Bd8FD4093528B38B6fD7c5a5C616EB28f",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "CONSUMABLE_SPLITTER",
+        "addr": "0x85454964Db79620e239C5425F047eAAe027d0E08",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "TREASURY_WALLET_MULTISIG",
+        "addr": "0xb9d7CB819Cf09c1aF796c23e7a5F0b7EE9a62902",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "TOKEN",
+        "addr": "0x1C43D05be7E5b54D506e3DdB6f0305e8A66CD04e",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "ADMIN_TIMELOCK_CONTROLLER",
+        "addr": "0xf16A0E806A4CF6e9031A0dA028c80eF8A771aE48",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "ADMIN_MULTISIG",
+        "addr": "0x5dE36e1b22520975021950c0ca190027A6f73aAa",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "GUARDIAN_MULTISIG",
+        "addr": "0xc6a9E0C54A678cC769563204bd84456d7314EF21",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "AUTOGRAPH_MINTER_PAYMENT_RECIPIENT",
+        "addr": "0xc3B2c05A417CD4903615556A81F82602C9D9eA04",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "REVENUE_WALLET_MULTISIG01",
+        "addr": "0x8A8041eaA86aD43656420FB4b04dcBf66EbD6261",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "REVENUE_WALLET_MULTISIG02",
+        "addr": "0xC3Ae66c6a96Cb4737D95B7D3e8587992332304a1",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "AUTOGRAPH_SERVICE_KMS_WALLET",
+        "addr": "0xEE8b0f0708224FbB5832f90f0441A9BaDE417568",
+        "chainId": 42161,
+        "isContract": false
+    },
+    {
+        "name": "WETH",
+        "addr": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "FINANCE_GUARDIAN_MULTISIG",
+        "addr": "0xc6a9E0C54A678cC769563204bd84456d7314EF21",
+        "chainId": 42161,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_MAX_SUPPLY_ADMIN_MINTER",
+        "addr": "0xd778a415A3AB81eF27da61218c71a5F31A4D10BE",
+        "chainId": 42161,
+        "isContract": true
+    }
+]

@@ -14,6 +14,7 @@ jobs:
       TOKEN_NAME: "XTZ Token"
       TOKEN_SYMBOL: XTZ
       ARBITRUM_TESTNET_SEPOLIA_RPC_URL: ${{ vars.ARBITRUM_TESTNET_SEPOLIA_RPC_URL }}
+      RPC_URL: ${{ vars.RPC_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -25,8 +26,8 @@ jobs:
       - uses: hrishikesh-kadam/setup-lcov@v1
 
       - run: |
-          forge coverage --report lcov
-          lcov --rc lcov_branch_coverage=1 --remove lcov.info -o lcov.info 'test/*' 'script/*'
+          ENVIRONMENT=mainnet forge coverage --report lcov
+          lcov --rc lcov_branch_coverage=1 --remove lcov.info -o lcov.info 'test/*' 'script/*' 'proposals/*'
 
       - uses: zgosalvez/github-actions-report-lcov@v3
         with:

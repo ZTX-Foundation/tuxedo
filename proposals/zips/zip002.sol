@@ -22,7 +22,7 @@ contract zip002 is Proposal, TimelockProposal {
 
     function _beforeDeploy(Addresses addresses, address) internal override {
         /// Get Core Address
-        _core = Core(addresses.getCore());
+        _core = Core(addresses.getAddress("CORE"));
     }
 
     function _deploy(Addresses addresses, address) internal override {
@@ -36,7 +36,7 @@ contract zip002 is Proposal, TimelockProposal {
             adminTimelockProposersExecutors,
             address(0) // No admin requried
         );
-        addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(_adminTimelock));
+        addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(_adminTimelock), true);
     }
 
     function _afterDeploy(Addresses addresses, address) internal override {}

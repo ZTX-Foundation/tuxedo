@@ -44,23 +44,35 @@ contract TestProposals is Test {
     bool public doTeardown;
     bool public doValidate;
 
-    address public deployer = address(0x00000108);
+    address public deployer;
 
     function setUp() public {
-        addresses = new Addresses();
+        string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
+        string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
+        addresses = new Addresses(addressPath);
 
-        // Load proposals
-        proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
-        proposals.push(Proposal(address(new zip001()))); /// Wearables, Core, ADMIN_MULTISIG proposal
-        proposals.push(Proposal(address(new zip002()))); /// Timelock proposal
-        proposals.push(Proposal(address(new zip003()))); /// CGv1 proposal
-        proposals.push(Proposal(address(new zip004()))); /// TokenIds, MaxSupply and Capsule settings proposal
-        proposals.push(Proposal(address(new zip005()))); /// MaxSupply settings proposal
-        proposals.push(Proposal(address(new zip006()))); /// MaxSupply settings proposal
-        proposals.push(Proposal(address(new zip007()))); /// MaxSupply settings proposal
-        proposals.push(Proposal(address(new zip008()))); /// MaxSupply settings proposal
-        proposals.push(Proposal(address(new zip009()))); /// MaxSupply settings proposal
-        proposals.push(Proposal(address(new zip010()))); /// MaxSupply settings proposal
+        // Admin access for deployer(ZTX_DEPLOYER) is revoked on mainnet
+        if (block.chainid == 42161) {
+            deployer = addresses.getAddress("ADMIN_MULTISIG");
+        } else {
+            deployer = addresses.getAddress("DEPLOYER");
+        }
+
+        if (block.chainid == 31337) {
+            // Load proposals
+            proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
+            proposals.push(Proposal(address(new zip001()))); /// Wearables, Core, ADMIN_MULTISIG proposal
+            proposals.push(Proposal(address(new zip002()))); /// Timelock proposal
+            proposals.push(Proposal(address(new zip003()))); /// CGv1 proposal
+            proposals.push(Proposal(address(new zip004()))); /// TokenIds, MaxSupply and Capsule settings proposal
+            proposals.push(Proposal(address(new zip005()))); /// MaxSupply settings proposal
+            proposals.push(Proposal(address(new zip006()))); /// MaxSupply settings proposal
+            proposals.push(Proposal(address(new zip007()))); /// MaxSupply settings proposal
+            proposals.push(Proposal(address(new zip008()))); /// MaxSupply settings proposal
+            proposals.push(Proposal(address(new zip009()))); /// MaxSupply settings proposal
+            proposals.push(Proposal(address(new zip010()))); /// MaxSupply settings proposal
+        }
+
         proposals.push(Proposal(address(new zipTest()))); /// RnD/testing only proposal
 
         nProposals = proposals.length;
@@ -92,7 +104,7 @@ contract TestProposals is Test {
             proposals[i].deployForTestingOnly(addresses, deployer);
 
             /// output deployed contract addresses and names
-            (string[] memory recordedNames, address[] memory recordedAddresses) = addresses.getRecordedAddresses();
+            (string[] memory recordedNames, , address[] memory recordedAddresses) = addresses.getRecordedAddresses();
             for (uint256 j = 0; j < recordedNames.length; j++) {
                 console.log("  Deployed", recordedAddresses[j], recordedNames[j]);
             }
