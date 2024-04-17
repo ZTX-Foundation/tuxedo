@@ -44,22 +44,13 @@ contract TestProposals is Test {
     bool public doTeardown;
     bool public doValidate;
 
-    address public deployer;
-
     function setUp() public {
         string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
         string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
         addresses = new Addresses(addressPath);
 
-        // Admin access for deployer(ZTX_DEPLOYER) is revoked on mainnet
-        if (block.chainid == 42161) {
-            deployer = addresses.getAddress("ADMIN_MULTISIG");
-        } else {
-            deployer = addresses.getAddress("DEPLOYER");
-        }
-
+        // Load proposals
         if (block.chainid == 31337) {
-            // Load proposals
             proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
             proposals.push(Proposal(address(new zip001()))); /// Wearables, Core, ADMIN_MULTISIG proposal
             proposals.push(Proposal(address(new zip002()))); /// Timelock proposal
@@ -74,6 +65,12 @@ contract TestProposals is Test {
         }
 
         proposals.push(Proposal(address(new zipTest()))); /// RnD/testing only proposal
+
+        addresses = proposals[0].addresses();
+
+        for (uint256 i = 0; i < proposals.length; i++) {
+            proposals[i].setAddresses(addresses);
+        }
 
         nProposals = proposals.length;
 
@@ -97,14 +94,13 @@ contract TestProposals is Test {
 
         for (uint256 i = 0; i < proposals.length; i++) {
             string memory name = proposals[i].name();
-            console.log("Proposal", name, "deploy()");
-            addresses.resetRecordingAddresses();
+            console.log("Proposal", name, "run()");
 
-            // Run the deploy for testing only workflow
-            proposals[i].deployForTestingOnly(addresses, deployer);
+            proposals[i].run();
 
             /// output deployed contract addresses and names
-            (string[] memory recordedNames, , address[] memory recordedAddresses) = addresses.getRecordedAddresses();
+            (string[] memory recordedNames, , address[] memory recordedAddresses) = Addresses(proposals[i].addresses())
+                .getRecordedAddresses();
             for (uint256 j = 0; j < recordedNames.length; j++) {
                 console.log("  Deployed", recordedAddresses[j], recordedNames[j]);
             }
