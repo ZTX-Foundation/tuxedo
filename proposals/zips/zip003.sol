@@ -20,11 +20,24 @@ import {CoreRef} from "@protocol/refs/CoreRef.sol";
 import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
 import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 
-contract zip003 is Proposal, TimelockProposal {
-    string public name = "ZIP003";
-    string public description = "ZTX CGv1 contracts proposal";
+contract zip003 is TimelockProposal {
+    Core private _core;
 
-    function _beforeDeploy(Addresses addresses, address deployer) internal override {
+    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
+
+    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
+
+    // Returns the name of the proposal.
+    function name() public pure override returns (string memory) {
+        return "ZIP003";
+    }
+
+    // Provides a brief description of the proposal.
+    function description() public pure override returns (string memory) {
+        return "ZTX CGv1 contracts proposal";
+    }
+
+    function _beforeDeploy() internal override {
         /// Get Core Address
         _core = Core(addresses.getAddress("CORE"));
 
@@ -38,7 +51,7 @@ contract zip003 is Proposal, TimelockProposal {
         assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")), true);
     }
 
-    function _deploy(Addresses addresses, address) internal override {
+    function _deploy() internal override {
         /// NTF contracts
         /// Setup metadata base uri
         string memory _metadataBaseUri = string(
@@ -117,13 +130,7 @@ contract zip003 is Proposal, TimelockProposal {
         addresses.addAddress("ERC1155_SEASON_ONE", address(erc1155SeasonOne), true);
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {}
-
-    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _afterDeployOnChain(Addresses, address deployer) internal override {}
-
-    function _validate(Addresses addresses, address) internal override {
+    function _validate() internal override {
         /// Verfiy all contracts are pointing to the correct core address
         {
             assertEq(
@@ -303,107 +310,32 @@ contract zip003 is Proposal, TimelockProposal {
         }
     }
 
-    function _validateOnChain(Addresses, address deployer) internal override {}
-
-    function _validateForTestingOnly(Addresses, address deployer) internal override {}
-
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _build(Addresses addresses, address) internal override {
+    function _build() internal override {
         /// Grant the GUARDIAN role to the GUARDIAN_MULTISIG
-        _pushTimelockAction(
-            addresses.getAddress("CORE"),
-            abi.encodeWithSignature(
-                "grantRole(bytes32,address)",
-                Roles.GUARDIAN,
-                addresses.getAddress("GUARDIAN_MULTISIG")
-            ),
-            "Grant GUARDIAN role to GUARDIAN_MULTISIG"
-        );
-
+        _core.grantRole(Roles.GUARDIAN, addresses.getAddress("GUARDIAN_MULTISIG"));
+        
         /// grant protocol Locker role
-        _pushTimelockAction(
-            addresses.getAddress("CORE"),
-            abi.encodeWithSignature(
-                "grantRole(bytes32,address)",
-                Roles.LOCKER_PROTOCOL_ROLE,
-                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
-            ),
-            "Grant protocol locker role to ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"
-        );
-
-        _pushTimelockAction(
-            addresses.getAddress("CORE"),
-            abi.encodeWithSignature(
-                "grantRole(bytes32,address)",
-                Roles.LOCKER_PROTOCOL_ROLE,
-                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
-            ),
-            "Grant protocol locker role to ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"
-        );
-
-        _pushTimelockAction(
-            addresses.getAddress("CORE"),
-            abi.encodeWithSignature(
-                "grantRole(bytes32,address)",
-                Roles.LOCKER_PROTOCOL_ROLE,
-                addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")
-            ),
-            "Grant protocol locker role to ERC1155_AUTO_GRAPH_MINTER"
-        );
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
 
         /// grant protocol minter role
-        _pushTimelockAction(
-            addresses.getAddress("CORE"),
-            abi.encodeWithSignature(
-                "grantRole(bytes32,address)",
-                Roles.MINTER_PROTOCOL_ROLE,
-                addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER")
-            ),
-            "Grant protocol minter role to ERC1155_AUTO_GRAPH_MINTER"
-        );
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
 
         /// grant registry operator role
-        _pushTimelockAction(
-            addresses.getAddress("CORE"),
-            abi.encodeWithSignature(
-                "grantRole(bytes32,address)",
-                Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE,
-                addresses.getAddress("ERC1155_SEASON_ONE")
-            ),
-            "Grant registry operator role to ERC1155_SEASON_ONE"
-        );
+        _core.grantRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SEASON_ONE"));
 
         /// grant minter notary role
-        _pushTimelockAction(
-            addresses.getAddress("CORE"),
-            abi.encodeWithSignature(
-                "grantRole(bytes32,address)",
-                Roles.MINTER_NOTARY_PROTOCOL_ROLE,
-                addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET")
-            ),
-            "Grant minter notary role to AUTOGRAPH_SERVICE_KMS_WALLET"
-        );
+        _core.grantRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET"));
 
-        /// grant minter notary role
-        _pushTimelockAction(
-            addresses.getAddress("CORE"),
-            abi.encodeWithSignature(
-                "grantRole(bytes32,address)",
-                Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE,
-                addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET")
-            ),
-            "Grant game consumer notary role to AUTOGRAPH_SERVICE_KMS_WALLET"
-        );
+        /// grant game consumer notary protocol role
+        _core.grantRole(Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE, addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET"));
     }
 
-    function _run(Addresses addresses, address) internal override {
+    function _run() internal override {
+        super._run();
         this.setDebug(true);
 
-        _simulateTimelockActions(
-            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
-            addresses.getAddress("ADMIN_MULTISIG"),
-            addresses.getAddress("ADMIN_MULTISIG")
-        );
+        _simulateActions(addresses.getAddress("ADMIN_MULTISIG"), addresses.getAddress("ADMIN_MULTISIG"));
     }
 }

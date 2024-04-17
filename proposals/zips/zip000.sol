@@ -12,15 +12,24 @@ import {Roles} from "@protocol/core/Roles.sol";
 import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 
-contract zip000 is Proposal, TimelockProposal {
-    string public name = "ZIP000";
-    string public description = "The ZTX Genesis Proposal";
+contract zip000 is TimelockProposal {
+    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
 
-    function _beforeDeploy(Addresses, address deployer) internal override {
-        // first deployment. Nothing to check
+    constructor() Proposal("DEPLOYER") {}
+
+    // Returns the name of the proposal.
+    function name() public pure override returns (string memory) {
+        return "ZIP000";
     }
 
-    function _deploy(Addresses addresses, address) internal override {
+    // Provides a brief description of the proposal.
+    function description() public pure override returns (string memory) {
+        return "The ZTX Genesis Proposal";
+    }
+
+    function _beforeDeploy() internal override {}
+
+    function _deploy() internal override {
         /// Token deployment
         {
             Token token = new Token(
@@ -31,30 +40,16 @@ contract zip000 is Proposal, TimelockProposal {
         }
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {
+    function _afterDeploy() internal override {
         /// Token transfer
         IERC20(addresses.getAddress("TOKEN")).transfer(addresses.getAddress("TREASURY_WALLET_MULTISIG"), MAX_SUPPLY);
     }
 
-    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _validate(Addresses addresses, address) internal override {
+    function _validate() internal override {
         /// Check Treasury balance
         assertEq(
             IERC20(addresses.getAddress("TOKEN")).balanceOf(addresses.getAddress("TREASURY_WALLET_MULTISIG")),
             10_000_000_000e18 // hardcoded to verfiy all code is working
         );
     }
-
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _build(Addresses addresses, address deployer) internal override {}
-
-    function _run(Addresses addresses, address deployer) internal override {}
 }
