@@ -35,8 +35,6 @@ contract BootstrapTestnet is Script {
     Proposal[] public proposals;
 
     function setUp() public {
-        privateKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
-
         string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
         string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
         addresses = new Addresses(addressPath);
@@ -62,12 +60,12 @@ contract BootstrapTestnet is Script {
             console.log("Proposal", name, "deploy()");
             addresses.resetRecordingAddresses();
 
-            address deployer = vm.addr(privateKey);
             // Run the deploy for testing only workflow
-            proposals[i].deployForTestingOnly(addresses, deployer);
+            proposals[i].run();
 
             /// output deployed contract addresses and names
-            (string[] memory recordedNames, , address[] memory recordedAddresses) = addresses.getRecordedAddresses();
+            (string[] memory recordedNames, , address[] memory recordedAddresses) = Addresses(proposals[i].addresses())
+                .getRecordedAddresses();
             for (uint256 j = 0; j < recordedNames.length; j++) {
                 console.log("  Deployed", recordedAddresses[j], recordedNames[j]);
             }
