@@ -150,11 +150,7 @@ abstract contract Proposal is Test, Script, IProposal {
     /// or execute a serie of Multisig calls...).
     /// See proposals for helper contracts.
     /// address param is the address of the proposal executor
-    function _run() internal virtual {
-        /// Check if there are actions to run
-        uint256 actionsLength = actions.length;
-        // require(actionsLength > 0, "No actions found");
-    }
+    function _run() internal virtual {}
 
     /// @dev After a proposal executed, if you mocked some behavior in the
     /// afterDeploy step, you might want to tear down the mocks here.

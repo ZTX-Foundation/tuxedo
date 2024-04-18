@@ -35,19 +35,9 @@ Or, from another Solidity file (for post-proposal integration testing):
 contract TestProposals is Test {
     Addresses public addresses;
     Proposal[] public proposals;
-    uint256 public nProposals;
     bool public debug;
-    bool public doDeploy;
-    bool public doAfterDeploy;
-    bool public doBuild;
-    bool public doRun;
-    bool public doTeardown;
-    bool public doValidate;
 
     function setUp() public {
-        string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
-        string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
-        addresses = new Addresses(addressPath);
 
         // Load proposals
         if (block.chainid == 31337) {
@@ -68,11 +58,9 @@ contract TestProposals is Test {
 
         addresses = proposals[0].addresses();
 
-        for (uint256 i = 0; i < proposals.length; i++) {
+        for (uint256 i = 1; i < proposals.length; i++) {
             proposals[i].setAddresses(addresses);
         }
-
-        nProposals = proposals.length;
 
         vm.warp(block.timestamp + 1); /// required for timelock to work
     }
@@ -99,11 +87,7 @@ contract TestProposals is Test {
             proposals[i].run();
 
             /// output deployed contract addresses and names
-            (string[] memory recordedNames, , address[] memory recordedAddresses) = Addresses(proposals[i].addresses())
-                .getRecordedAddresses();
-            for (uint256 j = 0; j < recordedNames.length; j++) {
-                console.log("  Deployed", recordedAddresses[j], recordedNames[j]);
-            }
+            proposals[i].addresses().printRecordedAddresses();
 
             /// take new snapshot
             postProposalVmSnapshots[i] = vm.snapshot();

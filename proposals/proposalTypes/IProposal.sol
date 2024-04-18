@@ -27,5 +27,9 @@ interface IProposal {
     /// @notice set the debug flag
     function setDebug(bool debug) external;
 
+    /// @notice Addresses contract
     function addresses() external view returns (Addresses);
+
+    /// @notice set Addresses contract for proposals
+    function setAddresses(Addresses) external;
 }
