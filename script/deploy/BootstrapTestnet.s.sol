@@ -17,7 +17,7 @@ import {zip007} from "@proposals/zips/zip007.sol";
 import {zip008} from "@proposals/zips/zip008.sol";
 import {zip009} from "@proposals/zips/zip009.sol";
 import {zip010} from "@proposals/zips/zip010.sol";
-import {zip011} from "@proposals/zips/zip010.sol";
+import {zip011} from "@proposals/zips/zip011.sol";
 
 /*
 How to use:
