@@ -19,11 +19,7 @@ Remove --broadcast if you want to try locally first, without paying any gas.
 contract DeployProposal is Script {
     TimelockProposal timeLock;
     function setUp() public {
-        // Default behavior: do debug prints
-        bool debug = vm.envOr("DEBUG", true);
-
         timeLock = new zip();
-        timeLock.setDebug(debug);
     }
 
     function run() public {

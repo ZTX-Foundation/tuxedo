@@ -67,12 +67,7 @@ contract zip010 is TimelockProposal {
     }
 
     function _run() internal override {
-        this.setDebug(true);
-
-        _simulateActions(
-            addresses.getAddress("ADMIN_MULTISIG"),
-            addresses.getAddress("ADMIN_MULTISIG")
-        );
+        _simulateActions(addresses.getAddress("ADMIN_MULTISIG"), addresses.getAddress("ADMIN_MULTISIG"));
     }
 
     function _validate() internal override {

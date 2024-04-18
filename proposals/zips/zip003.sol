@@ -334,7 +334,6 @@ contract zip003 is TimelockProposal {
 
     function _run() internal override {
         super._run();
-        this.setDebug(true);
 
         _simulateActions(addresses.getAddress("ADMIN_MULTISIG"), addresses.getAddress("ADMIN_MULTISIG"));
     }

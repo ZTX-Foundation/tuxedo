@@ -35,7 +35,6 @@ Or, from another Solidity file (for post-proposal integration testing):
 contract TestProposals is Test {
     Addresses public addresses;
     Proposal[] public proposals;
-    bool public debug;
 
     function setUp() public {
 
@@ -65,17 +64,8 @@ contract TestProposals is Test {
         vm.warp(block.timestamp + 1); /// required for timelock to work
     }
 
-    function setDebug(bool value) public {
-        debug = value;
-        for (uint256 i = 0; i < proposals.length; i++) {
-            proposals[i].setDebug(value);
-        }
-    }
-
     function testProposals() public returns (uint256[] memory postProposalVmSnapshots) {
-        if (debug) {
-            console.log("TestProposals: running", proposals.length, "proposals.");
-        }
+        console.log("TestProposals: running", proposals.length, "proposals.");
 
         /// evm snapshot array
         postProposalVmSnapshots = new uint256[](proposals.length);
@@ -88,6 +78,7 @@ contract TestProposals is Test {
 
             /// output deployed contract addresses and names
             proposals[i].addresses().printRecordedAddresses();
+            proposals[i].addresses().printChangedAddresses();
 
             /// take new snapshot
             postProposalVmSnapshots[i] = vm.snapshot();
