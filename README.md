@@ -144,7 +144,7 @@ npm run deploy:mainnet
 | [`0x8e5961897d0E1Db128a972c0937Eb08fa9a16C2C`](https://arbiscan.io/address/0x8e5961897d0E1Db128a972c0937Eb08fa9a16C2C) | [ADMIN_TIMELOCK_CONTROLLER](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/governance/TimelockController.sol) | [TimelockController.abi.json](./dist/v1.0.0/abi/TimelockController.abi.json)             | 
 
 
-### Arbitrum
+### Arbitrum (mainnet)
 
 | Address                                                                                                                | Contract                                                                                                                                    | ABI                                                                                      |
 |------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
