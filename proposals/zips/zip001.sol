@@ -157,10 +157,12 @@ contract zip001 is TimelockProposal {
         assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 2, "incorrect locker count");
         assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 2, "incorrect minter count");
 
+        // Verify ADMIN count 
+        assertEq(_core.getRoleMemberCount(Roles.ADMIN), 2, "incorrect admin count");
+        console.log("Verify only ADMIN_MULTISIG has ADMIN role on mainnet");
+
         console.log("Verify ADMIN role has been revoked from deployer on mainnet");
         // assertEq(_core.hasRole(Roles.ADMIN, deployer), false, "deployer should not have admin role");
 
-        console.log("Verify only ADMIN_MULTISIG has ADMIN role on mainnet");
-        // assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1, "incorrect admin count");
     }
 }
