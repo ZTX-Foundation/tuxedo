@@ -1,0 +1,134 @@
+[
+    {
+        "name": "AUTOGRAPH_SERVICE_KMS_WALLET",
+        "addr": "0x2526550d7c61559df4f55fbce69935c2d536f75e",
+        "chainId": 421614,
+        "isContract": false
+    },
+    {
+        "name": "ADMIN_MULTISIG",
+        "addr": "0x5Ec41e3a9c712D0BBC26d2CbA0E653c5d2cc982C",
+        "chainId": 421614,
+        "isContract": false
+    },
+    {
+        "name": "TREASURY_WALLET_MULTISIG",
+        "addr": "0x122cE5b2D6711cEac9A6dfCB424846da3f22eaa2",
+        "chainId": 421614,
+        "isContract": false
+    },
+    {
+        "name": "FINANCE_GUARDIAN_MULTISIG",
+        "addr": "0x37fe83f2bEC3C86A71864e80c1F1fE6AFE239d54",
+        "chainId": 421614,
+        "isContract": false
+    },
+    {
+        "name": "REVENUE_WALLET_MULTISIG01",
+        "addr": "0x0e6aCa776b3d12dd85363Fd6050eE05A4a242be9",
+        "chainId": 421614,
+        "isContract": false
+    },
+    {
+        "name": "REVENUE_WALLET_MULTISIG02",
+        "addr": "0x0e6aCa776b3d12dd85363Fd6050eE05A4a242be9",
+        "chainId": 421614,
+        "isContract": false
+    },
+    {
+        "name": "AUTOGRAPH_MINTER_PAYMENT_RECIPIENT",
+        "addr": "0x0e6aCa776b3d12dd85363Fd6050eE05A4a242be9",
+        "chainId": 421614,
+        "isContract": false
+    },
+    {
+        "name": "GUARDIAN_MULTISIG",
+        "addr": "0xc3c1D74048115316dCbd66baeDA8214D2CA83C35",
+        "chainId": 421614,
+        "isContract": false
+    },
+    {
+        "name": "WETH",
+        "addr": "0xc556bae1e86b2ae9c22ea5e036b07e55e7596074",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "TOKEN",
+        "addr": "0xfD1B439A292C3690FF5f052Df907Ae7817696537",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "CORE",
+        "addr": "0xeCd8CF66C8F44D8Ab0f257C2aC5220A943D8d8eE",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "GLOBAL_REENTRANCY_LOCK",
+        "addr": "0x4FCAaCfed2E0F5A4fdbfE01EBe50748Cdc06CBB6",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES",
+        "addr": "0x350aCe500A712D944Fb6De1D54C63340a5085b6f",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_MAX_SUPPLY_ADMIN_MINTER",
+        "addr": "0xb0Cb1448b40789302D371CdAC2881D2570DE1CAc",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "ADMIN_TIMELOCK_CONTROLLER",
+        "addr": "0x8e5961897d0E1Db128a972c0937Eb08fa9a16C2C",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES",
+        "addr": "0x95C68D9E3c0353a0CDd40000Cd1A06A87ED14744",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES",
+        "addr": "0x425Cdf97Cc3833B6C47c2EE708aE65dC19e7494f",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "CONSUMABLE_SPLITTER",
+        "addr": "0xB6DE3d51297124030371B5ff6009f5A117EFd8b5",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_AUTO_GRAPH_MINTER",
+        "addr": "0xd22040ACd20623c6ee507e8985a3FfdE7a270A63",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "GAME_CONSUMABLE",
+        "addr": "0xede3f2c44a7cfF1292eAA72Fe828862B0a334317",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "SEASONS_TOKEN_ID_REGISTRY",
+        "addr": "0x11af076f2a418B7627b5Fb3eE2e17ebC4543f94d",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_SEASON_ONE",
+        "addr": "0x14d9548b384dfd5612c5E421584645aE9a3eef38",
+        "chainId": 421614,
+        "isContract": true
+    }
+]
