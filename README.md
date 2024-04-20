@@ -87,26 +87,6 @@ npm run slither:install
 npm run slither
 ```
 
-## Deployment
-
-Before deploying, please ensure you have the correct environment variables set!
-
-### Arbitrum Goerli (testnet)
-
-To deploy to testnet, run:
-
-```console
-npm run deploy:testnet
-```
-
-### Arbitrum Mainnet
-
-To deploy to mainnet, run:
-
-```console
-npm run deploy:mainnet
-```
-
 ## Contracts
 
 ### Arbitrum Sepolia (devnet)
