@@ -6,6 +6,7 @@ import {Test} from "@forge-std/Test.sol";
 
 import {Addresses} from "@proposals/Addresses.sol";
 import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
+import {Constants} from '@proposals/utils/Constants.sol';
 
 import {zip000} from "@proposals/zips/zip000.sol";
 import {zip001} from "@proposals/zips/zip001.sol";
@@ -40,7 +41,7 @@ contract TestProposals is Test {
     function setUp() public {
 
         // Load proposals
-        if (block.chainid == 31337) {
+        if (block.chainid == Constants.ANVIL) {
             proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
             proposals.push(Proposal(address(new zip001()))); /// Wearables, Core, ADMIN_MULTISIG proposal
             proposals.push(Proposal(address(new zip002()))); /// Timelock proposal

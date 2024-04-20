@@ -12,6 +12,7 @@ import {Addresses} from "@proposals/Addresses.sol";
 import {ERC1155AdminMinter} from "@protocol/nfts/ERC1155AdminMinter.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
+import {Constants} from '@proposals/utils/Constants.sol';
 
 contract zip001 is TimelockProposal {
     Core private _core;
@@ -75,8 +76,8 @@ contract zip001 is TimelockProposal {
         _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
         _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
 
-        console.log("Revoke ADMIN role from deployer on mainnet");
-        // _core.revokeRole(Roles.ADMIN, deployer);
+        /// Revoke ADMIN role from deployer on mainnet
+        if (block.chainid == Constants.ARBITRUM_MAINNET) _core.revokeRole(Roles.ADMIN, addresses.getAddress("DEPLOYER"));
     }
 
     function _validate() internal override {
@@ -157,12 +158,18 @@ contract zip001 is TimelockProposal {
         assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 2, "incorrect locker count");
         assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 2, "incorrect minter count");
 
-        // Verify ADMIN count 
-        assertEq(_core.getRoleMemberCount(Roles.ADMIN), 2, "incorrect admin count");
-        console.log("Verify only ADMIN_MULTISIG has ADMIN role on mainnet");
+        // Verify ADMIN count
+        if (block.chainid == Constants.ARBITRUM_MAINNET)
+            assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1, "incorrect admin count");
+        else 
+            assertEq(_core.getRoleMemberCount(Roles.ADMIN), 2, "incorrect admin count");
 
-        console.log("Verify ADMIN role has been revoked from deployer on mainnet");
-        // assertEq(_core.hasRole(Roles.ADMIN, deployer), false, "deployer should not have admin role");
-
+        // Verify ADMIN role has been revoked from deployer on mainnet
+        if (block.chainid == Constants.ARBITRUM_MAINNET)
+            assertEq(
+                _core.hasRole(Roles.ADMIN, addresses.getAddress("DEPLOYER")),
+                false,
+                "deployer should not have admin role"
+            );
     }
 }
