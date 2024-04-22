@@ -159,16 +159,17 @@ contract zip001 is TimelockProposal {
         assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 2, "incorrect minter count");
 
         // Verify ADMIN count
-        if (block.chainid == Constants.ARBITRUM_MAINNET)
+        if (block.chainid == Constants.ARBITRUM_MAINNET) {
             assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1, "incorrect admin count");
-        else 
+        }
+        else {
             assertEq(_core.getRoleMemberCount(Roles.ADMIN), 2, "incorrect admin count");
+        }
 
         // Verify ADMIN role has been revoked from deployer on mainnet
         if (block.chainid == Constants.ARBITRUM_MAINNET)
-            assertEq(
+            assertFalse(
                 _core.hasRole(Roles.ADMIN, addresses.getAddress("DEPLOYER")),
-                false,
                 "deployer should not have admin role"
             );
     }
