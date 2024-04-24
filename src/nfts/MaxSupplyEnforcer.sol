@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
+import {Initializable} from "@openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
+
 import {Roles} from "@protocol/core/Roles.sol";
-import {CoreRef} from "@protocol/refs/CoreRef.sol";
+import {CoreRefUpgradeable} from "@protocol/refs/CoreRefUpgradeable.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-contract JobRegistry is CoreRef {
+contract MaxSupplyEnforcer is CoreRefUpgradeable {
     /// @notice pending job event
     event PendingJob(address indexed  contractAddress, uint256 indexed tokenId, uint256 indexed jobId);
 
@@ -19,7 +21,17 @@ contract JobRegistry is CoreRef {
     /// @notice completed jobs
     mapping(address contractAddress => mapping(uint256 tokenId => uint256[] jobId)) public completedJobs;
 
-    constructor(address _core) CoreRef(_core) {}
+    /// @notice disable the initializer to stop safe hijacking
+    /// and avoid selfdestruct attacks.
+    constructor() {
+        _disableInitializers();
+    }
+
+    /// @notice initializes max supply enforcer contract
+    /// @param _core Core address
+    function initialize(address _core) public initializer {
+        __CoreRef_init(_core);
+    }
 
     /// @notice register a job
     /// @param contractAddress the address of the NFT contract
@@ -30,9 +42,9 @@ contract JobRegistry is CoreRef {
         whenNotPaused
         hasAnyOfTwoRoles(Roles.ADMIN, Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE)
     {
-        require(!_isPending(contractAddress, tokenId, jobId), "JobRegistry: job is already pending");
-        require(_remainingSupplyOf(contractAddress, tokenId) > 0, "JobRegistry: supply exhausted");
-        require(!_isCompleted(contractAddress, tokenId, jobId), "JobRegistry: job is already completed");
+        require(!_isPending(contractAddress, tokenId, jobId), "MaxSupplyEnforcer: job is already pending");
+        require(_remainingSupplyOf(contractAddress, tokenId) > 0, "MaxSupplyEnforcer: supply exhausted");
+        require(!_isCompleted(contractAddress, tokenId, jobId), "MaxSupplyEnforcer: job is already completed");
 
         /// @notice set the job as pending
         pendingJobs[contractAddress][tokenId].push(jobId);
@@ -49,7 +61,7 @@ contract JobRegistry is CoreRef {
         whenNotPaused
         hasAnyOfTwoRoles(Roles.ADMIN, Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE)
     {
-        require(!_isCompleted(contractAddress, tokenId, jobId), "JobRegistry: job is already completed");
+        require(!_isCompleted(contractAddress, tokenId, jobId), "MaxSupplyEnforcer: job is already completed");
 
         /// @notice remove from the pending queue
         _removePendingJob(contractAddress, tokenId, jobId);
@@ -147,7 +159,7 @@ contract JobRegistry is CoreRef {
     /// @param index index to remove
     /// @param jobList the list of jobs to remove from
     function _removeJob(uint256 index, uint256[] storage jobList) private returns (uint256[] storage) {
-        require(index < jobList.length, "JobRegistry: index out of bound");
+        require(index < jobList.length, "MaxSupplyEnforcer: index out of bound");
 
         for (uint i = index; i < jobList.length - 1; ) {
             jobList[i] = jobList[i + 1];
@@ -173,7 +185,7 @@ contract JobRegistry is CoreRef {
         uint256 currentSupply = nftContract.totalSupply(tokenId);
         uint256 maxTokenSupply = nftContract.maxTokenSupply(tokenId);
 
-        require(pendingJobCount + completedJobCount + currentSupply <= maxTokenSupply, "JobRegistry: supply exhausted");
+        require(pendingJobCount + completedJobCount + currentSupply <= maxTokenSupply, "MaxSupplyEnforcer: supply exhausted");
 
         return (maxTokenSupply - (pendingJobCount + completedJobCount + currentSupply));
     }
