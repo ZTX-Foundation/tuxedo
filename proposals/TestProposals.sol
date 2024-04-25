@@ -6,6 +6,7 @@ import {Test} from "@forge-std/Test.sol";
 
 import {Addresses} from "@proposals/Addresses.sol";
 import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
+import {Constants} from '@proposals/utils/Constants.sol';
 
 import {zip000} from "@proposals/zips/zip000.sol";
 import {zip001} from "@proposals/zips/zip001.sol";
@@ -38,31 +39,11 @@ Or, from another Solidity file (for post-proposal integration testing):
 contract TestProposals is Test {
     Addresses public addresses;
     Proposal[] public proposals;
-    uint256 public nProposals;
-    bool public debug;
-    bool public doDeploy;
-    bool public doAfterDeploy;
-    bool public doBuild;
-    bool public doRun;
-    bool public doTeardown;
-    bool public doValidate;
-
-    address public deployer;
 
     function setUp() public {
-        string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
-        string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
-        addresses = new Addresses(addressPath);
 
-        // Admin access for deployer(ZTX_DEPLOYER) is revoked on mainnet
-        if (block.chainid == 42161) {
-            deployer = addresses.getAddress("ADMIN_MULTISIG");
-        } else {
-            deployer = addresses.getAddress("DEPLOYER");
-        }
-
-        if (block.chainid == 31337) {
-            // Load proposals
+        // Load proposals
+        if (block.chainid == Constants.ANVIL) {
             proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
             proposals.push(Proposal(address(new zip001()))); /// Wearables, Core, ADMIN_MULTISIG proposal
             proposals.push(Proposal(address(new zip002()))); /// Timelock proposal
@@ -81,39 +62,30 @@ contract TestProposals is Test {
 
         proposals.push(Proposal(address(new zipTest()))); /// RnD/testing only proposal
 
-        nProposals = proposals.length;
+        addresses = proposals[0].addresses();
+
+        for (uint256 i = 1; i < proposals.length; i++) {
+            proposals[i].setAddresses(addresses);
+        }
 
         vm.warp(block.timestamp + 1); /// required for timelock to work
     }
 
-    function setDebug(bool value) public {
-        debug = value;
-        for (uint256 i = 0; i < proposals.length; i++) {
-            proposals[i].setDebug(value);
-        }
-    }
-
     function testProposals() public returns (uint256[] memory postProposalVmSnapshots) {
-        if (debug) {
-            console.log("TestProposals: running", proposals.length, "proposals.");
-        }
+        console.log("TestProposals: running", proposals.length, "proposals.");
 
         /// evm snapshot array
         postProposalVmSnapshots = new uint256[](proposals.length);
 
         for (uint256 i = 0; i < proposals.length; i++) {
             string memory name = proposals[i].name();
-            console.log("Proposal", name, "deploy()");
-            addresses.resetRecordingAddresses();
+            console.log("Proposal", name, "run()");
 
-            // Run the deploy for testing only workflow
-            proposals[i].deployForTestingOnly(addresses, deployer);
+            proposals[i].run();
 
             /// output deployed contract addresses and names
-            (string[] memory recordedNames, , address[] memory recordedAddresses) = addresses.getRecordedAddresses();
-            for (uint256 j = 0; j < recordedNames.length; j++) {
-                console.log("  Deployed", recordedAddresses[j], recordedNames[j]);
-            }
+            proposals[i].addresses().printRecordedAddresses();
+            proposals[i].addresses().printChangedAddresses();
 
             /// take new snapshot
             postProposalVmSnapshots[i] = vm.snapshot();

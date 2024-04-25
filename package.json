@@ -46,7 +46,7 @@
         "deploy:mainnet:broadcast": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $RPC_URL --slow",
         "deploy:mainnet:broadcast:verified": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $RPC_URL --slow --verify --etherscan-api-key $ARBISCAN_API_KEY --verifier-url https://api.arbiscan.io/api",
         "deploy:mainnet:resume": "forge script ./script/deploy/DeployProposal.s.sol -vvvv --broadcast --rpc-url $RPC_URL --slow --resume",
-        "valid:mainnet": "forge script ./script/deploy/ValidProposal.s.sol --rpc-url $RPC_URL --slow -vvvv",
+        "valid:mainnet": "forge script ./script/deploy/DeployProposal.s.sol --rpc-url $RPC_URL --slow -vvvv",
         "bootstrap:testnet": "forge script ./script/deploy/BootstrapTestnet.s.sol:BootstrapTestnet --rpc-url $RPC_URL -vvvv",
         "bootstrap:testnet:broadcast": "forge script ./script/deploy/BootstrapTestnet.s.sol:BootstrapTestnet -vvvv --rpc-url $RPC_URL --broadcast --private-key ${DEPLOYER_PRIVATE_KEY} --slow --verify --etherscan-api-key $ARBISCAN_API_KEY --verifier-url https://api-sepolia.arbiscan.io/api"
     },
@@ -80,7 +80,7 @@
     },
     "dependencies": {
         "@ethersproject/keccak256": "^5.7.0",
-        "@moralisweb3/common-evm-utils": "^2.25.4",
+        "@moralisweb3/common-evm-utils": "^2.26.1",
         "@openzeppelin/merkle-tree": "^1.0.6",
         "axios": "^1.6.8",
         "commander": "^12.0.0",

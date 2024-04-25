@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
+import {console} from "@forge-std/console.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IVotes} from "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
@@ -25,17 +26,29 @@ import {ERC1155SeasonTwo} from "@protocol/nfts/seasons/ERC1155SeasonTwo.sol";
 import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 
-contract zipTest is Proposal, TimelockProposal {
-    string public name = "ZIPTest";
-    string public description = "The Last ZTX Proposal (For Testing only)";
+contract zipTest is TimelockProposal {
+    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
 
+    Core private _core;
     address[] public whitelistAddresses;
 
-    function _beforeDeploy(Addresses addresses, address) internal override {
+    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
+
+    // Returns the name of the proposal.
+    function name() public pure override returns (string memory) {
+        return "ZIPTest";
+    }
+
+    // Provides a brief description of the proposal.
+    function description() public pure override returns (string memory) {
+        return "The Last ZTX Proposal (For Testing only)";
+    }
+
+    function _beforeDeploy() internal override {
         _core = Core(addresses.getAddress("CORE"));
     }
 
-    function _deploy(Addresses addresses, address deployer) internal override {
+    function _deploy() internal override {
         {
             ERC20HoldingDeposit wethErc20HoldingDeposit = new ERC20HoldingDeposit(
                 address(_core),
@@ -71,7 +84,7 @@ contract zipTest is Proposal, TimelockProposal {
 
         {
             /// Timelock Controller (Governor Bravo DAO)
-            address governorDAOTimelockAdmin = deployer;
+            address governorDAOTimelockAdmin = addresses.getAddress("DEPLOYER");
 
             // /// @notice set a temporary admin and then transfer
             TimelockController governorDAOTimelock = new TimelockController(
@@ -140,7 +153,7 @@ contract zipTest is Proposal, TimelockProposal {
         }
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {
+    function _afterDeploy() internal override {
         /// ADMIN role
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
 
@@ -175,17 +188,7 @@ contract zipTest is Proposal, TimelockProposal {
         _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
     }
 
-    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _build(Addresses addresses, address deployer) internal override {}
-
-    function _run(Addresses addresses, address deployer) internal override {}
-
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _validate(Addresses addresses, address) internal override {
+    function _validate() internal override {
         assertEq(
             address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_CONSUMABLES")).core()),
             address(_core),
@@ -279,7 +282,8 @@ contract zipTest is Proposal, TimelockProposal {
         );
     }
 
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
+    function _build() internal override {
+        /// ADMIN role
+        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+    }
 }

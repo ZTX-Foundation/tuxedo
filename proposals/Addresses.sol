@@ -193,6 +193,19 @@ contract Addresses is IAddresses, Test {
         }
     }
 
+    function printChangedAddresses() external view {
+        console.log("Changed Addresses:");
+
+        for (uint256 i = 0; i < changedAddresses.length; i++) {
+            console.log(
+                changedAddresses[i].name,
+                changedAddresses[i].oldAddress,
+                "to",
+                _addresses[changedAddresses[i].name][changedAddresses[i].chainId].addr
+            );
+        }
+    }
+
     /// @notice remove changed addresses
     function resetChangedAddresses() external {
         delete changedAddresses;
