@@ -26,7 +26,6 @@ contract BaseTest is Test, ERC1155Holder {
         // Run all pending proposals first
         TestProposals proposals = new TestProposals();
         proposals.setUp();
-        proposals.setDebug(false);
         proposals.testProposals();
         addresses = proposals.addresses();
 

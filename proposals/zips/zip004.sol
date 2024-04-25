@@ -16,9 +16,8 @@ import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.
 import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 
-contract zip004 is Proposal, TimelockProposal {
-    string public name = "ZIP004";
-    string public description = "ZTX CGv1 tokenIds, MaxSupply and Capsules config proposal";
+contract zip004 is TimelockProposal {
+    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
 
     struct TokenIDMaxSupplySettings {
         uint256 tokenId;
@@ -30,6 +29,18 @@ contract zip004 is Proposal, TimelockProposal {
     TokenIDMaxSupplySettings[] public consumableTokenIDMaxSupplySettings;
 
     TokenIdRewardAmount[] public tokenIdRewardAmounts;
+
+    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
+
+    // Returns the name of the proposal.
+    function name() public pure override returns (string memory) {
+        return "ZIP004";
+    }
+
+    // Provides a brief description of the proposal.
+    function description() public pure override returns (string memory) {
+        return "ZTX CGv1 tokenIds, MaxSupply and Capsules config proposal";
+    }
 
     function setAndConfirmPlaceableData() public {
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(1, 100_000));
@@ -201,103 +212,50 @@ contract zip004 is Proposal, TimelockProposal {
         assertEq(rewardAmountTotal, 9134e18, "Invalid rewardAmountTotal"); // numbers from santiy check sheet
     }
 
-    function _beforeDeploy(Addresses, address deployer) internal override {
+    function _beforeDeploy() internal override {
         setAndConfirmPlaceableData();
         setAndConfirmWearableData();
         setAndConfirmConsumableData();
         setAndConfirmSeaonOneData();
     }
 
-    function _deploy(Addresses addresses, address) internal override {}
-
-    function _afterDeploy(Addresses addresses, address) internal override {}
-
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _build(Addresses addresses, address) internal override {
+    function _build() internal override {
+        ERC1155MaxSupplyMintable placeable = ERC1155MaxSupplyMintable(
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
+            );
         /// Placeables config
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
-            _pushTimelockAction(
-                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"),
-                abi.encodeWithSignature(
-                    "setSupplyCap(uint256,uint256)",
-                    placeableTokenIDMaxSupplySettings[i].tokenId,
-                    placeableTokenIDMaxSupplySettings[i].maxSupply
-                ),
-                string(
-                    abi.encodePacked(
-                        "Set placeable tokenId ",
-                        placeableTokenIDMaxSupplySettings[i].tokenId,
-                        " to max supply ",
-                        placeableTokenIDMaxSupplySettings[i].maxSupply
-                    )
-                )
-            );
+            placeable.setSupplyCap(placeableTokenIDMaxSupplySettings[i].tokenId, placeableTokenIDMaxSupplySettings[i].maxSupply);
         }
+
+        ERC1155MaxSupplyMintable wearables = ERC1155MaxSupplyMintable(
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
+            );
 
         /// Wearables config
         for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
-            _pushTimelockAction(
-                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"),
-                abi.encodeWithSignature(
-                    "setSupplyCap(uint256,uint256)",
-                    wearableTokenIDMaxSupplySettings[i].tokenId,
-                    wearableTokenIDMaxSupplySettings[i].maxSupply
-                ),
-                string(
-                    abi.encodePacked(
-                        "Set wearable tokenId ",
-                        wearableTokenIDMaxSupplySettings[i].tokenId,
-                        " to max supply ",
-                        wearableTokenIDMaxSupplySettings[i].maxSupply
-                    )
-                )
-            );
+            wearables.setSupplyCap(wearableTokenIDMaxSupplySettings[i].tokenId, wearableTokenIDMaxSupplySettings[i].maxSupply);
         }
+
+        ERC1155MaxSupplyMintable consumables = ERC1155MaxSupplyMintable(
+                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")
+            );
 
         /// Consumables config
         for (uint256 i = 0; i < consumableTokenIDMaxSupplySettings.length; i++) {
-            _pushTimelockAction(
-                addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES"),
-                abi.encodeWithSignature(
-                    "setSupplyCap(uint256,uint256)",
-                    consumableTokenIDMaxSupplySettings[i].tokenId,
-                    consumableTokenIDMaxSupplySettings[i].maxSupply
-                ),
-                string(
-                    abi.encodePacked(
-                        "Set consumable tokenId ",
-                        consumableTokenIDMaxSupplySettings[i].tokenId,
-                        " to max supply ",
-                        consumableTokenIDMaxSupplySettings[i].maxSupply
-                    )
-                )
-            );
+            consumables.setSupplyCap(consumableTokenIDMaxSupplySettings[i].tokenId, consumableTokenIDMaxSupplySettings[i].maxSupply);
         }
 
         /// Season One config
-        _pushTimelockAction(
-            addresses.getAddress("ERC1155_SEASON_ONE"),
-            abi.encodeWithSignature("initalizeSeasonDistribution((uint256,uint256)[])", tokenIdRewardAmounts),
-            string(abi.encodePacked("Initalize Season One"))
-        );
+        ERC1155SeasonOne seasonOne = ERC1155SeasonOne(addresses.getAddress("ERC1155_SEASON_ONE"));
+        seasonOne.initalizeSeasonDistribution(tokenIdRewardAmounts);
     }
 
-    function _run(Addresses addresses, address) internal override {
-        this.setDebug(true);
-
-        _simulateTimelockActions(
-            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
-            addresses.getAddress("ADMIN_MULTISIG"),
-            addresses.getAddress("ADMIN_MULTISIG")
-        );
+    function _run() internal override {
+        _simulateActions(addresses.getAddress("ADMIN_MULTISIG"), addresses.getAddress("ADMIN_MULTISIG"));
     }
 
-    function _validate(Addresses addresses, address) internal override {
+    function _validate() internal override {
         /// Verfiy Placeable
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
             uint256 tokenId = placeableTokenIDMaxSupplySettings[i].tokenId;
@@ -352,8 +310,4 @@ contract zip004 is Proposal, TimelockProposal {
             assertEq(seasonOne.tokenIdUsedAmount(tokenId), 0, "Invalid tokenIdUsedAmount");
         }
     }
-
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
 }

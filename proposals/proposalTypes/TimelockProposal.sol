@@ -1,129 +1,114 @@
-pragma solidity 0.8.18;
+pragma solidity ^0.8.0;
 
 import {console} from "@forge-std/console.sol";
 
-import {ITimelockController} from "@proposals/proposalTypes/ITimelockController.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
+import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+
+import {Proposal} from "./Proposal.sol";
 
 abstract contract TimelockProposal is Proposal {
-    struct TimelockAction {
-        address target;
-        uint256 value;
-        bytes arguments;
-        string description;
+    using Address for address;
+
+    /// @notice get schedule calldata
+    function getCalldata() public view override returns (bytes memory scheduleCalldata) {
+        bytes32 salt = keccak256(abi.encode(actions[0].description));
+        bytes32 predecessor = bytes32(0);
+
+        (address[] memory targets, uint256[] memory values, bytes[] memory payloads) = getProposalActions();
+
+        address addressCaller = addresses.getAddress(caller);
+        uint256 delay = TimelockController(payable(addressCaller)).getMinDelay();
+
+        scheduleCalldata = abi.encodeWithSignature(
+            "scheduleBatch(address[],uint256[],bytes[],bytes32,bytes32,uint256)",
+            targets,
+            values,
+            payloads,
+            predecessor,
+            salt,
+            delay
+        );
     }
 
-    TimelockAction[] public actions;
+    /// @notice get execute calldata
+    function getExecuteCalldata() public view returns (bytes memory executeCalldata) {
+        bytes32 salt = keccak256(abi.encode(actions[0].description));
+        bytes32 predecessor = bytes32(0);
 
-    /// @notice push an action to the Timelock proposal
-    function _pushTimelockAction(uint256 value, address target, bytes memory data, string memory description) internal {
-        actions.push(TimelockAction({value: value, target: target, arguments: data, description: description}));
-    }
+        (address[] memory targets, uint256[] memory values, bytes[] memory payloads) = getProposalActions();
 
-    /// @notice push an action to the Timelock proposal with a value of 0
-    function _pushTimelockAction(address target, bytes memory data, string memory description) internal {
-        _pushTimelockAction(0, target, data, description);
+        executeCalldata = abi.encodeWithSignature(
+            "executeBatch(address[],uint256[],bytes[],bytes32,bytes32)",
+            targets,
+            values,
+            payloads,
+            predecessor,
+            salt
+        );
     }
 
     /// @notice simulate timelock proposal
-    /// @param timelockAddress to execute the proposal against
     /// @param proposerAddress account to propose the proposal to the timelock
     /// @param executorAddress account to execute the proposal on the timelock
-    function _simulateTimelockActions(
-        address timelockAddress,
-        address proposerAddress,
-        address executorAddress
-    ) internal {
-        require(actions.length > 0, "Empty timelock operation");
-
-        ITimelockController timelock = ITimelockController(payable(timelockAddress));
-        uint256 delay = timelock.getMinDelay();
+    function _simulateActions(address proposerAddress, address executorAddress) internal {
         bytes32 salt = keccak256(abi.encode(actions[0].description));
-
-        if (DEBUG) {
-            console.log("salt: ");
-            emit log_bytes32(salt);
-        }
-
         bytes32 predecessor = bytes32(0);
 
-        uint256 proposalLength = actions.length;
-        address[] memory targets = new address[](proposalLength);
-        uint256[] memory values = new uint256[](proposalLength);
-        bytes[] memory payloads = new bytes[](proposalLength);
-
-        /// target cannot be address 0 as that call will fail
-        /// value can be 0
-        /// arguments can be 0 as long as eth is sent
-        for (uint256 i = 0; i < proposalLength; i++) {
-            require(actions[i].target != address(0), "Invalid target for timelock");
-            /// if there are no args and no eth, the action is not valid
-            require(
-                (actions[i].arguments.length == 0 && actions[i].value > 0) || actions[i].arguments.length > 0,
-                "Invalid arguments for timelock"
-            );
-
-            targets[i] = actions[i].target;
-            values[i] = actions[i].value;
-            payloads[i] = actions[i].arguments;
-        }
-
-        bytes32 proposalId = timelock.hashOperationBatch(targets, values, payloads, predecessor, salt);
-
         if (DEBUG) {
-            console.log("proposalId: ");
-            emit log_bytes32(proposalId);
+            console.log("salt:");
+            console.logBytes32(salt);
         }
 
-        if (!timelock.isOperationPending(proposalId) && !timelock.isOperation(proposalId)) {
-            vm.prank(proposerAddress);
-            timelock.scheduleBatch(targets, values, payloads, predecessor, salt, delay);
+        bytes memory scheduleCalldata = getCalldata();
+        bytes memory executeCalldata = getExecuteCalldata();
 
-            if (DEBUG) {
-                console.log(
-                    "schedule batch calldata with ",
-                    actions.length,
-                    (actions.length > 1 ? " actions" : " action")
-                );
-                emit log_bytes(
-                    abi.encodeWithSignature(
-                        "scheduleBatch(address[],uint256[],bytes[],bytes32,bytes32,uint256)",
-                        targets,
-                        values,
-                        payloads,
-                        predecessor,
-                        salt,
-                        delay
-                    )
-                );
+        address addressCaller = addresses.getAddress(caller);
+        TimelockController timelockController = TimelockController(payable(addressCaller));
+        (address[] memory targets, uint256[] memory values, bytes[] memory payloads) = getProposalActions();
+
+        bytes32 proposalId = timelockController.hashOperationBatch(targets, values, payloads, predecessor, salt);
+
+        if (!timelockController.isOperationPending(proposalId) && !timelockController.isOperation(proposalId)) {
+            vm.prank(proposerAddress);
+
+            // Perform the low-level call
+            bytes memory returndata = address(payable(addressCaller)).functionCall(scheduleCalldata);
+
+            if (DEBUG && returndata.length > 0) {
+                console.log("returndata");
+                console.logBytes(returndata);
             }
         } else if (DEBUG) {
             console.log("proposal already scheduled for id");
-            emit log_bytes32(proposalId);
+            console.logBytes32(proposalId);
         }
 
-        console.log("warping to", block.timestamp + delay);
+        uint256 delay = timelockController.getMinDelay();
         vm.warp(block.timestamp + delay);
 
-        if (!timelock.isOperationDone(proposalId)) {
+        if (!timelockController.isOperationDone(proposalId)) {
             vm.prank(executorAddress);
-            timelock.executeBatch(targets, values, payloads, predecessor, salt);
 
-            if (DEBUG) {
-                console.log("execute batch calldata");
-                emit log_bytes(
-                    abi.encodeWithSignature(
-                        "executeBatch(address[],uint256[],bytes[],bytes32,bytes32)",
-                        targets,
-                        values,
-                        payloads,
-                        predecessor,
-                        salt
-                    )
-                );
+            // Perform the low-level call
+            bytes memory returndata = address(payable(addressCaller)).functionCall(executeCalldata);
+
+            if (DEBUG && returndata.length > 0) {
+                console.log("returndata");
+                console.logBytes(returndata);
             }
         } else if (DEBUG) {
             console.log("proposal already executed");
         }
+    }
+
+    /// @notice print schedule and execute calldata
+    function _printCalldata() internal view override {
+        if (actions.length == 0) return;
+        console.log("\n\n------------------ Schedule Calldata ------------------");
+        console.logBytes(getCalldata());
+
+        console.log("\n\n------------------ Execute Calldata ------------------");
+        console.logBytes(getExecuteCalldata());
     }
 }

@@ -8,7 +8,7 @@ import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-contract zip011 is TimelockProposal {
+contract zip012 is TimelockProposal {
 
     struct TokenIDMaxSupplySettings {
         uint256 maxSupply;
@@ -21,7 +21,7 @@ contract zip011 is TimelockProposal {
 
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
-        return "ZIP011";
+        return "ZIP012";
     }
 
     // Provides a brief description of the proposal.
@@ -32,7 +32,7 @@ contract zip011 is TimelockProposal {
     function setAndConfirmWearableData() private {
         // Wearable data
         string memory wearableData = string(
-            abi.encodePacked(vm.readFile("./proposals/zips/zip011.json"))
+            abi.encodePacked(vm.readFile("./proposals/zips/zip012.json"))
         );
 
         bytes memory parsedJson = vm.parseJson(wearableData);
@@ -42,26 +42,16 @@ contract zip011 is TimelockProposal {
             (TokenIDMaxSupplySettings[])
         );
 
-        for (uint256 i = 0; i < wearablesDecoded.length; i++) {
-            wearableTokenIDMaxSupplySettings.push(
-                TokenIDMaxSupplySettings(
-                    wearablesDecoded[i].maxSupply,
-                    wearablesDecoded[i].tokenId
-                )
-            );
-        }
+       wearableTokenIDMaxSupplySettings.push(
+            TokenIDMaxSupplySettings(
+                wearablesDecoded[0].maxSupply,
+                wearablesDecoded[0].tokenId
+            )
+        );
 
         // sanity checks
-        assertEq(wearableTokenIDMaxSupplySettings.length, 12, "Invalid wearableTokenIDMaxSupplySettings length");
-
-        uint maxSupplyTotal = 0;
-
-        // sum numbers from requrements sheet
-        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
-            maxSupplyTotal += wearableTokenIDMaxSupplySettings[i].maxSupply;
-        }
-
-        assertEq(maxSupplyTotal, 1200_000, "Invalid maxSupplyTotal");
+        assertEq(wearableTokenIDMaxSupplySettings.length, 1, "Invalid wearableTokenIDMaxSupplySettings length");
+        assertEq(wearableTokenIDMaxSupplySettings[0].maxSupply, 120, "Invalid maxSupplyTotal");
     }
 
     function _beforeDeploy() internal override {
@@ -70,10 +60,10 @@ contract zip011 is TimelockProposal {
 
     function _build() internal override {
         /// Wearable config
-        ERC1155MaxSupplyMintable wearables = ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
-        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
-            wearables.setSupplyCap(wearableTokenIDMaxSupplySettings[i].tokenId, wearableTokenIDMaxSupplySettings[i].maxSupply);
-        }
+        ERC1155MaxSupplyMintable wearables = ERC1155MaxSupplyMintable(
+            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
+        );
+        wearables.setSupplyCap(wearableTokenIDMaxSupplySettings[0].tokenId, wearableTokenIDMaxSupplySettings[0].maxSupply);
     }
 
     function _run() internal override {
@@ -89,13 +79,11 @@ contract zip011 is TimelockProposal {
         );
 
         /// Verfiy Wearable
-        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
-            uint256 tokenId = wearableTokenIDMaxSupplySettings[i].tokenId;
-            uint256 maxSupply = wearableTokenIDMaxSupplySettings[i].maxSupply;
-            uint256 currentSupply = wearable.totalSupply(tokenId);
+        uint256 tokenId = wearableTokenIDMaxSupplySettings[0].tokenId;
+        uint256 maxSupply = wearableTokenIDMaxSupplySettings[0].maxSupply;
+        uint256 currentSupply = wearable.totalSupply(tokenId);
 
-            assertEq(wearable.maxTokenSupply(tokenId), maxSupply, "Invalid maxTokenSupply for tokenId");
-            assertEq(wearable.getMintAmountLeft(tokenId), maxSupply - currentSupply, "Invalid getMintAmountLeft for tokenId");
-        }
+        assertEq(wearable.maxTokenSupply(tokenId), maxSupply, "Invalid maxTokenSupply for tokenId");
+        assertEq(wearable.getMintAmountLeft(tokenId), maxSupply - currentSupply, "Invalid getMintAmountLeft for tokenId");
     }
 }

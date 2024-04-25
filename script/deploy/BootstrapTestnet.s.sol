@@ -18,6 +18,8 @@ import {zip008} from "@proposals/zips/zip008.sol";
 import {zip009} from "@proposals/zips/zip009.sol";
 import {zip010} from "@proposals/zips/zip010.sol";
 import {zip011} from "@proposals/zips/zip011.sol";
+import {zip012} from "@proposals/zips/zip012.sol";
+import {zip013} from "@proposals/zips/zip013.sol";
 
 /*
 How to use:
@@ -36,8 +38,6 @@ contract BootstrapTestnet is Script {
     Proposal[] public proposals;
 
     function setUp() public {
-        privateKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
-
         string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
         string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
         addresses = new Addresses(addressPath);
@@ -56,6 +56,8 @@ contract BootstrapTestnet is Script {
         proposals.push(Proposal(address(new zip009()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip010()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip011()))); /// MaxSupply settings proposal
+        proposals.push(Proposal(address(new zip012()))); /// MaxSupply settings proposal
+        proposals.push(Proposal(address(new zip013()))); /// MaxSupply settings proposal
     }
 
     function run() public {
@@ -64,12 +66,12 @@ contract BootstrapTestnet is Script {
             console.log("Proposal", name, "deploy()");
             addresses.resetRecordingAddresses();
 
-            address deployer = vm.addr(privateKey);
             // Run the deploy for testing only workflow
-            proposals[i].deployForTestingOnly(addresses, deployer);
+            proposals[i].run();
 
             /// output deployed contract addresses and names
-            (string[] memory recordedNames, , address[] memory recordedAddresses) = addresses.getRecordedAddresses();
+            (string[] memory recordedNames, , address[] memory recordedAddresses) = Addresses(proposals[i].addresses())
+                .getRecordedAddresses();
             for (uint256 j = 0; j < recordedNames.length; j++) {
                 console.log("  Deployed", recordedAddresses[j], recordedNames[j]);
             }

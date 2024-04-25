@@ -136,5 +136,17 @@
         "addr": "0xd778a415A3AB81eF27da61218c71a5F31A4D10BE",
         "chainId": 42161,
         "isContract": true
+    },
+    {
+        "name": "DEPLOYER",
+        "addr": "0x6FAEb7C2A9c2BF2d4Da601227A023eCC8FbAC0e6",
+        "chainId": 42161,
+        "isContract": false
+    },
+    {
+        "name": "AFTER_DEPLOY_CALLER",
+        "addr": "0x5dE36e1b22520975021950c0ca190027A6f73aAa",
+        "chainId": 42161,
+        "isContract": true
     }
 ]

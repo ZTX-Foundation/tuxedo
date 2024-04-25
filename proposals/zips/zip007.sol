@@ -8,9 +8,8 @@ import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-contract zip007 is Proposal, TimelockProposal {
-    string public name = "ZIP007";
-    string public description = "ZTX CGv1.2.4 MaxSupply updates";
+contract zip007 is TimelockProposal {
+    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
 
     struct TokenIDMaxSupplySettings {
         uint256 maxSupply;
@@ -19,25 +18,29 @@ contract zip007 is Proposal, TimelockProposal {
 
     TokenIDMaxSupplySettings[] private wearableTokenIDMaxSupplySettings;
 
+    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
+
+    // Returns the name of the proposal.
+    function name() public pure override returns (string memory) {
+        return "ZIP007";
+    }
+
+    // Provides a brief description of the proposal.
+    function description() public pure override returns (string memory) {
+        return "ZTX CGv1.2.4 MaxSupply updates";
+    }
+
     function setAndConfirmWearableData() private {
         // Wearable data
-        string memory wearableData = string(
-            abi.encodePacked(vm.readFile("./proposals/zips/zip007.json"))
-        );
+        string memory wearableData = string(abi.encodePacked(vm.readFile("./proposals/zips/zip007.json")));
 
         bytes memory parsedJson = vm.parseJson(wearableData);
 
-        TokenIDMaxSupplySettings[] memory wearablesDecoded = abi.decode(
-            parsedJson,
-            (TokenIDMaxSupplySettings[])
-        );
+        TokenIDMaxSupplySettings[] memory wearablesDecoded = abi.decode(parsedJson, (TokenIDMaxSupplySettings[]));
 
         for (uint256 i = 0; i < wearablesDecoded.length; i++) {
             wearableTokenIDMaxSupplySettings.push(
-                TokenIDMaxSupplySettings(
-                    wearablesDecoded[i].maxSupply,
-                    wearablesDecoded[i].tokenId
-                )
+                TokenIDMaxSupplySettings(wearablesDecoded[i].maxSupply, wearablesDecoded[i].tokenId)
             );
         }
 
@@ -54,54 +57,23 @@ contract zip007 is Proposal, TimelockProposal {
         assertEq(maxSupplyTotal, 75, "Invalid maxSupplyTotal");
     }
 
-    function _beforeDeploy(Addresses, address deployer) internal override {
+    function _beforeDeploy() internal override {
         setAndConfirmWearableData();
     }
 
-    function _deploy(Addresses addresses, address) internal override {}
-
-    function _afterDeploy(Addresses addresses, address) internal override {}
-
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _build(Addresses addresses, address) internal override {
+    function _build() internal override {
         /// Wearable config
-        address wearables = addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES");
+        ERC1155MaxSupplyMintable wearables = ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
         for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
-            _pushTimelockAction(
-                wearables,
-                abi.encodeWithSignature(
-                    "setSupplyCap(uint256,uint256)",
-                    wearableTokenIDMaxSupplySettings[i].tokenId,
-                    wearableTokenIDMaxSupplySettings[i].maxSupply
-                ),
-                string(
-                    abi.encodePacked(
-                        "Set wearable tokenId ",
-                        wearableTokenIDMaxSupplySettings[i].tokenId,
-                        " to max supply ",
-                        wearableTokenIDMaxSupplySettings[i].maxSupply
-                    )
-                )
-            );
+            wearables.setSupplyCap(wearableTokenIDMaxSupplySettings[i].tokenId, wearableTokenIDMaxSupplySettings[i].maxSupply);
         }
     }
 
-    function _run(Addresses addresses, address) internal override {
-        this.setDebug(true);
-
-        _simulateTimelockActions(
-            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
-            addresses.getAddress("ADMIN_MULTISIG"),
-            addresses.getAddress("ADMIN_MULTISIG")
-        );
+    function _run() internal override {
+        _simulateActions(addresses.getAddress("ADMIN_MULTISIG"), addresses.getAddress("ADMIN_MULTISIG"));
     }
 
-    function _validate(Addresses addresses, address) internal override {
+    function _validate() internal override {
         /// Verfiy Wearable
         for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
             uint256 tokenId = wearableTokenIDMaxSupplySettings[i].tokenId;
@@ -115,8 +87,4 @@ contract zip007 is Proposal, TimelockProposal {
             assertEq(wearable.getMintAmountLeft(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
         }
     }
-
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
 }

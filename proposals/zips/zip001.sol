@@ -1,22 +1,39 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
+import {console} from "@forge-std/console.sol";
+
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
+import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 import {Addresses} from "@proposals/Addresses.sol";
 import {ERC1155AdminMinter} from "@protocol/nfts/ERC1155AdminMinter.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
+import {Constants} from '@proposals/utils/Constants.sol';
 
-contract zip001 is Proposal {
-    string public name = "ZIP001";
-    string public description = "The ZTX wearable, Core & GlobalReentrancyLock contract proposal";
+contract zip001 is TimelockProposal {
+    Core private _core;
 
-    function _beforeDeploy(Addresses addresses, address deployer) internal override {}
+    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
 
-    function _deploy(Addresses addresses, address) internal override {
+    constructor() Proposal("DEPLOYER") {}
+
+    // Returns the name of the proposal.
+    function name() public pure override returns (string memory) {
+        return "ZIP001";
+    }
+
+    // Provides a brief description of the proposal.
+    function description() public pure override returns (string memory) {
+        return "The ZTX wearable, Core & GlobalReentrancyLock contract proposal";
+    }
+
+    function _beforeDeploy() internal override {}
+
+    function _deploy() internal override {
         /// Deploy Core
         _core = new Core();
         addresses.addAddress("CORE", address(_core), true);
@@ -44,7 +61,7 @@ contract zip001 is Proposal {
         addresses.addAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER", address(minter), true);
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {
+    function _afterDeploy() internal override {
         // Setup ADMIN_MULTISIG
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG"));
 
@@ -58,16 +75,12 @@ contract zip001 is Proposal {
         /// Set MINTER role for all NFT minting contracts
         _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES"));
         _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
+
+        /// Revoke ADMIN role from deployer on mainnet
+        if (block.chainid == Constants.ARBITRUM_MAINNET) _core.revokeRole(Roles.ADMIN, addresses.getAddress("DEPLOYER"));
     }
 
-    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _afterDeployOnChain(Addresses, address deployer) internal override {
-        // Revoke ADMIN role from deployer
-        _core.revokeRole(Roles.ADMIN, deployer);
-    }
-
-    function _validate(Addresses addresses, address) internal override {
+    function _validate() internal override {
         /// Check Roles
         assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true, "incorrect admin role");
 
@@ -144,21 +157,20 @@ contract zip001 is Proposal {
         // Sum of Role counts to date
         assertEq(_core.getRoleMemberCount(Roles.LOCKER_PROTOCOL_ROLE), 2, "incorrect locker count");
         assertEq(_core.getRoleMemberCount(Roles.MINTER_PROTOCOL_ROLE), 2, "incorrect minter count");
+
+        // Verify ADMIN count
+        if (block.chainid == Constants.ARBITRUM_MAINNET) {
+            assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1, "incorrect admin count");
+        }
+        else {
+            assertEq(_core.getRoleMemberCount(Roles.ADMIN), 2, "incorrect admin count");
+        }
+
+        // Verify ADMIN role has been revoked from deployer on mainnet
+        if (block.chainid == Constants.ARBITRUM_MAINNET)
+            assertFalse(
+                _core.hasRole(Roles.ADMIN, addresses.getAddress("DEPLOYER")),
+                "deployer should not have admin role"
+            );
     }
-
-    function _validateOnChain(Addresses, address deployer) internal override {
-        /// Verify ADMIN role has been revoked from deployer
-        assertEq(_core.hasRole(Roles.ADMIN, deployer), false, "deployer should not have admin role");
-
-        /// Verify only ADMIN_MULTISIG has ADMIN role
-        assertEq(_core.getRoleMemberCount(Roles.ADMIN), 1, "incorrect admin count");
-    }
-
-    function _validateForTestingOnly(Addresses, address deployer) internal override {}
-
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _build(Addresses addresses, address deployer) internal override {}
-
-    function _run(Addresses addresses, address deployer) internal override {}
 }
