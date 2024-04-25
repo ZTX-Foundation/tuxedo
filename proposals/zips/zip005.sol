@@ -6,9 +6,8 @@ import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-contract zip005 is Proposal, TimelockProposal {
-    string public name = "ZIP005";
-    string public description = "ZTX CGv1.2 MaxSupply updates for placeables";
+contract zip005 is TimelockProposal {
+    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
 
     struct TokenIDMaxSupplySettings {
         uint256 tokenId;
@@ -16,6 +15,18 @@ contract zip005 is Proposal, TimelockProposal {
     }
 
     TokenIDMaxSupplySettings[] private placeableTokenIDMaxSupplySettings;
+
+    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
+
+    // Returns the name of the proposal.
+    function name() public pure override returns (string memory) {
+        return "ZIP005";
+    }
+
+    // Provides a brief description of the proposal.
+    function description() public pure override returns (string memory) {
+        return "ZTX CGv1.2 MaxSupply updates for placeables";
+    }
 
     function setAndConfirmPlaceableData() private {
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(2, 6000));
@@ -127,54 +138,23 @@ contract zip005 is Proposal, TimelockProposal {
         assertEq(maxSupplyTotal, 6_380_000, "Invalid maxSupplyTotal");
     }
 
-    function _beforeDeploy(Addresses, address deployer) internal override {
+    function _beforeDeploy() internal override {
         setAndConfirmPlaceableData();
     }
 
-    function _deploy(Addresses addresses, address) internal override {}
-
-    function _afterDeploy(Addresses addresses, address) internal override {}
-
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _build(Addresses addresses, address) internal override {
+    function _build() internal override {
         /// Placeables config
-        address placeables = addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES");
+        ERC1155MaxSupplyMintable placeables = ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
-            _pushTimelockAction(
-                placeables,
-                abi.encodeWithSignature(
-                    "setSupplyCap(uint256,uint256)",
-                    placeableTokenIDMaxSupplySettings[i].tokenId,
-                    placeableTokenIDMaxSupplySettings[i].maxSupply
-                ),
-                string(
-                    abi.encodePacked(
-                        "Set placeable tokenId ",
-                        placeableTokenIDMaxSupplySettings[i].tokenId,
-                        " to max supply ",
-                        placeableTokenIDMaxSupplySettings[i].maxSupply
-                    )
-                )
-            );
+            placeables.setSupplyCap(placeableTokenIDMaxSupplySettings[i].tokenId, placeableTokenIDMaxSupplySettings[i].maxSupply);
         }
     }
 
-    function _run(Addresses addresses, address) internal override {
-        this.setDebug(true);
-
-        _simulateTimelockActions(
-            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
-            addresses.getAddress("ADMIN_MULTISIG"),
-            addresses.getAddress("ADMIN_MULTISIG")
-        );
+    function _run() internal override {
+        _simulateActions(addresses.getAddress("ADMIN_MULTISIG"), addresses.getAddress("ADMIN_MULTISIG"));
     }
 
-    function _validate(Addresses addresses, address) internal override {
+    function _validate() internal override {
         /// Verfiy Placeable
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
             uint256 tokenId = placeableTokenIDMaxSupplySettings[i].tokenId;
@@ -188,8 +168,4 @@ contract zip005 is Proposal, TimelockProposal {
             assertEq(placeable.getMintAmountLeft(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
         }
     }
-
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
 }
