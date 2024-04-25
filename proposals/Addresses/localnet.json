@@ -64,5 +64,11 @@
         "chainid": 31337,
         "addr": "0x0000000000000000000000000000000000000108",
         "isContract": false
+    },
+    {
+        "name": "AFTER_DEPLOY_CALLER",
+        "chainid": 31337,
+        "addr": "0x0000000000000000000000000000000000000108",
+        "isContract": false
     }
 ]

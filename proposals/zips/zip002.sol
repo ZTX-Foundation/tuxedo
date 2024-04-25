@@ -14,18 +14,30 @@ import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
 
-contract zip002 is Proposal, TimelockProposal {
-    string public name = "ZIP002";
-    string public description = "The ZTX TimeLock contract proposal";
-
+contract zip002 is TimelockProposal {
     TimelockController private _adminTimelock;
+    Core private _core;
 
-    function _beforeDeploy(Addresses addresses, address) internal override {
+    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
+
+    constructor() Proposal("ADMIN_MULTISIG") {}
+
+    // Returns the name of the proposal.
+    function name() public pure override returns (string memory) {
+        return "ZIP002";
+    }
+
+    // Provides a brief description of the proposal.
+    function description() public pure override returns (string memory) {
+        return "The ZTX TimeLock contract proposal";
+    }
+
+    function _beforeDeploy() internal override {
         /// Get Core Address
         _core = Core(addresses.getAddress("CORE"));
     }
 
-    function _deploy(Addresses addresses, address) internal override {
+    function _deploy() internal override {
         /// Admin timelock controller
         address[] memory adminTimelockProposersExecutors = new address[](1);
 
@@ -39,20 +51,16 @@ contract zip002 is Proposal, TimelockProposal {
         addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(_adminTimelock), true);
     }
 
-    function _afterDeploy(Addresses addresses, address) internal override {}
-
-    function _aferDeployForTestingOnly(Addresses addresses, address deployer) internal virtual override {
+    function _afterDeploy() internal override {
         /// For the sake of testing, give the ADMIN role to the ADMIN_TIMELOCK_CONTROLLER.
         /// This is not possible onchain as the deployer is not an Admin
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
-    }
 
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {
         /// The ADMIN_MULTISIG now needs to give the ADMIN role to the ADMIN_TIMELOCK_CONTROLLER
         console.log("Please give Roles.Admin to the ADMIN_TIMELOCK_CONTROLLER from the ADMIN_MULTISIG");
     }
 
-    function _validate(Addresses addresses, address) internal override {
+    function _validate() internal override {
         /// Check that the ADMIN_MULTISIG has the PROPOSER role
         assertEq(
             _adminTimelock.hasRole(_adminTimelock.PROPOSER_ROLE(), addresses.getAddress("ADMIN_MULTISIG")),
@@ -74,14 +82,4 @@ contract zip002 is Proposal, TimelockProposal {
             "ADMIN_MULTISIG does not have CANCELLER_ROLE"
         );
     }
-
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _build(Addresses addresses, address deployer) internal override {}
-
-    function _run(Addresses addresses, address deployer) internal override {}
 }
