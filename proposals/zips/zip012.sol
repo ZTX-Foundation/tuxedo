@@ -8,9 +8,7 @@ import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
 import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-contract zip012 is Proposal, TimelockProposal {
-    string public name = "ZIP012";
-    string public description = "ZTX CGv1.4 MaxSupply updates";
+contract zip012 is TimelockProposal {
 
     struct TokenIDMaxSupplySettings {
         uint256 maxSupply;
@@ -18,6 +16,18 @@ contract zip012 is Proposal, TimelockProposal {
     }
 
     TokenIDMaxSupplySettings[] private wearableTokenIDMaxSupplySettings;
+
+    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
+
+    // Returns the name of the proposal.
+    function name() public pure override returns (string memory) {
+        return "ZIP012";
+    }
+
+    // Provides a brief description of the proposal.
+    function description() public pure override returns (string memory) {
+        return "ZTX CGv1.4 MaxSupply updates";
+    }
 
     function setAndConfirmWearableData() private {
         // Wearable data
@@ -44,52 +54,26 @@ contract zip012 is Proposal, TimelockProposal {
         assertEq(wearableTokenIDMaxSupplySettings[0].maxSupply, 120, "Invalid maxSupplyTotal");
     }
 
-    function _beforeDeploy(Addresses, address deployer) internal override {
+    function _beforeDeploy() internal override {
         setAndConfirmWearableData();
     }
 
-    function _deploy(Addresses addresses, address) internal override {}
-
-    function _afterDeploy(Addresses addresses, address) internal override {}
-
-    function _afterDeployOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _aferDeployForTestingOnly(Addresses, address deployer) internal virtual override {}
-
-    function _teardown(Addresses addresses, address deployer) internal override {}
-
-    function _build(Addresses addresses, address) internal override {
+    function _build() internal override {
         /// Wearable config
-        address wearables = addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES");
-        _pushTimelockAction(
-            wearables,
-            abi.encodeWithSignature(
-                "setSupplyCap(uint256,uint256)",
-                wearableTokenIDMaxSupplySettings[0].tokenId,
-                wearableTokenIDMaxSupplySettings[0].maxSupply
-            ),
-            string(
-                abi.encodePacked(
-                    "Set wearable tokenId ",
-                    wearableTokenIDMaxSupplySettings[0].tokenId,
-                    " to max supply ",
-                    wearableTokenIDMaxSupplySettings[0].maxSupply
-                )
-            )
+        ERC1155MaxSupplyMintable wearables = ERC1155MaxSupplyMintable(
+            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
         );
+        wearables.setSupplyCap(wearableTokenIDMaxSupplySettings[0].tokenId, wearableTokenIDMaxSupplySettings[0].maxSupply);
     }
 
-    function _run(Addresses addresses, address) internal override {
-        this.setDebug(true);
-
-        _simulateTimelockActions(
-            addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"),
+    function _run() internal override {
+        _simulateActions(
             addresses.getAddress("ADMIN_MULTISIG"),
             addresses.getAddress("ADMIN_MULTISIG")
         );
     }
 
-    function _validate(Addresses addresses, address) internal override {
+    function _validate() internal override {
         ERC1155MaxSupplyMintable wearable = ERC1155MaxSupplyMintable(
             addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
         );
@@ -102,8 +86,4 @@ contract zip012 is Proposal, TimelockProposal {
         assertEq(wearable.maxTokenSupply(tokenId), maxSupply, "Invalid maxTokenSupply for tokenId");
         assertEq(wearable.getMintAmountLeft(tokenId), maxSupply - currentSupply, "Invalid getMintAmountLeft for tokenId");
     }
-
-    function _validateOnChain(Addresses, address deployer) internal virtual override {}
-
-    function _validateForTestingOnly(Addresses, address deployer) internal virtual override {}
 }
