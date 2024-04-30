@@ -331,10 +331,4 @@ contract zip003 is TimelockProposal {
         /// grant game consumer notary protocol role
         _core.grantRole(Roles.GAME_CONSUMER_NOTARY_PROTOCOL_ROLE, addresses.getAddress("AUTOGRAPH_SERVICE_KMS_WALLET"));
     }
-
-    function _run() internal override {
-        super._run();
-
-        _simulateActions(addresses.getAddress("ADMIN_MULTISIG"), addresses.getAddress("ADMIN_MULTISIG"));
-    }
 }
