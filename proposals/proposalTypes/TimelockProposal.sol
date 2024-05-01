@@ -111,4 +111,9 @@ abstract contract TimelockProposal is Proposal {
         console.log("\n\n------------------ Execute Calldata ------------------");
         console.logBytes(getExecuteCalldata());
     }
+
+    function _run() internal virtual override {
+        if (actions.length == 0) return;
+        _simulateActions(addresses.getAddress("ADMIN_MULTISIG"), addresses.getAddress("ADMIN_MULTISIG"));
+    }
 }
