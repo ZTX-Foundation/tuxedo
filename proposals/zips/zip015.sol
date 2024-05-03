@@ -12,7 +12,6 @@ import {Roles} from "@protocol/core/Roles.sol";
 import {Token} from "@protocol/token/Token.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
 import {ERC1155Sale} from "@protocol/sale/ERC1155Sale.sol";
-import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
 
 contract zip015 is TimelockProposal {
     Core private _core;
