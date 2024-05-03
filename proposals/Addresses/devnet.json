@@ -136,5 +136,23 @@
         "addr": "0x5Ec41e3a9c712D0BBC26d2CbA0E653c5d2cc982C",
         "chainId": 421614,
         "isContract": false
+    },
+    {
+        "name": "ERC1155_SALE_CONSUMABLES",
+        "addr": "0xC6a2A17Dc8C7da5Bc8729F0ac7f35c48078aaf41",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_SALE_PLACEABLES",
+        "addr": "0xAa3A6CF6A57dCf2a0407E6B44a3103aac2283bd8",
+        "chainId": 421614,
+        "isContract": true
+    },
+    {
+        "name": "ERC1155_SALE_WEARABLES",
+        "addr": "0x99cBb7fAE0C7EdD3C0d1d232334a92E90fAE0a47",
+        "chainId": 421614,
+        "isContract": true
     }
 ]

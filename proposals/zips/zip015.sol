@@ -56,21 +56,6 @@ contract zip015 is TimelockProposal {
         );
         addresses.addAddress("ERC1155_SALE_WEARABLES", address(wearablesERC1155Sale), true);
 
-        /// ERC20Splitter allocation settings
-        ERC20Splitter.Allocation[] memory allocations = new ERC20Splitter.Allocation[](2);
-        allocations[0].deposit = addresses.getAddress("REVENUE_WALLET_MULTISIG01");
-        allocations[0].ratio = 5_000;
-        allocations[1].deposit = addresses.getAddress("REVENUE_WALLET_MULTISIG02");
-        allocations[1].ratio = 5_000;
-
-        /// ERC20Splitter consumable splitter contract
-        ERC20Splitter erc1155SaleSplitter = new ERC20Splitter(
-            address(_core),
-            addresses.getAddress("TOKEN"),
-            allocations
-        );
-        addresses.addAddress("ERC1155_SALE_SPLITTER", address(erc1155SaleSplitter), true);
-
         /// @dev configure the proceeds
         ERC1155Sale(addresses.getAddress("ERC1155_SALE_CONSUMABLES")).setTokenRecipients(
             addresses.getAddress("TOKEN"),
@@ -103,15 +88,6 @@ contract zip015 is TimelockProposal {
         _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
     }
 
-    function _run() internal override {
-        super._run();
-
-        _simulateActions(
-            addresses.getAddress("ADMIN_MULTISIG"),
-            addresses.getAddress("ADMIN_MULTISIG")
-        );
-    }
-
     function _validate() internal override {
         assertEq(
             address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_CONSUMABLES")).core()),
@@ -127,31 +103,6 @@ contract zip015 is TimelockProposal {
             address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_PLACEABLES")).core()),
             address(_core),
             "ERC1155Sale core address is not equal to core address"
-        );
-
-        /// ERC1155Sale
-        ERC20Splitter.Allocation[] memory erc1155SaleAllocations = ERC20Splitter(
-            addresses.getAddress("ERC1155_SALE_SPLITTER")
-        ).getAllocations();
-
-        assertEq(erc1155SaleAllocations.length, 2, "ERC1155Sale allocations length is not equal to 2");
-        assertEq(
-            erc1155SaleAllocations[0].deposit,
-            addresses.getAddress("REVENUE_WALLET_MULTISIG01"),
-            "ERC1155Sale allocation deposit is not equal to REVENUE_WALLET_MULTISIG01"
-        );
-        assertEq(erc1155SaleAllocations[0].ratio, 5_000);
-        assertEq(
-            erc1155SaleAllocations[1].deposit,
-            addresses.getAddress("REVENUE_WALLET_MULTISIG02"),
-            "ERC1155Sale allocation deposit is not equal to REVENUE_WALLET_MULTISIG02"
-        );
-        assertEq(erc1155SaleAllocations[1].ratio, 5_000, "ERC1155Sale allocation ratio is not equal to 5_000");
-
-        assertEq(
-            address(ERC20Splitter(addresses.getAddress("ERC1155_SALE_SPLITTER")).core()),
-            address(_core),
-            "ERC1155_SALE_SPLITTER is pointing to wrong core"
         );
     }
 }
