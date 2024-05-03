@@ -153,41 +153,6 @@ contract zipTest is TimelockProposal {
         }
     }
 
-    function _afterDeploy() internal override {
-        /// ADMIN role
-        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
-
-        /// LOCKER role
-        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
-        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
-        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
-
-        /// MINTER role
-        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
-        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
-        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
-
-        /// TOKEN_GOVERNOR role
-        _core.grantRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, addresses.getAddress("GOVERNOR_DAO"));
-
-        /// GUARDIAN role
-        _core.grantRole(Roles.GUARDIAN, addresses.getAddress("GUARDIAN_MULTISIG"));
-
-        /// FINANCIAL_CONTROLLER role
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("TREASURY_WALLET_MULTISIG"));
-        _core.grantRole(
-            Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
-            addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT")
-        );
-        _core.grantRole(
-            Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
-            addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER")
-        );
-
-        /// FINANCIAL_GUARDIAN Role
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
-    }
-
     function _validate() internal override {
         assertEq(
             address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_CONSUMABLES")).core()),
@@ -285,5 +250,35 @@ contract zipTest is TimelockProposal {
     function _build() internal override {
         /// ADMIN role
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+
+        /// LOCKER role
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
+
+        /// MINTER role
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
+
+        /// TOKEN_GOVERNOR role
+        _core.grantRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, addresses.getAddress("GOVERNOR_DAO"));
+
+        /// GUARDIAN role
+        _core.grantRole(Roles.GUARDIAN, addresses.getAddress("GUARDIAN_MULTISIG"));
+
+        /// FINANCIAL_CONTROLLER role
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("TREASURY_WALLET_MULTISIG"));
+        _core.grantRole(
+            Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
+            addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT")
+        );
+        _core.grantRole(
+            Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
+            addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER")
+        );
+
+        /// FINANCIAL_GUARDIAN Role
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
     }
 }
