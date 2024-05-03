@@ -19,7 +19,7 @@ program
         "ERC1155Sale contract"
     )
     .requiredOption("-t, --token-id <token id>", "Token Id")
-    .requiredOption("-n, --nft-contract-address <address>", "NFT contract")
+    .requiredOption("-n, --payment-token <address>", "Payment token contract address")
     .requiredOption("-s, --start-time <timestamp>", "Sale start time timestamp")
     .requiredOption("-p, --price <amount>", "Price")
     .requiredOption("-f, --fee <amount>", "Fee")
@@ -44,13 +44,13 @@ const contract = new ethers.Contract(
 );
 
 await contract.setTokenConfig(
-    program.opts().tokenID,
-    program.opts().nftContractAddress,
+    program.opts().tokenId,
+    program.opts().paymentToken,
     program.opts().startTime,
     program.opts().price,
     program.opts().fee,
-    ethers.utils.formatBytes32String(""),
-    false
+    true,
+    ethers.utils.formatBytes32String("")
 ).then((tx: any) => {
     console.log("SUCCESS");
     console.log(tx);
