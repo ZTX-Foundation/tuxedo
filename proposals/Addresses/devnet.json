@@ -1,7 +1,7 @@
 [
     {
         "name": "AUTOGRAPH_SERVICE_KMS_WALLET",
-        "addr": "0x2526550d7c61559df4f55fbce69935c2d536f75e",
+        "addr": "0x254079270651fbf1408aa7a96746735974a087bf",
         "chainId": 421614,
         "isContract": false
     },
@@ -55,79 +55,73 @@
     },
     {
         "name": "TOKEN",
-        "addr": "0xfD1B439A292C3690FF5f052Df907Ae7817696537",
+        "addr": "0x5422a3De80BA3891d663fa4EC7506A7f263c1Fd9",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "CORE",
-        "addr": "0xeCd8CF66C8F44D8Ab0f257C2aC5220A943D8d8eE",
+        "addr": "0x68D6B4af6668A62Fc1B21ABF3DbfA366DD1d8eC7",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "GLOBAL_REENTRANCY_LOCK",
-        "addr": "0x4FCAaCfed2E0F5A4fdbfE01EBe50748Cdc06CBB6",
+        "addr": "0x87D7b991540747522404c86b281E4880Cd6dE7f2",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES",
-        "addr": "0x350aCe500A712D944Fb6De1D54C63340a5085b6f",
+        "addr": "0x27564B8cf86aba79b398A39B75898fe8AFf30627",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "ERC1155_MAX_SUPPLY_ADMIN_MINTER",
-        "addr": "0xb0Cb1448b40789302D371CdAC2881D2570DE1CAc",
+        "addr": "0x34c775910e5CbB1511eF00Ea51cd0f6bd1E3E4Db",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "ADMIN_TIMELOCK_CONTROLLER",
-        "addr": "0x8e5961897d0E1Db128a972c0937Eb08fa9a16C2C",
+        "addr": "0x4a40ca2184ec0c5fab58b45b4a3a2bc240eb1043",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES",
-        "addr": "0x95C68D9E3c0353a0CDd40000Cd1A06A87ED14744",
+        "addr": "0x898C5e72Cb4121A8ae579faEAe2C5879196493fc",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES",
-        "addr": "0x425Cdf97Cc3833B6C47c2EE708aE65dC19e7494f",
-        "chainId": 421614,
-        "isContract": true
-    },
-    {
-        "name": "CONSUMABLE_SPLITTER",
-        "addr": "0xB6DE3d51297124030371B5ff6009f5A117EFd8b5",
+        "addr": "0xa7654c44f0A4Da52a10469dC380f02F75d6E0631",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "ERC1155_AUTO_GRAPH_MINTER",
-        "addr": "0xd22040ACd20623c6ee507e8985a3FfdE7a270A63",
+        "addr": "0x34c775910e5CbB1511eF00Ea51cd0f6bd1E3E4Db",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "GAME_CONSUMABLE",
-        "addr": "0xede3f2c44a7cfF1292eAA72Fe828862B0a334317",
+        "addr": "0xf052f3F94f6E71DfBA39544b8DF02c873De4469F",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "SEASONS_TOKEN_ID_REGISTRY",
-        "addr": "0x11af076f2a418B7627b5Fb3eE2e17ebC4543f94d",
+        "addr": "0x8ccE22Fe7Bd3F4998E158De3c3a77ee85A6F6bBB",
         "chainId": 421614,
         "isContract": true
     },
     {
         "name": "ERC1155_SEASON_ONE",
-        "addr": "0x14d9548b384dfd5612c5E421584645aE9a3eef38",
+        "addr": "0x3006b30E32dEA503503Bf9e3f909163834085A5C",
         "chainId": 421614,
         "isContract": true
     },

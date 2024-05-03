@@ -104,6 +104,7 @@ npm run slither
 | [`0x2a7093311D65550285AcA9650C9F9165f74337f3`](https://sepolia-explorer.arbitrum.io/address/0x2a7093311D65550285AcA9650C9F9165f74337f3) | [ERC1155_AUTO_GRAPH_MINTER](./src/nfts/ERC1155AutoGraphMinter.sol)                 | [ERC1155AutoGraphMinter.abi.json](./dist/v1.0.0/abi/ERC1155AutoGraphMinter.abi.json)     |
 | [`0x5422a3De80BA3891d663fa4EC7506A7f263c1Fd9`](https://sepolia-explorer.arbitrum.io/address/0x5422a3De80BA3891d663fa4EC7506A7f263c1Fd9) | [TOKEN](./src/token/Token.sol)                                                     | [Token.abi.json](./dist/v1.0.0/abi/Token.abi.json)                                       |
 | [`0xf052f3F94f6E71DfBA39544b8DF02c873De4469F`](https://sepolia-explorer.arbitrum.io/address/0xf052f3F94f6E71DfBA39544b8DF02c873De4469F) | [GAME_CONSUMABLE](./src/game/GameConsumer.sol)                                     | [GameConsumer.abi.json](./dist/v1.0.0/abi/GameConsumer.abi.json)                         |
+| [`0x4a40ca2184ec0c5fab58b45b4a3a2bc240eb1043`](https://sepolia.arbiscan.io/address/0x4a40ca2184ec0c5fab58b45b4a3a2bc240eb1043) | [ADMIN_TIMELOCK_CONTROLLER](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/governance/TimelockController.sol) | [TimelockController.abi.json](./dist/v1.0.0/abi/TimelockController.abi.json)             |
 
 ### Arbitrum Sepolia (qa)
 
