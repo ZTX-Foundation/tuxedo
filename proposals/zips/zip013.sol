@@ -78,13 +78,6 @@ contract zip013 is TimelockProposal {
         }
     }
 
-    function _run() internal override {
-        _simulateActions(
-            addresses.getAddress("ADMIN_MULTISIG"),
-            addresses.getAddress("ADMIN_MULTISIG")
-        );
-    }
-
     function _validate() internal override {
         ERC1155MaxSupplyMintable wearable = ERC1155MaxSupplyMintable(
             addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")

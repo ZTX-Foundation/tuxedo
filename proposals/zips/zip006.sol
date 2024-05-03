@@ -69,10 +69,6 @@ contract zip006 is TimelockProposal {
         }
     }
 
-    function _run() internal override {
-        _simulateActions(addresses.getAddress("ADMIN_MULTISIG"), addresses.getAddress("ADMIN_MULTISIG"));
-    }
-
     function _validate() internal override {
         /// Verfiy Wearable
         for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
