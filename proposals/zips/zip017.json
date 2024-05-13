@@ -4,7 +4,59 @@
         "tokenId": 94
     },
     {
-        "maxSupply": 74,
+        "maxSupply": 100000,
         "tokenId": 95
+    },
+    {
+        "maxSupply": 100000,
+        "tokenId": 96
+    },
+    {
+        "maxSupply": 6000,
+        "tokenId": 97
+    },
+    {
+        "maxSupply": 100000,
+        "tokenId": 98
+    },
+    {
+        "maxSupply": 100000,
+        "tokenId": 99
+    },
+    {
+        "maxSupply": 100000,
+        "tokenId": 100
+    },
+    {
+        "maxSupply": 100000,
+        "tokenId": 101
+    },
+    {
+        "maxSupply": 100000,
+        "tokenId": 102
+    },
+    {
+        "maxSupply": 1000,
+        "tokenId": 103
+    },
+    {
+        "maxSupply": 6000,
+        "tokenId": 104
+    },
+    {
+        "maxSupply": 6000,
+        "tokenId": 105
+    },
+    {
+        "maxSupply": 6000,
+        "tokenId": 106
+    },
+    {
+        "maxSupply": 100000,
+        "tokenId": 107
+    },
+    {
+        "maxSupply": 100000,
+        "tokenId": 108
     }
 ]
