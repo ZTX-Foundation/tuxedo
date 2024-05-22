@@ -1,3 +1,6 @@
+//SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.18;
+
 import "@forge-std/console.sol";
 
 import {Addresses} from "@proposals/Addresses.sol";
@@ -20,7 +23,18 @@ contract zip018 is TimelockProposal {
     TokenIDMaxSupplySettings[] private placeableTokenIDMaxSupplySettings;
     TokenIDMaxSupplySettings[] private wearableTokenIDMaxSupplySettings;
 
-    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
+    /// @notice ERC1155 collections
+    ERC1155MaxSupplyMintable placeable;
+    ERC1155MaxSupplyMintable wearable;
+
+    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {
+        placeable = ERC1155MaxSupplyMintable(
+            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
+        );
+        wearable = ERC1155MaxSupplyMintable(
+            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
+        );
+    }
 
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
@@ -63,7 +77,7 @@ contract zip018 is TimelockProposal {
             );
         }
 
-        // Sanity checks for placeables
+        /// @notice sanity checks for placeables
         assertEq(placeableTokenIDMaxSupplySettings.length, 24, "Invalid placeableTokenIDMaxSupplySettings length");
 
         uint placeableMaxSupplyTotal = 0;
@@ -74,7 +88,7 @@ contract zip018 is TimelockProposal {
 
         assertEq(placeableMaxSupplyTotal, 1366000, "Invalid maxSupplyTotal for placeables");
 
-        // Sanity checks for wearables
+        /// @notice sanity checks for wearables
         assertEq(wearableTokenIDMaxSupplySettings.length, 5, "Invalid wearableTokenIDMaxSupplySettings length");
 
         uint wearableMaxSupplyTotal = 0;
@@ -91,42 +105,19 @@ contract zip018 is TimelockProposal {
     }
 
     function _build() internal override {
-        /// Wearable config
-        ERC1155MaxSupplyMintable wearable = ERC1155MaxSupplyMintable(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
-        );
-        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
-            wearable.setSupplyCap(wearableTokenIDMaxSupplySettings[i].tokenId, wearableTokenIDMaxSupplySettings[i].maxSupply);
-        }
-        
-        // Placeable config
-        ERC1155MaxSupplyMintable placeable = ERC1155MaxSupplyMintable(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
-        );
+         /// @notice placeable config
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
             placeable.setSupplyCap(placeableTokenIDMaxSupplySettings[i].tokenId, placeableTokenIDMaxSupplySettings[i].maxSupply);
+        }
+
+        /// @notice wearable config
+        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
+            wearable.setSupplyCap(wearableTokenIDMaxSupplySettings[i].tokenId, wearableTokenIDMaxSupplySettings[i].maxSupply);
         }
     }
 
     function _validate() internal override {
-        ERC1155MaxSupplyMintable wearable = ERC1155MaxSupplyMintable(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
-        );
-
-        /// Verify Wearable
-        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
-            uint256 tokenId = wearableTokenIDMaxSupplySettings[i].tokenId;
-            uint256 maxSupply = wearableTokenIDMaxSupplySettings[i].maxSupply;
-            uint256 currentSupply = wearable.totalSupply(tokenId);
-
-            assertEq(wearable.maxTokenSupply(tokenId), maxSupply, "Invalid maxTokenSupply for tokenId");
-            assertEq(wearable.getMintAmountLeft(tokenId), maxSupply - currentSupply, "Invalid getMintAmountLeft for tokenId");
-        }
-
-        // Verify Placeable
-        ERC1155MaxSupplyMintable placeable = ERC1155MaxSupplyMintable(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
-        );
+        /// @notice verify placeables
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
             uint256 tokenId = placeableTokenIDMaxSupplySettings[i].tokenId;
             uint256 maxSupply = placeableTokenIDMaxSupplySettings[i].maxSupply;
@@ -134,6 +125,16 @@ contract zip018 is TimelockProposal {
 
             assertEq(placeable.maxTokenSupply(tokenId), maxSupply, "Invalid maxTokenSupply for tokenId");
             assertEq(placeable.getMintAmountLeft(tokenId), maxSupply - currentSupply, "Invalid getMintAmountLeft for tokenId");
+        }
+
+        /// @notice verify wearables
+        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
+            uint256 tokenId = wearableTokenIDMaxSupplySettings[i].tokenId;
+            uint256 maxSupply = wearableTokenIDMaxSupplySettings[i].maxSupply;
+            uint256 currentSupply = wearable.totalSupply(tokenId);
+
+            assertEq(wearable.maxTokenSupply(tokenId), maxSupply, "Invalid maxTokenSupply for tokenId");
+            assertEq(wearable.getMintAmountLeft(tokenId), maxSupply - currentSupply, "Invalid getMintAmountLeft for tokenId");
         }
     }
 }
