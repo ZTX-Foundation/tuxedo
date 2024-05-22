@@ -68,8 +68,8 @@ contract zip018 is TimelockProposal {
 
         uint placeableMaxSupplyTotal = 0;
 
-        for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
-            placeableMaxSupplyTotal += wearableTokenIDMaxSupplySettings[i].maxSupply;
+        for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
+            placeableMaxSupplyTotal += placeableTokenIDMaxSupplySettings[i].maxSupply;
         }
 
         assertEq(placeableMaxSupplyTotal, 1366000, "Invalid maxSupplyTotal for placeables");
