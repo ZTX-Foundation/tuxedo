@@ -32,7 +32,7 @@ contract zip015 is TimelockProposal {
         _core = Core(addresses.getAddress("CORE"));
     }
 
-    function _deploy() internal override {
+    function _build() internal override {
         /// ERC1155Sale
         ERC1155Sale consumablesERC1155Sale = new ERC1155Sale(
             address(_core),
@@ -73,9 +73,7 @@ contract zip015 is TimelockProposal {
             addresses.getAddress("REVENUE_WALLET_MULTISIG01"),
             addresses.getAddress("REVENUE_WALLET_MULTISIG02")
         );
-    }
 
-    function _afterDeploy() internal override {
         /// LOCKER role
         _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
         _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
