@@ -1,0 +1,122 @@
+{
+    "placeables": [
+        {
+            "maxSupply": 100000,
+            "tokenId": 8
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 15
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 16
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 18
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 23
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 24
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 25
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 38
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 40
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 46
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 47
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 54
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 95
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 103
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 105
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 116
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 117
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 126
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 127
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 130
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 136
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 137
+        },
+        {
+            "maxSupply": 6000,
+            "tokenId": 144
+        },
+        {
+            "maxSupply": 100000,
+            "tokenId": 351
+        }
+    ],
+    "wearables": [
+        {
+            "maxSupply": 100,
+            "tokenId": 109
+        },
+        {
+            "maxSupply": 100,
+            "tokenId": 110
+        },
+        {
+            "maxSupply": 66,
+            "tokenId": 111
+        },
+        {
+            "maxSupply": 1,
+            "tokenId": 112
+        },
+        {
+            "maxSupply": 1,
+            "tokenId": 113
+        }
+    ]
+}

@@ -21,6 +21,9 @@ import {zip011} from "@proposals/zips/zip011.sol";
 import {zip012} from "@proposals/zips/zip012.sol";
 import {zip013} from "@proposals/zips/zip013.sol";
 import {zip014} from "@proposals/zips/zip014.sol";
+import {zip016} from "@proposals/zips/zip016.sol";
+import {zip017} from "@proposals/zips/zip017.sol";
+import {zip018} from "@proposals/zips/zip018.sol";
 
 /*
 How to use:
@@ -60,6 +63,9 @@ contract BootstrapTestnet is Script {
         proposals.push(Proposal(address(new zip012()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip013()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip014()))); /// MaxSupply settings proposal
+        proposals.push(Proposal(address(new zip016()))); /// MaxSupply settings proposal
+        proposals.push(Proposal(address(new zip017()))); /// MaxSupply settings proposal
+        proposals.push(Proposal(address(new zip018()))); /// MaxSupply settings proposal
     }
 
     function run() public {

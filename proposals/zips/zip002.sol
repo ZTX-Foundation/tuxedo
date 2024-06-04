@@ -13,6 +13,7 @@ import {Roles} from "@protocol/core/Roles.sol";
 import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
+import {Constants} from '@proposals/utils/Constants.sol';
 
 contract zip002 is TimelockProposal {
     TimelockController private _adminTimelock;
@@ -54,7 +55,9 @@ contract zip002 is TimelockProposal {
     function _afterDeploy() internal override {
         /// For the sake of testing, give the ADMIN role to the ADMIN_TIMELOCK_CONTROLLER.
         /// This is not possible onchain as the deployer is not an Admin
-        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+        if (block.chainid != Constants.ARBITRUM_MAINNET) {
+            _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+        }
 
         /// The ADMIN_MULTISIG now needs to give the ADMIN role to the ADMIN_TIMELOCK_CONTROLLER
         console.log("Please give Roles.Admin to the ADMIN_TIMELOCK_CONTROLLER from the ADMIN_MULTISIG");

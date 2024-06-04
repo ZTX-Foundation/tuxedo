@@ -60,10 +60,6 @@ abstract contract Proposal is Test, Script, IProposal {
         vm.startBroadcast(deployer);
         _beforeDeploy();
         _deploy();
-        vm.stopBroadcast();
-
-        address afterDeployCaller = addresses.getAddress("AFTER_DEPLOY_CALLER");
-        vm.startBroadcast(afterDeployCaller);
         _afterDeploy();
         vm.stopBroadcast();
 
