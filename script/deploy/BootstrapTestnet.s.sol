@@ -67,7 +67,7 @@ contract BootstrapTestnet is Script {
         proposals.push(Proposal(address(new zip016()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip017()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip018()))); /// MaxSupply settings proposal
-        proposals.push(Proposal(address(new zip015()))); /// MaxSupply settings proposal
+        proposals.push(Proposal(address(new zip015()))); /// Sales contract proposal
     }
 
     function run() public {
