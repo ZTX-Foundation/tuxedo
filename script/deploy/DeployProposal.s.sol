@@ -18,6 +18,8 @@ Remove --broadcast if you want to try locally first, without paying any gas.
 
 contract DeployProposal is Script {
     TimelockProposal newProposal;
+    Addresses addresses;
+    
     function setUp() public {
         string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
         string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
