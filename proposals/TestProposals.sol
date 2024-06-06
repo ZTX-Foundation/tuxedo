@@ -4,8 +4,8 @@ pragma solidity ^0.8.18;
 import {console} from "@forge-std/console.sol";
 import {Test} from "@forge-std/Test.sol";
 
-import {Addresses} from "proposals/Addresses.sol";
-import {Proposal} from "proposals/proposalTypes/Proposal.sol";
+import {Addresses} from "@forge-proposal-simulator/addresses/Addresses.sol";
+import {Proposal} from "@forge-proposal-simulator/src/proposals/Proposal.sol";
 import {Constants} from 'proposals/utils/Constants.sol';
 
 import {zip000} from "proposals/zips/zip000.sol";
@@ -46,6 +46,10 @@ contract TestProposals is Test {
 
     function setUp() public {
 
+        string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
+        string memory addressesPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
+        addresses = new Addresses(addressesPath);
+
         // Load proposals
         if (block.chainid == Constants.ANVIL) {
             proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
@@ -65,14 +69,12 @@ contract TestProposals is Test {
             proposals.push(Proposal(address(new zip014()))); /// MaxSupply settings proposal
             proposals.push(Proposal(address(new zip016()))); /// MaxSupply settings proposal
             proposals.push(Proposal(address(new zip017()))); /// MaxSupply settings proposal
-            // proposals.push(Proposal(address(new zip018()))); /// MaxSupply settings proposal
+            proposals.push(Proposal(address(new zip018()))); /// MaxSupply settings proposal
         }
 
         proposals.push(Proposal(address(new zipTest()))); /// RnD/testing only proposal
 
-        addresses = proposals[0].addresses();
-
-        for (uint256 i = 1; i < proposals.length; i++) {
+        for (uint256 i = 0; i < proposals.length; i++) {
             proposals[i].setAddresses(addresses);
         }
 
@@ -92,8 +94,7 @@ contract TestProposals is Test {
             proposals[i].run();
 
             /// output deployed contract addresses and names
-            proposals[i].addresses().printRecordedAddresses();
-            proposals[i].addresses().printChangedAddresses();
+            proposals[i].addresses().printJSONChanges();
 
             /// take new snapshot
             postProposalVmSnapshots[i] = vm.snapshot();
