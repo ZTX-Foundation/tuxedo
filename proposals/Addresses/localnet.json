@@ -54,13 +54,7 @@
         "isContract": false
     },
     {
-        "name": "FINANCE_GUARDIAN_MULTISIG",
-        "chainid": 31337,
-        "addr": "0x0000000000000000000000000000000000000003",
-        "isContract": false
-    },
-    {
-        "name": "DEPLOYER",
+        "name": "DEPLOYER_EOA",
         "chainid": 31337,
         "addr": "0x0000000000000000000000000000000000000108",
         "isContract": false
