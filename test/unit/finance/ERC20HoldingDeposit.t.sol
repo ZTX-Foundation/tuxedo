@@ -3,12 +3,12 @@ pragma solidity 0.8.18;
 import "@forge-std/Test.sol";
 
 import {Core} from "@protocol/core/Core.sol";
-import {MockERC20} from "@test/mock/MockERC20.sol";
+import {MockERC20} from "test//mock/MockERC20.sol";
 import {Roles} from "@protocol/core/Roles.sol";
-import {MockERC20, IERC20} from "@test/mock/MockERC20.sol";
+import {MockERC20, IERC20} from "test//mock/MockERC20.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
-import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
-import {getCore} from "@test/fixtures/Fixtures.sol";
+import {TestAddresses as addresses} from "test//fixtures/TestAddresses.sol";
+import {getCore} from "test//fixtures/Fixtures.sol";
 
 contract UnitTestERC20HoldingsDeposit is Test {
     event Deposit(address indexed _from, uint256 _amount);

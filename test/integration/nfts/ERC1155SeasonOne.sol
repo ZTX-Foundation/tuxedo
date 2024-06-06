@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {BaseTest} from "@test/integration/BaseTest.sol";
+import {BaseTest} from "test//integration/BaseTest.sol";
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
-import {SeasonBase} from "@test/unit/nfts/seasons/SeasonBase.t.sol";
+import {SeasonBase} from "test//unit/nfts/seasons/SeasonBase.t.sol";
 import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
-import {ERC1155AutoGraphMinterHelperLib} from "@test/helpers/ERC1155AutoGraphMinterHelper.sol";
+import {ERC1155AutoGraphMinterHelperLib} from "test//helpers/ERC1155AutoGraphMinterHelper.sol";
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
-import {ERC1155SeaonsHelperLib as Helper} from "@test/helpers/ERC1155SeasonsHelper.sol";
+import {ERC1155SeaonsHelperLib as Helper} from "test//helpers/ERC1155SeasonsHelper.sol";
 import {Token} from "@protocol/token/Token.sol";
 
 contract IntegrationTestERC1155SeasonOne is BaseTest {

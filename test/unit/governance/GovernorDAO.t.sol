@@ -9,11 +9,11 @@ import {GovernorCountingSimple} from "@openzeppelin/contracts/governance/extensi
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
 
 import {Core} from "@protocol/core/Core.sol";
-import {getCore} from "@test/fixtures/Fixtures.sol";
+import {getCore} from "test//fixtures/Fixtures.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {GovernorDAO} from "@protocol/governance/GovernorDAO.sol";
-import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
-import {MockERC20} from "@test/mock/MockERC20.sol";
+import {TestAddresses as addresses} from "test//fixtures/TestAddresses.sol";
+import {MockERC20} from "test//mock/MockERC20.sol";
 
 contract UnitTestGovernorDAO is Test {
     Core private core;

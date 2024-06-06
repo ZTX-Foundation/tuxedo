@@ -1,9 +1,10 @@
 [profile.default]
 src = 'src'
-fs_permissions = [{ access = "read", path = "./proposals"}]
+fs_permissions = [{ access = "read", path = "./"}]
 out = 'out'
 libs = ['lib']
-solc_version = '0.8.18'
+auto_detect_solc = true
+evm_version="Cancun"
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
 

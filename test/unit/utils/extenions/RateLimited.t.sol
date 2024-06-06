@@ -7,10 +7,10 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 import {Core} from "@protocol/core/Core.sol";
-import {MockRateLimited} from "@test/mock/MockRateLimited.sol";
-import {getCore} from "@test/fixtures/Fixtures.sol";
+import {MockRateLimited} from "test//mock/MockRateLimited.sol";
+import {getCore} from "test//fixtures/Fixtures.sol";
 
-import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
+import {TestAddresses as addresses} from "test//fixtures/TestAddresses.sol";
 
 contract UnitTestRateLimited is Test {
     using SafeCast for *;

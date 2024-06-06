@@ -8,12 +8,12 @@ import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.
 
 import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
-import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
+import {TestAddresses as addresses} from "test//fixtures/TestAddresses.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
-import {SeasonBase} from "@test/unit/nfts/seasons/SeasonBase.t.sol";
+import {SeasonBase} from "test//unit/nfts/seasons/SeasonBase.t.sol";
 import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
-import {ERC1155SeaonsHelperLib as Helper} from "@test/helpers/ERC1155SeasonsHelper.sol";
+import {ERC1155SeaonsHelperLib as Helper} from "test//helpers/ERC1155SeasonsHelper.sol";
 
 contract UnitTestERC1155SeasonOne is SeasonBase {
     /// ----------------------------------- Events ----------------------------------------------/

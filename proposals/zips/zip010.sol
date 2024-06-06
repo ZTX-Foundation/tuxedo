@@ -1,11 +1,9 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
-import "@forge-std/console.sol";
+import {console} from "@forge-std/console.sol";
+import {TimelockProposal} from "@forge-proposal-simulator/src/proposals/TimelockProposal.sol";
 
-import {Addresses} from "@proposals/Addresses.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
 contract zip010 is TimelockProposal {
@@ -17,8 +15,6 @@ contract zip010 is TimelockProposal {
 
     TokenIDMaxSupplySettings[] private placeableTokenIDMaxSupplySettings;
 
-    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
-
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
         return "ZIP010";
@@ -29,7 +25,7 @@ contract zip010 is TimelockProposal {
         return "ZTX CGv1.3 MaxSupply updates";
     }
 
-    function setAndConfirmPaceableData() private {
+    function _setAndConfirmPaceableData() private {
         // Paceable data
         string memory placeableData = string(
             abi.encodePacked(vm.readFile("./proposals/zips/zip010.json"))
@@ -56,22 +52,37 @@ contract zip010 is TimelockProposal {
         assertEq(maxSupplyTotal, 100_000, "Invalid maxSupplyTotal");
     }
 
-    function _beforeDeploy() internal override {
-        setAndConfirmPaceableData();
-    }
-
-    function _build() internal override {
+    function build()
+        public
+        override
+        buildModifier(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")) 
+    {
         /// Paceable config
         ERC1155MaxSupplyMintable placeables = ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
         placeables.setSupplyCap(placeableTokenIDMaxSupplySettings[0].tokenId, placeableTokenIDMaxSupplySettings[0].maxSupply);
     }
 
-    function _validate() internal override {
+    function run() public override {
+        setTimelock(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+
+        _setAndConfirmPaceableData();
+        
+        super.run();
+    }
+
+    function simulate() public override {
+        address multisig = addresses.getAddress("ADMIN_MULTISIG");
+
+        /// Multisig is proposer and executor
+        _simulateActions(multisig, multisig);
+    }
+
+    function validate() public override {
         ERC1155MaxSupplyMintable placeable = ERC1155MaxSupplyMintable(
             addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
         );
 
-        /// Verfiy Paceable
+        /// Verify Paceable
         uint256 tokenId = placeableTokenIDMaxSupplySettings[0].tokenId;
         uint256 maxSupply = placeableTokenIDMaxSupplySettings[0].maxSupply;
         uint256 currentSupply = placeable.totalSupply(tokenId);

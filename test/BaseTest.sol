@@ -6,16 +6,16 @@ import {ERC1155Holder} from "@openzeppelin/contracts/token/ERC1155/utils/ERC1155
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
-import {MockWeth} from "@test/mock/MockWeth.sol";
-import {MockERC20} from "@test/mock/MockERC20.sol";
+import {MockWeth} from "test//mock/MockWeth.sol";
+import {MockERC20} from "test//mock/MockERC20.sol";
 import {Constants} from "@protocol/Constants.sol";
 import {ERC1155Sale} from "@protocol/sale/ERC1155Sale.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
-import {MockERC20, IERC20} from "@test/mock/MockERC20.sol";
+import {MockERC20, IERC20} from "test//mock/MockERC20.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
-import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
-import {getSystem, configureSale, setSupplyCap} from "@test/fixtures/Fixtures.sol";
+import {TestAddresses as addresses} from "test//fixtures/TestAddresses.sol";
+import {getSystem, configureSale, setSupplyCap} from "test//fixtures/Fixtures.sol";
 
 contract BaseTest is Test, ERC1155Holder {
     Core public core;

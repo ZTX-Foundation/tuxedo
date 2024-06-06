@@ -1,8 +1,8 @@
 pragma solidity 0.8.18;
 
-import "@test/BaseTest.sol";
-import {SingleFunctionReentrancy} from "@test/mock/SingleFunctionReentrancy.sol";
-import {CrossFunctionReentrancy} from "@test/mock/CrossFunctionReentrancy.sol";
+import "test//BaseTest.sol";
+import {SingleFunctionReentrancy} from "test//mock/SingleFunctionReentrancy.sol";
+import {CrossFunctionReentrancy} from "test//mock/CrossFunctionReentrancy.sol";
 
 contract UnitTestERC1155Reentrancy is BaseTest {
 

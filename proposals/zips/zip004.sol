@@ -3,21 +3,13 @@ pragma solidity 0.8.18;
 
 import {console} from "@forge-std/console.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {TimelockProposal} from "@forge-proposal-simulator/src/proposals/TimelockProposal.sol";
 
-import {Addresses} from "@proposals/Addresses.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
-
-import {Core} from "@protocol/core/Core.sol";
-import {Roles} from "@protocol/core/Roles.sol";
-import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
-import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 
 contract zip004 is TimelockProposal {
-    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
 
     struct TokenIDMaxSupplySettings {
         uint256 tokenId;
@@ -30,8 +22,6 @@ contract zip004 is TimelockProposal {
 
     TokenIdRewardAmount[] public tokenIdRewardAmounts;
 
-    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
-
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
         return "ZIP004";
@@ -42,7 +32,7 @@ contract zip004 is TimelockProposal {
         return "ZTX CGv1 tokenIds, MaxSupply and Capsules config proposal";
     }
 
-    function setAndConfirmPlaceableData() public {
+    function _setAndConfirmPlaceableData() private {
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(1, 100_000));
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(4, 100_000));
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(12, 100_000));
@@ -140,7 +130,7 @@ contract zip004 is TimelockProposal {
         assertEq(maxSupplyTotal, 3_852_700, "Invalid maxSupplyTotal");
     }
 
-    function setAndConfirmWearableData() public {
+    function _setAndConfirmWearableData() private {
         wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(1, 100_000));
         wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(2, 6000));
         wearableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(3, 6000));
@@ -169,7 +159,7 @@ contract zip004 is TimelockProposal {
         assertEq(maxSupplyTotal, 331500, "Invalid maxSupplyTotal");
     }
 
-    function setAndConfirmConsumableData() public {
+    function _setAndConfirmConsumableData() private {
         consumableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(1, 15_000));
         consumableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(2, 5538));
         consumableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(3, 2025));
@@ -190,7 +180,7 @@ contract zip004 is TimelockProposal {
         assertEq(maxSupplyTotal, 22_563, "Invalid maxSupplyTotal");
     }
 
-    function setAndConfirmSeaonOneData() public {
+    function _setAndConfirmSeaonOneData() private {
         // config the season distribution
         tokenIdRewardAmounts.push(TokenIdRewardAmount({tokenId: 1, rewardAmount: 300e18}));
         tokenIdRewardAmounts.push(TokenIdRewardAmount({tokenId: 2, rewardAmount: 2167e18}));
@@ -212,14 +202,11 @@ contract zip004 is TimelockProposal {
         assertEq(rewardAmountTotal, 9134e18, "Invalid rewardAmountTotal"); // numbers from santiy check sheet
     }
 
-    function _beforeDeploy() internal override {
-        setAndConfirmPlaceableData();
-        setAndConfirmWearableData();
-        setAndConfirmConsumableData();
-        setAndConfirmSeaonOneData();
-    }
-
-    function _build() internal override {
+    function build()
+        public
+        override
+        buildModifier(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")) 
+    {
         ERC1155MaxSupplyMintable placeable = ERC1155MaxSupplyMintable(
                 addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
             );
@@ -251,8 +238,26 @@ contract zip004 is TimelockProposal {
         seasonOne.initalizeSeasonDistribution(tokenIdRewardAmounts);
     }
 
-    function _validate() internal override {
-        /// Verfiy Placeable
+    function run() public override {
+        setTimelock(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+
+        _setAndConfirmPlaceableData();
+        _setAndConfirmWearableData();
+        _setAndConfirmConsumableData();
+        _setAndConfirmSeaonOneData();
+
+        super.run();
+    }
+
+    function simulate() public override {
+        address multisig = addresses.getAddress("ADMIN_MULTISIG");
+
+        /// Multisig is proposer and executor
+        _simulateActions(multisig, multisig);
+    }
+
+    function validate() public override {
+        /// Verify Placeable
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
             uint256 tokenId = placeableTokenIDMaxSupplySettings[i].tokenId;
             uint256 maxSupply = placeableTokenIDMaxSupplySettings[i].maxSupply;
@@ -265,7 +270,7 @@ contract zip004 is TimelockProposal {
             assertEq(placeable.getMintAmountLeft(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
         }
 
-        /// Verfiy Wearable
+        /// Verify Wearable
         for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
             uint256 tokenId = wearableTokenIDMaxSupplySettings[i].tokenId;
             uint256 maxSupply = wearableTokenIDMaxSupplySettings[i].maxSupply;
@@ -278,7 +283,7 @@ contract zip004 is TimelockProposal {
             assertEq(wearable.getMintAmountLeft(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
         }
 
-        /// Verfiy Consumable
+        /// Verify Consumable
         for (uint256 i = 0; i < consumableTokenIDMaxSupplySettings.length; i++) {
             uint256 tokenId = consumableTokenIDMaxSupplySettings[i].tokenId;
             uint256 maxSupply = consumableTokenIDMaxSupplySettings[i].maxSupply;
@@ -291,7 +296,7 @@ contract zip004 is TimelockProposal {
             assertEq(consumable.getMintAmountLeft(tokenId), maxSupply, "Invalid getMintAmountLeft for tokenId");
         }
 
-        /// Verfiy Season One
+        /// Verify Season One
         ERC1155SeasonOne seasonOne = ERC1155SeasonOne(addresses.getAddress("ERC1155_SEASON_ONE"));
 
         assertEq(seasonOne.totalRewardTokens(), 30001521e18, "Invalid totalRewardTokens");

@@ -3,25 +3,19 @@ pragma solidity 0.8.18;
 
 import {console} from "@forge-std/console.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
-import {Addresses} from "@proposals/Addresses.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
+import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
+import {MultisigProposal} from "@forge-proposal-simulator/src/proposals/MultisigProposal.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
-import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
-import {Constants} from '@proposals/utils/Constants.sol';
 
-contract zip002 is TimelockProposal {
+import {Constants} from 'proposals/utils/Constants.sol';
+
+contract zip002 is MultisigProposal {
     TimelockController private _adminTimelock;
     Core private _core;
-
-    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
-
-    constructor() Proposal("ADMIN_MULTISIG") {}
 
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
@@ -33,12 +27,7 @@ contract zip002 is TimelockProposal {
         return "The ZTX TimeLock contract proposal";
     }
 
-    function _beforeDeploy() internal override {
-        /// Get Core Address
-        _core = Core(addresses.getAddress("CORE"));
-    }
-
-    function _deploy() internal override {
+    function deploy() public override {
         /// Admin timelock controller
         address[] memory adminTimelockProposersExecutors = new address[](1);
 
@@ -50,9 +39,7 @@ contract zip002 is TimelockProposal {
             address(0) // No admin requried
         );
         addresses.addAddress("ADMIN_TIMELOCK_CONTROLLER", address(_adminTimelock), true);
-    }
 
-    function _afterDeploy() internal override {
         /// For the sake of testing, give the ADMIN role to the ADMIN_TIMELOCK_CONTROLLER.
         /// This is not possible onchain as the deployer is not an Admin
         if (block.chainid != Constants.ARBITRUM_MAINNET) {
@@ -63,7 +50,17 @@ contract zip002 is TimelockProposal {
         console.log("Please give Roles.Admin to the ADMIN_TIMELOCK_CONTROLLER from the ADMIN_MULTISIG");
     }
 
-    function _validate() internal override {
+    function run() public override {
+        // No actions to print
+        DO_PRINT = false;
+
+        /// Get Core Address
+        _core = Core(addresses.getAddress("CORE"));
+
+        super.run();
+    }
+
+    function validate() public override {
         /// Check that the ADMIN_MULTISIG has the PROPOSER role
         assertEq(
             _adminTimelock.hasRole(_adminTimelock.PROPOSER_ROLE(), addresses.getAddress("ADMIN_MULTISIG")),

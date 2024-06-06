@@ -9,7 +9,7 @@ import {console} from "@forge-std/console.sol";
 
 import {Script} from "@forge-std/Script.sol";
 import {IProposal} from "./IProposal.sol";
-import {Addresses} from "@proposals/Addresses.sol";
+import {Addresses} from "proposals/Addresses.sol";
 
 abstract contract Proposal is Test, Script, IProposal {
     using Strings for *;

@@ -1,11 +1,9 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
-import {Addresses} from "@proposals/Addresses.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
+import {TimelockProposal} from "proposals/proposalTypes/TimelockProposal.sol";
 
 contract zipTemplate is TimelockProposal {
-    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
 
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
@@ -17,17 +15,28 @@ contract zipTemplate is TimelockProposal {
         return "Template proposal";
     }
 
-    function _beforeDeploy() internal override {}
+    function deploy() public override {}
 
-    function _deploy() internal override {}
+    function build()
+        public
+        override
+        buildModifier(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")) 
+    {}
 
-    function _afterDeploy() internal override {}
+    function run() public override {
+        setTimelock(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
 
-    function _build() internal override {}
+        super.run();
+    }
 
-    function _run() internal override {}
+    function simulate() public override {
+        address multisig = addresses.getAddress("ADMIN_MULTISIG");
 
-    function _teardown() internal override {}
+        /// Multisig is proposer and executor
+        _simulateActions(multisig, multisig);
+    }
 
-    function _validate() internal override {}
+    function teardown() public override {}
+
+    function validate() public override {}
 }

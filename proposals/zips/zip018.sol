@@ -1,11 +1,9 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity 0.8.18;
+pragma solidity ^0.8.18;
 
-import "@forge-std/console.sol";
+import {console} from "@forge-std/console.sol";
+import {TimelockProposal} from "@forge-proposal-simulator/src/proposals/TimelockProposal.sol";
 
-import {Addresses} from "@proposals/Addresses.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
 contract zip018 is TimelockProposal {
@@ -27,15 +25,6 @@ contract zip018 is TimelockProposal {
     ERC1155MaxSupplyMintable placeable;
     ERC1155MaxSupplyMintable wearable;
 
-    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {
-        placeable = ERC1155MaxSupplyMintable(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
-        );
-        wearable = ERC1155MaxSupplyMintable(
-            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
-        );
-    }
-
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
         return "ZIP018";
@@ -46,7 +35,7 @@ contract zip018 is TimelockProposal {
         return "ZTX CGv1.4 MaxSupply updates";
     }
 
-    function setAndConfirmData() private {
+    function _setAndConfirmData() private {
         // Wearable and placeable data
         string memory data = string(
             abi.encodePacked(vm.readFile("./proposals/zips/zip018.json"))
@@ -100,11 +89,11 @@ contract zip018 is TimelockProposal {
         assertEq(wearableMaxSupplyTotal, 268, "Invalid maxSupplyTotal for wearables");
     }
 
-    function _beforeDeploy() internal override {
-        setAndConfirmData();
-    }
-
-    function _build() internal override {
+    function build()
+        public
+        override
+        buildModifier(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")) 
+    {
          /// @notice placeable config
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
             placeable.setSupplyCap(placeableTokenIDMaxSupplySettings[i].tokenId, placeableTokenIDMaxSupplySettings[i].maxSupply);
@@ -116,7 +105,29 @@ contract zip018 is TimelockProposal {
         }
     }
 
-    function _validate() internal override {
+    function run() public override {
+        setTimelock(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+
+        placeable = ERC1155MaxSupplyMintable(
+            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")
+        );
+        wearable = ERC1155MaxSupplyMintable(
+            addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
+        );
+
+        _setAndConfirmData();
+
+        super.run();
+    }
+
+    function simulate() public override {
+        address multisig = addresses.getAddress("ADMIN_MULTISIG");
+
+        /// Multisig is proposer and executor
+        _simulateActions(multisig, multisig);
+    }
+
+    function validate() public override {
         /// @notice verify placeables
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
             uint256 tokenId = placeableTokenIDMaxSupplySettings[i].tokenId;

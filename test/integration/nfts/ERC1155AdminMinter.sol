@@ -4,7 +4,7 @@ import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {ERC1155AdminMinter} from "@protocol/nfts/ERC1155AdminMinter.sol";
-import {BaseTest} from "@test/integration/BaseTest.sol";
+import {BaseTest} from "test//integration/BaseTest.sol";
 
 contract IntegrationTestERC1155AdminMinter is BaseTest {
     address multisig;
