@@ -1,6 +1,6 @@
 pragma solidity 0.8.18;
 
-import {BaseTest} from "test//BaseTest.sol";
+import {BaseTest} from "test/BaseTest.sol";
 
 import {PlayTest} from "@protocol/nfts/PlayTest.sol";
 

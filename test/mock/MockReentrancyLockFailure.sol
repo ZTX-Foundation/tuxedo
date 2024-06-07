@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
-import {MockReentrancyLock} from "test//mock/MockReentrancyLock.sol";
+import {MockReentrancyLock} from "test/mock/MockReentrancyLock.sol";
 import {IGlobalReentrancyLock} from "@protocol/core/IGlobalReentrancyLock.sol";
 
 contract MockReentrancyLockFailure is CoreRef {

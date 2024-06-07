@@ -3,12 +3,12 @@ pragma solidity 0.8.18;
 
 import {Test} from "@forge-std/Test.sol";
 
-import {MockERC721} from "test//mock/MockERC721.sol";
+import {MockERC721} from "test/mock/MockERC721.sol";
 import {Addresses} from "@forge-proposal-simulator/addresses/Addresses.sol";
-import {MerkleProof} from "test//fixtures/MerkleProof.sol";
-import {TestAddresses as testAddresses} from "test//fixtures/TestAddresses.sol";
-import {configureSale, setSupplyCap} from "test//fixtures/Fixtures.sol";
-import {BaseTest} from "test//integration/BaseTest.sol";
+import {MerkleProof} from "test/fixtures/MerkleProof.sol";
+import {TestAddresses as testAddresses} from "test/fixtures/TestAddresses.sol";
+import {configureSale, setSupplyCap} from "test/fixtures/Fixtures.sol";
+import {BaseTest} from "test/integration/BaseTest.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";

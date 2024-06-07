@@ -8,7 +8,7 @@ import {TimelockController} from "@openzeppelin/contracts/governance/TimelockCon
 
 import {Addresses} from "@forge-proposal-simulator/addresses/Addresses.sol";
 import {TestProposals} from "proposals/TestProposals.sol";
-import {BaseTest} from "test//integration/BaseTest.sol";
+import {BaseTest} from "test/integration/BaseTest.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";

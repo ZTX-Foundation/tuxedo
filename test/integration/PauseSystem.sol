@@ -3,7 +3,7 @@ pragma solidity 0.8.18;
 
 import {Test} from "@forge-std/Test.sol";
 
-import {BasePauseSystem} from "test//integration/BasePauseSystem.sol";
+import {BasePauseSystem} from "test/integration/BasePauseSystem.sol";
 
 /// @title Integration tests for pausing and unpausing the system
 contract IntegrationTestPauseSystem is BasePauseSystem {

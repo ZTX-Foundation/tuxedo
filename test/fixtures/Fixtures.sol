@@ -7,8 +7,8 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
-import {MockWeth} from "test//mock/MockWeth.sol";
-import {MockERC20} from "test//mock/MockERC20.sol";
+import {MockWeth} from "test/mock/MockWeth.sol";
+import {MockERC20} from "test/mock/MockERC20.sol";
 import {ERC1155Sale} from "@protocol/sale/ERC1155Sale.sol";
 import {TestAddresses} from "./TestAddresses.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";

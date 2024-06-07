@@ -1,6 +1,6 @@
 pragma solidity 0.8.18;
 
-import "test//BaseTest.sol";
+import "test/BaseTest.sol";
 
 contract UnitTestERC1155MaxSupplyMintable is BaseTest {
     function setUp() public override {

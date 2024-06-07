@@ -4,16 +4,16 @@ import "@forge-std/Test.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
-import {MockERC20} from "test//mock/MockERC20.sol";
+import {MockERC20} from "test/mock/MockERC20.sol";
 import {Constants} from "@protocol/Constants.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
-import {MockERC20, IERC20} from "test//mock/MockERC20.sol";
+import {MockERC20, IERC20} from "test/mock/MockERC20.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
-import {TestAddresses as addresses} from "test//fixtures/TestAddresses.sol";
-import {ERC1155AutoGraphMinterHelperLib as Helper} from "test//helpers/ERC1155AutoGraphMinterHelper.sol";
-import {BaseTest} from "test//BaseTest.sol";
+import {TestAddresses as addresses} from "test/fixtures/TestAddresses.sol";
+import {ERC1155AutoGraphMinterHelperLib as Helper} from "test/helpers/ERC1155AutoGraphMinterHelper.sol";
+import {BaseTest} from "test/BaseTest.sol";
 
 contract UnitTestERC1155AutoGraphMinter is BaseTest {
     ERC1155AutoGraphMinter private _autoGraphMinter;
