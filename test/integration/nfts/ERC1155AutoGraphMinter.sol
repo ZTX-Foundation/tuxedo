@@ -1,12 +1,12 @@
 pragma solidity 0.8.18;
 
-import {ERC1155AutoGraphMinterHelperLib as Helper} from "@test/helpers/ERC1155AutoGraphMinterHelper.sol";
+import {ERC1155AutoGraphMinterHelperLib as Helper} from "test/helpers/ERC1155AutoGraphMinterHelper.sol";
 
 import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
-import {BaseTest} from "@test/integration/BaseTest.sol";
+import {BaseTest} from "test/integration/BaseTest.sol";
 
 import {Token} from "@protocol/token/Token.sol";
 

@@ -3,19 +3,12 @@ pragma solidity 0.8.18;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {Addresses} from "@proposals/Addresses.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
+import {MultisigProposal} from "@forge-proposal-simulator/src/proposals/MultisigProposal.sol";
 
-import {Core} from "@protocol/core/Core.sol";
-import {Roles} from "@protocol/core/Roles.sol";
 import {Token, MAX_SUPPLY} from "@protocol/token/Token.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
 
-contract zip000 is TimelockProposal {
-    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
-
-    constructor() Proposal("DEPLOYER") {}
+contract zip000 is MultisigProposal {
 
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
@@ -27,9 +20,7 @@ contract zip000 is TimelockProposal {
         return "The ZTX Genesis Proposal";
     }
 
-    function _beforeDeploy() internal override {}
-
-    function _deploy() internal override {
+    function deploy() public override {
         /// Token deployment
         {
             Token token = new Token(
@@ -38,18 +29,23 @@ contract zip000 is TimelockProposal {
             );
             addresses.addAddress("TOKEN", address(token), true);
         }
-    }
 
-    function _afterDeploy() internal override {
         /// Token transfer
         IERC20(addresses.getAddress("TOKEN")).transfer(addresses.getAddress("TREASURY_WALLET_MULTISIG"), MAX_SUPPLY);
     }
 
-    function _validate() internal override {
+    function validate() public override {
         /// Check Treasury balance
         assertEq(
             IERC20(addresses.getAddress("TOKEN")).balanceOf(addresses.getAddress("TREASURY_WALLET_MULTISIG")),
-            10_000_000_000e18 // hardcoded to verfiy all code is working
+            10_000_000_000e18 // hardcoded to Verify all code is working
         );
+    }
+
+    function run() public override {
+        // No actions to print
+        DO_PRINT = false;
+
+        super.run();
     }
 }

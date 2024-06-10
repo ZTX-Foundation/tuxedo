@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
+import {TestAddresses as addresses} from "test/fixtures/TestAddresses.sol";
 import {ActualERC721Staking} from "@protocol/nfts/staking/ActualERC721Staking.sol";
 import {ERC721Holder} from "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import {MockERC721} from "@test/mock/MockERC721.sol";
-import {BaseTest} from "@test/BaseTest.sol";
+import {MockERC721} from "test/mock/MockERC721.sol";
+import {BaseTest} from "test/BaseTest.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import "@forge-std/Test.sol";

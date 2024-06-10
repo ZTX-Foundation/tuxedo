@@ -18,12 +18,6 @@
         "isContract": false
     },
     {
-        "name": "FINANCE_GUARDIAN_MULTISIG",
-        "addr": "0x37fe83f2bEC3C86A71864e80c1F1fE6AFE239d54",
-        "chainId": 421614,
-        "isContract": false
-    },
-    {
         "name": "REVENUE_WALLET_MULTISIG01",
         "addr": "0x0e6aCa776b3d12dd85363Fd6050eE05A4a242be9",
         "chainId": 421614,

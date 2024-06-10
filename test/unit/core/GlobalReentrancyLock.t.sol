@@ -5,11 +5,11 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import {Core} from "@protocol/core/Core.sol";
-import {getCore} from "@test/fixtures/Fixtures.sol";
+import {getCore} from "test/fixtures/Fixtures.sol";
 import {Roles} from "@protocol/core/Roles.sol";
-import {MockReentrancyLock} from "@test/mock/MockReentrancyLock.sol";
-import {MockReentrancyLockFailure} from "@test/mock/MockReentrancyLockFailure.sol";
-import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
+import {MockReentrancyLock} from "test/mock/MockReentrancyLock.sol";
+import {MockReentrancyLockFailure} from "test/mock/MockReentrancyLockFailure.sol";
+import {TestAddresses as addresses} from "test/fixtures/TestAddresses.sol";
 import {IGlobalReentrancyLock, GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 
 import "@forge-std/Test.sol";

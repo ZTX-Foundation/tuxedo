@@ -6,9 +6,9 @@ import {Test} from "@forge-std/Test.sol";
 import {IGovernor} from "@openzeppelin/contracts/governance/IGovernor.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
 
-import {Addresses} from "@proposals/Addresses.sol";
-import {TestProposals} from "@proposals/TestProposals.sol";
-import {BaseTest} from "@test/integration/BaseTest.sol";
+import {Addresses} from "@forge-proposal-simulator/addresses/Addresses.sol";
+import {TestProposals} from "proposals/TestProposals.sol";
+import {BaseTest} from "test/integration/BaseTest.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";

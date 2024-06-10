@@ -1,38 +1,22 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity 0.8.18;
+pragma solidity ^0.8.18;
 
-import {console} from "@forge-std/console.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IVotes} from "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
-
-import {Addresses} from "@proposals/Addresses.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
+import {TimelockProposal} from "@forge-proposal-simulator/src/proposals/TimelockProposal.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {Token} from "@protocol/token/Token.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
 import {ERC1155Sale} from "@protocol/sale/ERC1155Sale.sol";
-import {GameConsumer} from "@protocol/game/GameConsumer.sol";
 import {GovernorDAO} from "@protocol/governance/GovernorDAO.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
-import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
-import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {ERC20HoldingDeposit} from "@protocol/finance/ERC20HoldingDeposit.sol";
-import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
-import {ERC1155SeasonTwo} from "@protocol/nfts/seasons/ERC1155SeasonTwo.sol";
-import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
-import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 
 contract zipTest is TimelockProposal {
-    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
 
     Core private _core;
     address[] public whitelistAddresses;
-
-    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
 
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
@@ -44,11 +28,7 @@ contract zipTest is TimelockProposal {
         return "The Last ZTX Proposal (For Testing only)";
     }
 
-    function _beforeDeploy() internal override {
-        _core = Core(addresses.getAddress("CORE"));
-    }
-
-    function _deploy() internal override {
+    function deploy() public override {
         {
             ERC20HoldingDeposit wethErc20HoldingDeposit = new ERC20HoldingDeposit(
                 address(_core),
@@ -84,7 +64,7 @@ contract zipTest is TimelockProposal {
 
         {
             /// Timelock Controller (Governor Bravo DAO)
-            address governorDAOTimelockAdmin = addresses.getAddress("DEPLOYER");
+            address governorDAOTimelockAdmin = addresses.getAddress("DEPLOYER_EOA");
 
             // /// @notice set a temporary admin and then transfer
             TimelockController governorDAOTimelock = new TimelockController(
@@ -153,7 +133,61 @@ contract zipTest is TimelockProposal {
         }
     }
 
-    function _validate() internal override {
+    function build()
+        public
+        override
+        buildModifier(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")) 
+    {
+        /// ADMIN role
+        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+
+        /// LOCKER role
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
+        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
+
+        /// MINTER role
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
+
+        /// TOKEN_GOVERNOR role
+        _core.grantRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, addresses.getAddress("GOVERNOR_DAO"));
+
+        /// GUARDIAN role
+        _core.grantRole(Roles.GUARDIAN, addresses.getAddress("GUARDIAN_MULTISIG"));
+
+        /// FINANCIAL_CONTROLLER role
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("TREASURY_WALLET_MULTISIG"));
+        _core.grantRole(
+            Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
+            addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT")
+        );
+        _core.grantRole(
+            Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
+            addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER")
+        );
+
+        /// FINANCIAL_GUARDIAN Role
+        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("GUARDIAN_MULTISIG"));
+    }
+
+    function run() public override {
+        // set core
+        _core = Core(addresses.getAddress("CORE"));
+        setTimelock(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+
+        super.run();
+    }
+
+    function simulate() public override {
+        address multisig = addresses.getAddress("ADMIN_MULTISIG");
+
+        /// Multisig is proposer and executor
+        _simulateActions(multisig, multisig);
+    }
+
+    function validate() public override {
         assertEq(
             address(ERC1155Sale(addresses.getAddress("ERC1155_SALE_CONSUMABLES")).core()),
             address(_core),
@@ -245,40 +279,5 @@ contract zipTest is TimelockProposal {
             _core.getRoleMember(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, 1),
             addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT")
         );
-    }
-
-    function _build() internal override {
-        /// ADMIN role
-        _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
-
-        /// LOCKER role
-        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
-        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
-        _core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
-
-        /// MINTER role
-        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_CONSUMABLES"));
-        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_PLACEABLES"));
-        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_SALE_WEARABLES"));
-
-        /// TOKEN_GOVERNOR role
-        _core.grantRole(Roles.GOVERNOR_DAO_PROTOCOL_ROLE, addresses.getAddress("GOVERNOR_DAO"));
-
-        /// GUARDIAN role
-        _core.grantRole(Roles.GUARDIAN, addresses.getAddress("GUARDIAN_MULTISIG"));
-
-        /// FINANCIAL_CONTROLLER role
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("TREASURY_WALLET_MULTISIG"));
-        _core.grantRole(
-            Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
-            addresses.getAddress("WETH_TREASURY_HOLDING_DEPOSIT")
-        );
-        _core.grantRole(
-            Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE,
-            addresses.getAddress("GOVERNOR_DAO_TIMELOCK_CONTROLLER")
-        );
-
-        /// FINANCIAL_GUARDIAN Role
-        _core.grantRole(Roles.FINANCIAL_CONTROLLER_PROTOCOL_ROLE, addresses.getAddress("FINANCE_GUARDIAN_MULTISIG"));
     }
 }

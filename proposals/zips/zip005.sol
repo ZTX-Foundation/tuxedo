@@ -1,13 +1,11 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
-import {Addresses} from "@proposals/Addresses.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
+import {TimelockProposal} from "@forge-proposal-simulator/src/proposals/TimelockProposal.sol";
+
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 
 contract zip005 is TimelockProposal {
-    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
 
     struct TokenIDMaxSupplySettings {
         uint256 tokenId;
@@ -15,8 +13,6 @@ contract zip005 is TimelockProposal {
     }
 
     TokenIDMaxSupplySettings[] private placeableTokenIDMaxSupplySettings;
-
-    constructor() Proposal("ADMIN_TIMELOCK_CONTROLLER") {}
 
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
@@ -28,7 +24,7 @@ contract zip005 is TimelockProposal {
         return "ZTX CGv1.2 MaxSupply updates for placeables";
     }
 
-    function setAndConfirmPlaceableData() private {
+    function _setAndConfirmPlaceableData() private {
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(2, 6000));
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(3, 6000));
         placeableTokenIDMaxSupplySettings.push(TokenIDMaxSupplySettings(5, 100000));
@@ -138,11 +134,11 @@ contract zip005 is TimelockProposal {
         assertEq(maxSupplyTotal, 6_380_000, "Invalid maxSupplyTotal");
     }
 
-    function _beforeDeploy() internal override {
-        setAndConfirmPlaceableData();
-    }
-
-    function _build() internal override {
+    function build()
+        public
+        override
+        buildModifier(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")) 
+    {
         /// Placeables config
         ERC1155MaxSupplyMintable placeables = ERC1155MaxSupplyMintable(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES"));
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
@@ -150,8 +146,23 @@ contract zip005 is TimelockProposal {
         }
     }
 
-    function _validate() internal override {
-        /// Verfiy Placeable
+    function run() public override {
+        setTimelock(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
+
+        _setAndConfirmPlaceableData();
+
+        super.run();
+    }
+
+    function simulate() public override {
+        address multisig = addresses.getAddress("ADMIN_MULTISIG");
+
+        /// Multisig is proposer and executor
+        _simulateActions(multisig, multisig);
+    }
+
+    function validate() public override {
+        /// Verify Placeable
         for (uint256 i = 0; i < placeableTokenIDMaxSupplySettings.length; i++) {
             uint256 tokenId = placeableTokenIDMaxSupplySettings[i].tokenId;
             uint256 maxSupply = placeableTokenIDMaxSupplySettings[i].maxSupply;

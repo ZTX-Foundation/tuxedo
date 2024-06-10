@@ -3,7 +3,7 @@
 
 pragma solidity 0.8.18;
 
-import {MockMaliciousReceiver} from "@test/mock/MockMaliciousReceiver.sol";
+import {MockMaliciousReceiver} from "test/mock/MockMaliciousReceiver.sol";
 import {ERC1155Sale} from "@protocol/sale/ERC1155Sale.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 

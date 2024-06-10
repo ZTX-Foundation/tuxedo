@@ -42,12 +42,6 @@
         "isContract": true
     },
     {
-        "name": "ERC1155_MAX_SUPPLY_ADMIN_MINTABLE",
-        "addr": "0xd778a415A3AB81eF27da61218c71a5F31A4D10BE",
-        "chainId": 42161,
-        "isContract": true
-    },
-    {
         "name": "ERC1155_AUTO_GRAPH_MINTER",
         "addr": "0xD031aD02aD4bADFc06b64ec64eBA32cFc781FB9b",
         "chainId": 42161,
@@ -126,19 +120,13 @@
         "isContract": true
     },
     {
-        "name": "FINANCE_GUARDIAN_MULTISIG",
-        "addr": "0xc6a9E0C54A678cC769563204bd84456d7314EF21",
-        "chainId": 42161,
-        "isContract": true
-    },
-    {
         "name": "ERC1155_MAX_SUPPLY_ADMIN_MINTER",
         "addr": "0xd778a415A3AB81eF27da61218c71a5F31A4D10BE",
         "chainId": 42161,
         "isContract": true
     },
     {
-        "name": "DEPLOYER",
+        "name": "DEPLOYER_EOA",
         "addr": "0x6FAEb7C2A9c2BF2d4Da601227A023eCC8FbAC0e6",
         "chainId": 42161,
         "isContract": false

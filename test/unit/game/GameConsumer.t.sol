@@ -1,8 +1,8 @@
 pragma solidity 0.8.18;
 
-import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
+import {TestAddresses as addresses} from "test/fixtures/TestAddresses.sol";
 import {Roles} from "@protocol/core/Roles.sol";
-import {BaseTest} from "@test/BaseTest.sol";
+import {BaseTest} from "test/BaseTest.sol";
 import {GameConsumer} from "@protocol/game/GameConsumer.sol";
 
 contract GameConsumerUnitTest is BaseTest {

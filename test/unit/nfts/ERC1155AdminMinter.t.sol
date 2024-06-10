@@ -4,10 +4,10 @@ import "@forge-std/Test.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
-import {BaseTest} from "@test/BaseTest.sol";
+import {BaseTest} from "test/BaseTest.sol";
 import {ERC1155AdminMinter} from "@protocol/nfts/ERC1155AdminMinter.sol";
-import {TestAddresses as addresses} from "@test/fixtures/TestAddresses.sol";
-import {getSystem, configureSale, setSupplyCap} from "@test/fixtures/Fixtures.sol";
+import {TestAddresses as addresses} from "test/fixtures/TestAddresses.sol";
+import {getSystem, configureSale, setSupplyCap} from "test/fixtures/Fixtures.sol";
 
 contract UnitTestERC1155AdminMinter is BaseTest {
     ERC1155AdminMinter minter;

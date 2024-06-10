@@ -2,7 +2,7 @@ pragma solidity 0.8.18;
 
 import "@forge-std/Test.sol";
 
-import {BaseTest} from "@test/BaseTest.sol";
+import {BaseTest} from "test/BaseTest.sol";
 
 import {ERC721ZepetoUA} from "@protocol/nfts/ERC721ZepetoUA.sol";
 

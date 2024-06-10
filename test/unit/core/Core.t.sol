@@ -1,8 +1,8 @@
 pragma solidity 0.8.18;
 
 import {Core} from "@protocol/core/Core.sol";
-import {getCore, getRevertMessage} from "@test/fixtures/Fixtures.sol";
-import {TestAddresses} from "@test/fixtures/TestAddresses.sol";
+import {getCore, getRevertMessage} from "test/fixtures/Fixtures.sol";
+import {TestAddresses} from "test/fixtures/TestAddresses.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import "@forge-std/Test.sol";
 

@@ -1,30 +1,30 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity 0.8.18;
+pragma solidity ^0.8.18;
 
 import {console} from "@forge-std/console.sol";
 import {Script} from "@forge-std/Script.sol";
-import {Addresses} from "@proposals/Addresses.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
+import {Addresses} from "@forge-proposal-simulator/addresses/Addresses.sol";
+import {Proposal} from "@forge-proposal-simulator/src/proposals/Proposal.sol";
 
-import {zip000} from "@proposals/zips/zip000.sol";
-import {zip001} from "@proposals/zips/zip001.sol";
-import {zip002} from "@proposals/zips/zip002.sol";
-import {zip003} from "@proposals/zips/zip003.sol";
-import {zip004} from "@proposals/zips/zip004.sol";
-import {zip005} from "@proposals/zips/zip005.sol";
-import {zip006} from "@proposals/zips/zip006.sol";
-import {zip007} from "@proposals/zips/zip007.sol";
-import {zip008} from "@proposals/zips/zip008.sol";
-import {zip009} from "@proposals/zips/zip009.sol";
-import {zip010} from "@proposals/zips/zip010.sol";
-import {zip011} from "@proposals/zips/zip011.sol";
-import {zip012} from "@proposals/zips/zip012.sol";
-import {zip013} from "@proposals/zips/zip013.sol";
-import {zip014} from "@proposals/zips/zip014.sol";
-import {zip016} from "@proposals/zips/zip016.sol";
-import {zip017} from "@proposals/zips/zip017.sol";
-import {zip018} from "@proposals/zips/zip018.sol";
-import {zip019} from "@proposals/zips/zip019.sol";
+import {zip000} from "proposals/zips/zip000.sol";
+import {zip001} from "proposals/zips/zip001.sol";
+import {zip002} from "proposals/zips/zip002.sol";
+import {zip003} from "proposals/zips/zip003.sol";
+import {zip004} from "proposals/zips/zip004.sol";
+import {zip005} from "proposals/zips/zip005.sol";
+import {zip006} from "proposals/zips/zip006.sol";
+import {zip007} from "proposals/zips/zip007.sol";
+import {zip008} from "proposals/zips/zip008.sol";
+import {zip009} from "proposals/zips/zip009.sol";
+import {zip010} from "proposals/zips/zip010.sol";
+import {zip011} from "proposals/zips/zip011.sol";
+import {zip012} from "proposals/zips/zip012.sol";
+import {zip013} from "proposals/zips/zip013.sol";
+import {zip014} from "proposals/zips/zip014.sol";
+import {zip016} from "proposals/zips/zip016.sol";
+import {zip017} from "proposals/zips/zip017.sol";
+import {zip018} from "proposals/zips/zip018.sol";
+import {zip019} from "proposals/zips/zip019.sol";
 
 /*
 How to use:
@@ -46,7 +46,6 @@ contract BootstrapTestnet is Script {
         string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
         string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
         addresses = new Addresses(addressPath);
-        addresses.resetRecordingAddresses();
 
         // Load proposals
         proposals.push(Proposal(address(new zip000()))); /// Genesis token proposal
@@ -68,6 +67,10 @@ contract BootstrapTestnet is Script {
         proposals.push(Proposal(address(new zip017()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip018()))); /// MaxSupply settings proposal
         proposals.push(Proposal(address(new zip019()))); /// MaxSupply settings proposal
+
+        for (uint256 i = 0; i < proposals.length; i++) {
+            proposals[i].setAddresses(addresses);
+        }
     }
 
     function run() public {
@@ -76,15 +79,8 @@ contract BootstrapTestnet is Script {
             console.log("Proposal", name, "deploy()");
             addresses.resetRecordingAddresses();
 
-            // Run the deploy for testing only workflow
+            // Run the proposal workflow
             proposals[i].run();
-
-            /// output deployed contract addresses and names
-            (string[] memory recordedNames, , address[] memory recordedAddresses) = Addresses(proposals[i].addresses())
-                .getRecordedAddresses();
-            for (uint256 j = 0; j < recordedNames.length; j++) {
-                console.log("  Deployed", recordedAddresses[j], recordedNames[j]);
-            }
         }
     }
 }

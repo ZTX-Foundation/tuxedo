@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity 0.8.18;
+pragma solidity ^0.8.18;
 
 import {console} from "@forge-std/console.sol";
-import {zip019 as zip} from "@proposals/zips/zip019.sol";
+import {zip019 as zip} from "proposals/zips/zip019.sol";
 import {Script} from "@forge-std/Script.sol";
-import {Addresses} from "@proposals/Addresses.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
+import {Addresses} from "@forge-proposal-simulator/addresses/Addresses.sol";
+import {TimelockProposal} from "@forge-proposal-simulator/src/proposals/TimelockProposal.sol";
 
 /*
 How to use:
@@ -17,13 +17,19 @@ Remove --broadcast if you want to try locally first, without paying any gas.
 */
 
 contract DeployProposal is Script {
-    TimelockProposal timeLock;
+    TimelockProposal newProposal;
+    Addresses addresses;
+    
     function setUp() public {
-        timeLock = new zip();
+        string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
+        string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
+        addresses = new Addresses(addressPath);
+
+        newProposal = new zip();
     }
 
     function run() public {
-        /// Run the deploy OnChain workflow
-        timeLock.run();
+        /// Run the proposal workflow
+        newProposal.run();
     }
 }

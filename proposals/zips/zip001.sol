@@ -1,25 +1,19 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
-import {console} from "@forge-std/console.sol";
+import {MultisigProposal} from "@forge-proposal-simulator/src/proposals/MultisigProposal.sol";
 
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {CoreRef} from "@protocol/refs/CoreRef.sol";
-import {TimelockProposal} from "@proposals/proposalTypes/TimelockProposal.sol";
-import {Proposal} from "@proposals/proposalTypes/Proposal.sol";
-import {Addresses} from "@proposals/Addresses.sol";
 import {ERC1155AdminMinter} from "@protocol/nfts/ERC1155AdminMinter.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
-import {Constants} from '@proposals/utils/Constants.sol';
 
-contract zip001 is TimelockProposal {
+import {Constants} from 'proposals/utils/Constants.sol';
+
+contract zip001 is MultisigProposal {
     Core private _core;
-
-    string private constant ADDRESSES_PATH = "proposals/Addresses.json";
-
-    constructor() Proposal("DEPLOYER") {}
 
     // Returns the name of the proposal.
     function name() public pure override returns (string memory) {
@@ -31,9 +25,7 @@ contract zip001 is TimelockProposal {
         return "The ZTX wearable, Core & GlobalReentrancyLock contract proposal";
     }
 
-    function _beforeDeploy() internal override {}
-
-    function _deploy() internal override {
+    function deploy() public override {
         /// Deploy Core
         _core = new Core();
         addresses.addAddress("CORE", address(_core), true);
@@ -59,9 +51,7 @@ contract zip001 is TimelockProposal {
 
         ERC1155AdminMinter minter = new ERC1155AdminMinter(address(_core));
         addresses.addAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER", address(minter), true);
-    }
 
-    function _afterDeploy() internal override {
         // Setup ADMIN_MULTISIG
         _core.grantRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG"));
 
@@ -77,14 +67,14 @@ contract zip001 is TimelockProposal {
         _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_ADMIN_MINTER"));
 
         /// Revoke ADMIN role from deployer on mainnet
-        if (block.chainid == Constants.ARBITRUM_MAINNET) _core.revokeRole(Roles.ADMIN, addresses.getAddress("DEPLOYER"));
+        if (block.chainid == Constants.ARBITRUM_MAINNET) _core.revokeRole(Roles.ADMIN, addresses.getAddress("DEPLOYER_EOA"));
     }
 
-    function _validate() internal override {
+    function validate() public override {
         /// Check Roles
         assertEq(_core.hasRole(Roles.ADMIN, addresses.getAddress("ADMIN_MULTISIG")), true, "incorrect admin role");
 
-        /// Verfiy all contracts are pointing to the correct core address
+        /// Verify all contracts are pointing to the correct core address
         assertEq(
             address(GlobalReentrancyLock(addresses.getAddress("GLOBAL_REENTRANCY_LOCK")).core()),
             address(_core),
@@ -115,7 +105,7 @@ contract zip001 is TimelockProposal {
             "incorrect core address erc1155 max supply mintable wearables"
         );
 
-        /// Verfiy globlal lock has been set correctly
+        /// Verify globlal lock has been set correctly
         assertEq(address(_core.lock()), addresses.getAddress("GLOBAL_REENTRANCY_LOCK"), "incorrect global lock");
 
         /// Verify metadata URI
@@ -133,8 +123,8 @@ contract zip001 is TimelockProposal {
             "incorrect metadata URI"
         );
 
-        /// Verfiy all roles have been assigned correcly
-        /// Verfiy LOCKER role
+        /// Verify all roles have been assigned correcly
+        /// Verify LOCKER role
         assertTrue(
             _core.hasRole(Roles.LOCKER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
             "incorrect locker wearables"
@@ -144,7 +134,7 @@ contract zip001 is TimelockProposal {
             "incorrect locker admin minter"
         );
 
-        /// Verfiy MINTER role
+        /// Verify MINTER role
         assertTrue(
             _core.hasRole(Roles.MINTER_PROTOCOL_ROLE, addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
             "incorrect minter wearables"
@@ -169,8 +159,15 @@ contract zip001 is TimelockProposal {
         // Verify ADMIN role has been revoked from deployer on mainnet
         if (block.chainid == Constants.ARBITRUM_MAINNET)
             assertFalse(
-                _core.hasRole(Roles.ADMIN, addresses.getAddress("DEPLOYER")),
+                _core.hasRole(Roles.ADMIN, addresses.getAddress("DEPLOYER_EOA")),
                 "deployer should not have admin role"
             );
+    }
+
+    function run() public override {
+        // No actions to print
+        DO_PRINT = false;
+
+        super.run();
     }
 }
