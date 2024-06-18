@@ -26,6 +26,7 @@ contract DeployProposal is Script {
         addresses = new Addresses(addressPath);
 
         newProposal = new zip();
+        newProposal.setAddresses(addresses);
     }
 
     function run() public {
