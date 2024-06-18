@@ -1,8 +1,6 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.18;
 
-import {console} from "@forge-std/console.sol";
-
 import {TimelockProposal} from "@forge-proposal-simulator/src/proposals/TimelockProposal.sol";
 
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
