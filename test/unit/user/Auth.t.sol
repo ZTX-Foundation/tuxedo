@@ -1,7 +1,6 @@
 pragma solidity 0.8.18;
 
-import "@forge-std/Test.sol";
-
+import "forge-std/Test.sol";
 import {Auth} from "@protocol/user/Auth.sol";
 
 contract UnitTestAuth is Test {
@@ -15,7 +14,7 @@ contract UnitTestAuth is Test {
     function setUp() public {
         auth = new Auth();
 
-        privateKey = vm.deriveKey("test test test test test test test test test test test junk", "m/44'/60'/0'/2/", 0);
+        privateKey = vm.deriveKey("test test test test test test test test test test test junk", "m/44'/60'/0'/2", 0);
         user = vm.addr(privateKey);
     }
 
@@ -29,46 +28,54 @@ contract UnitTestAuth is Test {
         assertEq(version, "1");
     }
 
-    function _domainSeparator() public returns (bytes32) {
+    function _domainSeparator() public view returns (bytes32) {
         return keccak256(
             abi.encode(
-                keccak256(abi.encodePacked("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")),
-                keccak256(abi.encodePacked(auth.name())),
-                keccak256(abi.encodePacked(auth.version())),
+                keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                keccak256(bytes(auth.name())),
+                keccak256(bytes(auth.version())),
                 block.chainid,
                 address(auth)
             )
         );
     }
 
-    function _messageType() public returns (bytes32) {
+    function _structHash() public view returns (bytes32) {
+        return keccak256(
+            abi.encode(
+                keccak256("LoginMessage(string session)"),
+                keccak256(bytes(sessionId))
+            )
+        );
+    }
+
+    function _messageType() public view returns (bytes32) {
         return keccak256(
             abi.encodePacked(
                 "\x19\x01",
                 _domainSeparator(),
-                keccak256(
-                    abi.encode(
-                        keccak256(abi.encodePacked("Message(string sessionId)")),
-                        sessionId
-                    )
-                )
+                _structHash()
             )
         );
     }
 
     function testGetSigner() public {
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, _messageType());
+        bytes32 messageHash = _messageType();
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, messageHash);
         bytes memory signature = abi.encodePacked(r, s, v);
 
-        address signer = auth.getSigner(sessionId, signature);
+        Auth.LoginMessage memory loginMessage = Auth.LoginMessage({session: sessionId});
+        address signer = auth.getSigner(loginMessage, signature);
         assertEq(signer, user);
     }
 
     function testGetSignerFail() public {
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, _messageType());
+        bytes32 messageHash = _messageType();
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, messageHash);
         bytes memory signature = abi.encodePacked(r, s, v);
 
-        address signer = auth.getSigner("iZIMeoCOdVD1c03CT2sbQO7n8kLPOQkG", signature);
+        Auth.LoginMessage memory loginMessage = Auth.LoginMessage({session: "iZIMeoCOdVD1c03CT2sbQO7n8kLPOQkG"});
+        address signer = auth.getSigner(loginMessage, signature);
         assertTrue(signer != user);
     }
 }

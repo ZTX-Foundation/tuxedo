@@ -4,28 +4,38 @@ pragma solidity 0.8.18;
 /// @notice Verify that a signature is valid so that a ZTX user can sign in.
 contract Auth {
     /// @notice name
-    string public name = "ZTX";
+    string public name;
 
     /// @notice version
-    string public version = "1";
+    string public version;
+
+    struct LoginMessage {
+        string session;
+    }
+
+    /// @notice Constructor
+    constructor() {
+        name = "ZTX";
+        version = "1";
+    }
 
     /// @notice get signer address
-    /// @param sessionId The cognito session ID
+    /// @param loginMessage The login message object
     /// @param _signature The signature
-    function getSigner(string memory sessionId, bytes memory _signature) public view returns (address) {
-        /// @dev EIP721 domain type
-        uint256 chainId = block.chainid;
+    function getSigner(LoginMessage memory loginMessage, bytes memory _signature) public view returns (address) {
+        /// @dev EIP712 domain type
+        uint256 chainId = block.chainid; // Dynamically get the chain ID
         address verifyingContract = address(this);
 
         string memory domainType = "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)";
-        string memory messageType = "Message(string sessionId)";
+        string memory messageType = "LoginMessage(string session)";
 
         /// @dev hash to prevent signature collision
         bytes32 domainSeparator = keccak256(
             abi.encode(
-                keccak256(abi.encodePacked(domainType)),
-                keccak256(abi.encodePacked(name)),
-                keccak256(abi.encodePacked(version)),
+                keccak256(bytes(domainType)),
+                keccak256(bytes(name)),
+                keccak256(bytes(version)),
                 chainId,
                 verifyingContract
             )
@@ -38,8 +48,8 @@ contract Auth {
                 domainSeparator,
                 keccak256(
                     abi.encode(
-                        keccak256(abi.encodePacked(messageType)),
-                        sessionId
+                        keccak256(bytes(messageType)),
+                        keccak256(bytes(loginMessage.session))
                     )
                 )
             )
