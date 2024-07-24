@@ -24,7 +24,7 @@ contract zip021 is TimelockProposal {
         return "ZTX CGv1.4 MaxSupply updates";
     }
 
-    function setAndConfirmWearableData() private {
+    function _setAndConfirmWearableData() private {
         // Wearable data
         string memory wearableData = string(
             abi.encodePacked(vm.readFile("./proposals/zips/zip021.json"))
@@ -59,7 +59,11 @@ contract zip021 is TimelockProposal {
         assertEq(maxSupplyTotal, 3730000, "Invalid maxSupplyTotal");
     }
 
-    function build() public override {
+    function build()
+        public
+        override
+        buildModifier(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")) 
+    {
         /// Wearable config
         ERC1155MaxSupplyMintable wearable = ERC1155MaxSupplyMintable(
             addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
@@ -72,7 +76,7 @@ contract zip021 is TimelockProposal {
     function run() public override {
         setTimelock(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER"));
 
-        setAndConfirmWearableData();
+        _setAndConfirmWearableData();
 
         super.run();
     }
@@ -89,7 +93,7 @@ contract zip021 is TimelockProposal {
             addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
         );
 
-        /// Verfiy Wearable
+        /// Verify Wearable
         for (uint256 i = 0; i < wearableTokenIDMaxSupplySettings.length; i++) {
             uint256 tokenId = wearableTokenIDMaxSupplySettings[i].tokenId;
             uint256 maxSupply = wearableTokenIDMaxSupplySettings[i].maxSupply;
