@@ -87,7 +87,7 @@ contract TestProposals is Test {
         vm.warp(block.timestamp + 1); /// required for timelock to work
     }
 
-    function testProposals() public returns (uint256[] memory postProposalVmSnapshots) {
+    function runProposals() public returns (uint256[] memory postProposalVmSnapshots) {
         console.log("TestProposals: running", proposals.length, "proposals.");
 
         /// evm snapshot array
