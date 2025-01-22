@@ -46,6 +46,10 @@ contract BootstrapTestnet is Script {
 
     function setUp() public {
         string memory environment = vm.envOr("ENVIRONMENT", string("localnet"));
+        // warp on localnet so that timestamp is not 1 and timelock simulation works
+        if (block.chainid == 31337) {
+            vm.warp(block.timestamp + 100);
+        }
         string memory addressPath = string(abi.encodePacked("proposals/Addresses/", environment, ".json"));
         addresses = new Addresses(addressPath);
 
