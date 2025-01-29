@@ -59,7 +59,7 @@ contract zip019 is TimelockProposal {
         assertEq(maxSupplyTotal, 4780700, "Invalid maxSupplyTotal");
     }
 
-    function build() public override {
+    function build() public override buildModifier(addresses.getAddress("ADMIN_TIMELOCK_CONTROLLER")) {
         /// Wearable config
         ERC1155MaxSupplyMintable wearable = ERC1155MaxSupplyMintable(
             addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")
