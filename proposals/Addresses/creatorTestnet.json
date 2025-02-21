@@ -12,6 +12,12 @@
         "isContract": false
     },
     {
+        "name": "TREASURY_WALLET_MULTISIG",
+        "addr": "0x122cE5b2D6711cEac9A6dfCB424846da3f22eaa2",
+        "chainId": 4654,
+        "isContract": false
+    },
+    {
         "name": "REVENUE_WALLET_MULTISIG01",
         "addr": "0x0e6aCa776b3d12dd85363Fd6050eE05A4a242be9",
         "chainId": 4654,
@@ -30,12 +36,6 @@
         "isContract": false
     },
     {
-        "name": "AUTOGRAPH_MINTER_PAYMENT_RECIPIENT",
-        "addr": "0x0e6aCa776b3d12dd85363Fd6050eE05A4a242be9",
-        "chainId": 4654,
-        "isContract": false
-    },
-    {
         "name": "GUARDIAN_MULTISIG",
         "addr": "0xc3c1D74048115316dCbd66baeDA8214D2CA83C35",
         "chainId": 4654,
@@ -45,6 +45,12 @@
         "name": "WETH",
         "addr": "0xc556bae1e86b2ae9c22ea5e036b07e55e7596074",
         "chainId": 4654,
+        "isContract": false
+    },
+    {
+        "name": "DEPLOYER_EOA",
+        "chainid": 4654,
+        "addr": "0x2c9c0F10E3F8820544522df210dFb0A2BbC75147",
         "isContract": false
     }
 ]
