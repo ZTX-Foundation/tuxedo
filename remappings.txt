@@ -6,3 +6,4 @@
 openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/
 operator-filter-registry/=lib/seadrop/lib/operator-filter-registry/src/
 utility-contracts/=lib/seadrop/lib/utility-contracts/src/
+@foundry-zksync/=lib/foundry-zksync/src/
