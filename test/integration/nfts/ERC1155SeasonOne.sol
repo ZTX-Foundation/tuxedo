@@ -8,7 +8,8 @@ import {ERC1155SeasonOne} from "@protocol/nfts/seasons/ERC1155SeasonOne.sol";
 import {SeasonBase} from "test/unit/nfts/seasons/SeasonBase.t.sol";
 import {SeasonsTokenIdRegistry} from "@protocol/nfts/seasons/SeasonsTokenIdRegistry.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
-import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
+import {ERC1155AutoGraphMinterProxy} from "@protocol/nfts/ERC1155AutoGraphMinterProxy.sol";
+import {ERC1155AutoGraphMinterImpl} from "@protocol/nfts/ERC1155AutoGraphMinterImpl.sol";
 import {ERC1155AutoGraphMinterHelperLib} from "test/helpers/ERC1155AutoGraphMinterHelper.sol";
 import {TokenIdRewardAmount} from "@protocol/nfts/seasons/SeasonsBase.sol";
 import {ERC1155SeaonsHelperLib as Helper} from "test/helpers/ERC1155SeasonsHelper.sol";
@@ -18,7 +19,8 @@ contract IntegrationTestERC1155SeasonOne is BaseTest {
     SeasonsTokenIdRegistry private _registry;
     ERC1155SeasonOne private _seasonOne;
     ERC1155MaxSupplyMintable private _erc1155Consumables;
-    ERC1155AutoGraphMinter private _autoGraphMinter;
+    ERC1155AutoGraphMinterProxy private _autoGraphMinterProxy;
+    ERC1155AutoGraphMinterImpl private _autoGraphMinterImpl;
     Token private _token;
     address _multisig;
     address _treasury;
@@ -54,10 +56,12 @@ contract IntegrationTestERC1155SeasonOne is BaseTest {
         vm.prank(addresses.getAddress("ADMIN_MULTISIG"));
         _core.grantRole(Roles.REGISTRY_OPERATOR_PROTOCOL_ROLE, address(_seasonOne));
 
-        _autoGraphMinter = ERC1155AutoGraphMinter(addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER"));
+        address proxyAddress = addresses.getAddress("ERC1155_AUTO_GRAPH_MINTER_PROXY");
+        _autoGraphMinterProxy = ERC1155AutoGraphMinterProxy(payable(proxyAddress));
+        _autoGraphMinterImpl = ERC1155AutoGraphMinterImpl(proxyAddress);
 
         vm.prank(addresses.getAddress("ADMIN_MULTISIG"));
-        _autoGraphMinter.addWhitelistedContract(address(_erc1155Consumables));
+        _autoGraphMinterImpl.addWhitelistedContract(address(_erc1155Consumables));
 
         _token = Token(addresses.getAddress("TOKEN"));
         _multisig = addresses.getAddress("ADMIN_MULTISIG");
@@ -86,7 +90,7 @@ contract IntegrationTestERC1155SeasonOne is BaseTest {
         ERC1155AutoGraphMinterHelperLib.mintForFree(
             vm,
             _privateKey,
-            address(_autoGraphMinter),
+            address(_autoGraphMinterProxy),
             address(_erc1155Consumables),
             tokenId,
             units

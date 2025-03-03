@@ -1,10 +1,10 @@
 pragma solidity 0.8.18;
 
 import "@forge-std/Test.sol";
-import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import {ERC1155AutoGraphMinterLib} from "@protocol/nfts/ERC1155AutoGraphMinterLib.sol";
+import {ERC1155AutoGraphMinterLogic} from "@protocol/nfts/ERC1155AutoGraphMinterLogic.sol";
+import {ERC1155AutoGraphMinterImpl} from "@protocol/nfts/ERC1155AutoGraphMinterImpl.sol";
 
 library ERC1155AutoGraphMinterHelperLib {
     using ECDSA for bytes32;
@@ -33,7 +33,7 @@ library ERC1155AutoGraphMinterHelperLib {
         uint256 expiryToken;
     }
 
-    function getHash(ERC1155AutoGraphMinterLib.HashInputsParams memory input) public pure returns (bytes32) {
+    function getHash(ERC1155AutoGraphMinterLogic.HashInputsParams memory input) public pure returns (bytes32) {
         bytes32 hash = keccak256(
             abi.encode(
                 input.recipient,
@@ -103,7 +103,7 @@ library ERC1155AutoGraphMinterHelperLib {
         address recipient = address(this);
         uint256 salt = block.timestamp;
 
-        ERC1155AutoGraphMinterLib.HashInputsParams memory inputs = ERC1155AutoGraphMinterLib.HashInputsParams(
+        ERC1155AutoGraphMinterLogic.HashInputsParams memory inputs = ERC1155AutoGraphMinterLogic.HashInputsParams(
             recipient,
             txx.jobId,
             txx.tokenId,
@@ -142,7 +142,7 @@ library ERC1155AutoGraphMinterHelperLib {
         uint256 privateKey,
         ERC1155MaxSupplyMintable nftContract,
         address adminAddress
-    ) public returns (ERC1155AutoGraphMinterLib.MintBatchParams[] memory) {
+    ) public returns (ERC1155AutoGraphMinterLogic.MintBatchParams[] memory) {
         return setupTxs(vm, privateKey, nftContract, 0, adminAddress, 10, address(0), 0, block.timestamp);
     }
 
@@ -156,8 +156,8 @@ library ERC1155AutoGraphMinterHelperLib {
         address paymentToken,
         uint256 paymentAmount,
         uint256 expiryToken
-    ) public returns (ERC1155AutoGraphMinterLib.MintBatchParams[] memory) {
-        ERC1155AutoGraphMinterLib.MintBatchParams[] memory params = new ERC1155AutoGraphMinterLib.MintBatchParams[](
+    ) public returns (ERC1155AutoGraphMinterLogic.MintBatchParams[] memory) {
+        ERC1155AutoGraphMinterLogic.MintBatchParams[] memory params = new ERC1155AutoGraphMinterLogic.MintBatchParams[](
             testItems
         );
 
@@ -178,7 +178,7 @@ library ERC1155AutoGraphMinterHelperLib {
             );
 
             TxParts memory parts = setupTx(txx);
-            params[i] = ERC1155AutoGraphMinterLib.MintBatchParams(
+            params[i] = ERC1155AutoGraphMinterLogic.MintBatchParams(
                 parts.jobId,
                 parts.tokenId,
                 parts.units,
@@ -204,7 +204,7 @@ library ERC1155AutoGraphMinterHelperLib {
     ) public {
         TxParts memory parts = setupTx(_vm, _privateKey, _nftContract, tokenId, units);
 
-        ERC1155AutoGraphMinter(_autoGraphMinterContract).mintForFree(
+        ERC1155AutoGraphMinterImpl(_autoGraphMinterContract).mintForFree(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
