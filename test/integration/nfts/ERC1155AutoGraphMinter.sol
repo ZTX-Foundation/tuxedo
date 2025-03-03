@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.18;
 
 import {ERC1155AutoGraphMinterHelperLib as Helper} from "test/helpers/ERC1155AutoGraphMinterHelper.sol";
@@ -9,6 +10,7 @@ import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.
 import {BaseTest} from "test/integration/BaseTest.sol";
 
 import {Token} from "@protocol/token/Token.sol";
+import {ERC1155AutoGraphMinterLib} from "@protocol/nfts/ERC1155AutoGraphMinterLib.sol";
 
 contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
     /// @notice ZTX ERC20
@@ -286,20 +288,19 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
-        ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
-            .MintWithPaymentTokenAsFeeParams(
-                parts.recipient,
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.hash,
-                parts.salt,
-                parts.signature,
-                erc1155Consumables,
-                address(token),
-                paymentAmount,
-                block.timestamp
-            );
+        ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams(
+            parts.recipient,
+            parts.jobId,
+            parts.tokenId,
+            parts.units,
+            parts.hash,
+            parts.salt,
+            parts.signature,
+            erc1155Consumables,
+            address(token),
+            paymentAmount,
+            block.timestamp
+        );
 
         autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
 
@@ -332,7 +333,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
-        inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -376,7 +377,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
-        inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -413,20 +414,19 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
-        ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
-            .MintWithPaymentTokenAsFeeParams(
-                parts.recipient,
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.hash,
-                parts.salt,
-                parts.signature,
-                erc1155Consumables,
-                address(token),
-                paymentAmount,
-                block.timestamp
-            );
+        ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams(
+            parts.recipient,
+            parts.jobId,
+            parts.tokenId,
+            parts.units,
+            parts.hash,
+            parts.salt,
+            parts.signature,
+            erc1155Consumables,
+            address(token),
+            paymentAmount,
+            block.timestamp
+        );
 
         autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
 
@@ -446,7 +446,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
                 block.timestamp
             )
         );
-        inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -486,7 +486,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
-        inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -518,7 +518,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
                 block.timestamp
             )
         );
-        inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -557,7 +557,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         deal(address(token), address(this), paymentAmount, true);
         token.approve(address(autoGraphMinter), paymentAmount);
 
-        inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -589,7 +589,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
                 block.timestamp
             )
         );
-        inputs = ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithPaymentTokenAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -619,7 +619,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+        ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -662,7 +662,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             )
         );
 
-        inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -704,7 +704,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             )
         );
 
-        inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -741,7 +741,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             block.timestamp
         );
 
-        ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+        ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -775,7 +775,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
                 block.timestamp
             )
         );
-        inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -810,7 +810,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             )
         );
 
-        inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -844,7 +844,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
                 block.timestamp
             )
         );
-        inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -878,7 +878,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
             )
         );
 
-        inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -912,7 +912,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
                 block.timestamp
             )
         );
-        inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
+        inputs = ERC1155AutoGraphMinterLib.MintWithEthAsFeeParams(
             parts.recipient,
             parts.jobId,
             parts.tokenId,
@@ -932,7 +932,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
     /// --------------------- test batch minting functions ---------------------
 
     function testMintBatchForFreeWithExpiredHash() public {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        ERC1155AutoGraphMinterLib.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),
@@ -1002,7 +1002,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
     }
 
     function testMintBatchForFreeWithExpiredJob() public {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        ERC1155AutoGraphMinterLib.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),
@@ -1109,7 +1109,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         uint256 testItems = 10;
         uint256 paymentAmountPerMint = 10_000;
         uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        ERC1155AutoGraphMinterLib.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),
@@ -1217,7 +1217,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         uint256 testItems = 10;
         uint256 paymentAmountPerMint = 10_000;
         uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        ERC1155AutoGraphMinterLib.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),
@@ -1358,7 +1358,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         uint256 testItems = 10;
         uint256 paymentAmountPerMint = 10_000;
         uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        ERC1155AutoGraphMinterLib.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),
@@ -1455,7 +1455,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         uint256 testItems = 10;
         uint256 paymentAmountPerMint = 10_000;
         uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        ERC1155AutoGraphMinterLib.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),

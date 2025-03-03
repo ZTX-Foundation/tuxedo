@@ -4,6 +4,7 @@ import "@forge-std/Test.sol";
 import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import {ERC1155AutoGraphMinterLib} from "@protocol/nfts/ERC1155AutoGraphMinterLib.sol";
 
 library ERC1155AutoGraphMinterHelperLib {
     using ECDSA for bytes32;
@@ -32,7 +33,7 @@ library ERC1155AutoGraphMinterHelperLib {
         uint256 expiryToken;
     }
 
-    function getHash(ERC1155AutoGraphMinter.HashInputsParams memory input) public pure returns (bytes32) {
+    function getHash(ERC1155AutoGraphMinterLib.HashInputsParams memory input) public pure returns (bytes32) {
         bytes32 hash = keccak256(
             abi.encode(
                 input.recipient,
@@ -102,7 +103,7 @@ library ERC1155AutoGraphMinterHelperLib {
         address recipient = address(this);
         uint256 salt = block.timestamp;
 
-        ERC1155AutoGraphMinter.HashInputsParams memory inputs = ERC1155AutoGraphMinter.HashInputsParams(
+        ERC1155AutoGraphMinterLib.HashInputsParams memory inputs = ERC1155AutoGraphMinterLib.HashInputsParams(
             recipient,
             txx.jobId,
             txx.tokenId,
@@ -141,7 +142,7 @@ library ERC1155AutoGraphMinterHelperLib {
         uint256 privateKey,
         ERC1155MaxSupplyMintable nftContract,
         address adminAddress
-    ) public returns (ERC1155AutoGraphMinter.MintBatchParams[] memory) {
+    ) public returns (ERC1155AutoGraphMinterLib.MintBatchParams[] memory) {
         return setupTxs(vm, privateKey, nftContract, 0, adminAddress, 10, address(0), 0, block.timestamp);
     }
 
@@ -155,8 +156,8 @@ library ERC1155AutoGraphMinterHelperLib {
         address paymentToken,
         uint256 paymentAmount,
         uint256 expiryToken
-    ) public returns (ERC1155AutoGraphMinter.MintBatchParams[] memory) {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = new ERC1155AutoGraphMinter.MintBatchParams[](
+    ) public returns (ERC1155AutoGraphMinterLib.MintBatchParams[] memory) {
+        ERC1155AutoGraphMinterLib.MintBatchParams[] memory params = new ERC1155AutoGraphMinterLib.MintBatchParams[](
             testItems
         );
 
@@ -177,7 +178,7 @@ library ERC1155AutoGraphMinterHelperLib {
             );
 
             TxParts memory parts = setupTx(txx);
-            params[i] = ERC1155AutoGraphMinter.MintBatchParams(
+            params[i] = ERC1155AutoGraphMinterLib.MintBatchParams(
                 parts.jobId,
                 parts.tokenId,
                 parts.units,
