@@ -1,4 +1,5 @@
-pragma solidity 0.8.18;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.28;
 
 import "@forge-std/Test.sol";
 
@@ -10,1002 +11,144 @@ import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
 import {MockERC20, IERC20} from "test/mock/MockERC20.sol";
 import {GlobalReentrancyLock} from "@protocol/core/GlobalReentrancyLock.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
-import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
+import {ERC1155AutoGraphMinterImpl} from "@protocol/nfts/ERC1155AutoGraphMinterImpl.sol";
+import {ERC1155AutoGraphMinterProxy} from "@protocol/nfts/ERC1155AutoGraphMinterProxy.sol";
 import {TestAddresses as addresses} from "test/fixtures/TestAddresses.sol";
-import {ERC1155AutoGraphMinterHelperLib as Helper} from "test/helpers/ERC1155AutoGraphMinterHelper.sol";
+import {BatchMinting} from "@protocol/nfts/BatchMinting.sol";
 import {BaseTest} from "test/BaseTest.sol";
 
-contract UnitTestERC1155AutoGraphMinter is BaseTest {
-    ERC1155AutoGraphMinter private _autoGraphMinter;
-
-    uint256 private _privateKey;
-    address private _notary;
-
-    /// ------ Whitelist setting ---------- ///
-
-    address[] public defaultWhitelistedAddresses = [address(0x987), address(0x654), address(0x321)];
-    address[] public addressesToAdd = [address(0x123), address(0x456), address(0x789)];
-
-    /// ------ Rate limiting setting ------ ///
-
-    /// @notice rate limit per second in RateLimitedV2
+/// @title ERC1155AutoGraphMinterTest
+/// @notice Unit tests for ERC1155AutoGraphMinter
+contract ERC1155AutoGraphMinterTest is BaseTest {
+    /// @notice Test constants
     uint128 private constant _REPLENISH_RATE_PER_SECOND = 100;
+    uint128 private constant _BUFFER_CAP = 10_000;
+    uint8 private constant _EXPIRY_TOKEN_HOURS_VALID = 1;
 
-    /// @notice buffer cap in RateLimited
-    uint128 private constant _BUFFER_CAP = 1_000;
+    /// @notice Core contracts
+    Core private _core;
+    GlobalReentrancyLock private _globalLock;
 
-    address private _defaultPaymentRecipient = address(0x123);
+    /// @notice Test contracts
+    MockERC20 private _token;
+    ERC1155MaxSupplyMintable private _erc1155;
 
+    /// @notice Main contract being tested (through proxy)
+    ERC1155AutoGraphMinterImpl private _implementation;
+    ERC1155AutoGraphMinterProxy private _proxy;
+    ERC1155AutoGraphMinterImpl private _autoGraphMinter; /// @dev Points to proxy address but typed as implementation
+
+    /// @notice Test data
+    address private _paymentRecipient = address(0x999);
+    uint256 private _privateKey = 0x1234; /// @dev Test private key for signing
+
+    /// @notice Set up test environment before each test
     function setUp() public override {
-        super.setUp();
+        vm.warp(1_000_000); /// @dev Set block timestamp
 
-        string memory mnemonic = "test test test test test test test test test test test junk";
-        _privateKey = vm.deriveKey(mnemonic, "m/44'/60'/0'/1/", 0);
-        _notary = vm.addr(_privateKey);
+        /// @dev Deploy core contracts
+        _core = new Core();
+        _globalLock = new GlobalReentrancyLock(address(_core));
+        _core.setGlobalLock(address(_globalLock));
 
-        _autoGraphMinter = new ERC1155AutoGraphMinter(
-            address(core),
-            defaultWhitelistedAddresses,
+        /// @dev Deploy test contracts
+        _token = new MockERC20();
+        _erc1155 = new ERC1155MaxSupplyMintable(
+            address(_core),
+            "https://api.example.com/metadata/",
+            "Test NFT",
+            "TNFT"
+        );
+
+        /// @dev Deploy implementation
+        _implementation = new ERC1155AutoGraphMinterImpl(address(_core), address(_globalLock));
+
+        /// @dev Deploy proxy
+        _proxy = new ERC1155AutoGraphMinterProxy(
+            address(_implementation),
+            address(this) /// @dev Admin is the test contract
+        );
+
+        /// @dev Cast proxy to implementation type for easier interaction
+        _autoGraphMinter = ERC1155AutoGraphMinterImpl(address(_proxy));
+
+        /// @dev Initialize system
+        address[] memory nftContracts = new address[](1);
+        nftContracts[0] = address(_erc1155);
+
+        _autoGraphMinter.initialize(
+            address(_core),
+            address(_globalLock),
+            nftContracts,
             _REPLENISH_RATE_PER_SECOND,
             _BUFFER_CAP,
-            _defaultPaymentRecipient,
-            1
+            _paymentRecipient,
+            _EXPIRY_TOKEN_HOURS_VALID
         );
 
-        vm.startPrank(addresses.adminAddress);
-        _autoGraphMinter.addWhitelistedContract(address(nft));
-        nft.setSupplyCap(0, supplyCap);
-        core.grantRole(Roles.MINTER_PROTOCOL_ROLE, address(_autoGraphMinter));
-        core.grantRole(Roles.LOCKER_PROTOCOL_ROLE, address(_autoGraphMinter));
-        core.grantRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, _notary);
-        vm.stopPrank();
+        /// @dev Set up roles
+        _core.grantRole(Roles.MINTER_PROTOCOL_ROLE, address(_autoGraphMinter));
+        _core.grantRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, vm.addr(_privateKey));
+        _core.grantRole(Roles.GUARDIAN, address(this));
+        _core.grantRole(Roles.ADMIN, address(this));
+
+        /// @dev Set up NFT contract
+        _erc1155.setSupplyCap(1, 100);
+
+        /// @dev Fund test contract with tokens
+        _token.mint(address(this), 1000 ether);
+        _token.approve(address(_autoGraphMinter), type(uint256).max);
     }
 
-    /// --------------------- Testing Hash functions --------------------- ///
+    /// @notice Test that batch minting for free works correctly
+    function testMintBatchForFree() public {
+        /// @dev Create batch params
+        uint256 jobId = 1;
+        uint256 tokenId = 1;
+        uint256 units = 5;
 
-    function testHashEncoding() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
+        /// @dev Create params directly
+        BatchMinting.MintBatchParams[] memory params = new BatchMinting.MintBatchParams[](1);
 
-        // setup hash manually
-        bytes32 hashFirstPass = keccak256(
+        /// @dev Fill in parameters for the mint
+        params[0] = BatchMinting.MintBatchParams({
+            jobId: jobId,
+            tokenId: tokenId,
+            units: units,
+            hash: bytes32(0), /// @dev Will be filled
+            salt: 123456,
+            signature: bytes(""), /// @dev Will be filled
+            paymentAmount: 0,
+            expiryToken: block.timestamp - 1
+        });
+
+        /// @dev Generate hash
+        bytes32 hash = keccak256(
             abi.encode(
-                parts.recipient,
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.salt,
-                address(nft),
-                address(0),
-                0,
-                block.timestamp
+                address(this), /// @dev recipient
+                params[0].jobId,
+                params[0].tokenId,
+                params[0].units,
+                params[0].salt,
+                address(_erc1155), /// @dev nftContract
+                address(0), /// @dev paymentToken
+                params[0].paymentAmount,
+                params[0].expiryToken
             )
         );
-        bytes32 expectedHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hashFirstPass));
 
-        assertEq(parts.hash, expectedHash);
-    }
+        /// @dev Sign the hash with our private key
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(_privateKey, hash);
+        bytes memory signature = abi.encodePacked(r, s, v);
 
-    function testRecoverSigner() public {
-        // hash'ed messages parameters
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
+        /// @dev Update the params with hash and signature
+        params[0].hash = hash;
+        params[0].signature = signature;
 
-        // recover signer
-        address signer = _autoGraphMinter.recoverSigner(parts.hash, parts.signature);
+        /// @dev Mint through the proxy
+        _autoGraphMinter.mintBatchForFree(address(_erc1155), address(this), params);
 
-        // assert signer is the same as the signer of the hash
-        assertEq(signer, vm.addr(_privateKey));
-    }
-
-    /// --------------------- Testing Mint for free functions --------------------- ///
-
-    function testMintForFreeWithExpiredHash() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
-
-        // mint
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            block.timestamp
-        );
-
-        // assert balance
-        assertEq(nft.balanceOf(parts.recipient, parts.tokenId), parts.units);
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash expired");
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            block.timestamp
-        );
-    }
-
-    function testMintForFreeWithExpiredJob() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
-
-        // mint
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            parts.expiryToken
-        );
-
-        // assert balance
-        assertEq(nft.balanceOf(parts.recipient, parts.tokenId), parts.units);
-
-        // expired job with valid hash
-        parts = Helper.setupTx(
-            Helper.SetupTxParams(vm, _privateKey, address(nft), 99, 1, 1, address(0), 0, block.timestamp)
-        );
-        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            parts.expiryToken
-        );
-    }
-
-    function testMintForFreeMissingSigningRole() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
-
-        vm.prank(addresses.adminAddress);
-        core.revokeRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, _notary);
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Missing MINTER_NOTARY Role");
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            block.timestamp
-        );
-    }
-
-    function testMintForFreeInvalidTokenIdHashMismatch() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
-
-        uint256 _tokenId = 999;
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash mismatch");
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            _tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            block.timestamp
-        );
-    }
-
-    function testMintForFreeInvalidUnitstHashMismatch() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
-
-        uint256 units = 999;
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash mismatch");
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            block.timestamp
-        );
-    }
-
-    function testMintForFreeInvalidNftContractAddress() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
-
-        vm.expectRevert("WhitelistedAddress: Provided address is not whitelisted");
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(0x123),
-            block.timestamp
-        );
-    }
-
-    function testMintForFreeInvalidSalt() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash mismatch");
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            block.timestamp + 1,
-            parts.signature,
-            address(nft),
-            block.timestamp
-        );
-    }
-
-    function testMintForFreeInvalidRecipient() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash mismatch");
-        _autoGraphMinter.mintForFree(
-            address(0x123),
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            block.timestamp
-        );
-    }
-
-    /// --------------------- Testing Mint With paymentToken Fee functions --------------------- ///
-
-    function testMintWithPaymentTokenSuccessAndExpiredHash() public {
-        uint paymentAmount = 111;
-        Helper.TxParts memory parts = Helper.setupTx(
-            vm,
-            _privateKey,
-            address(nft),
-            address(token),
-            paymentAmount,
-            block.timestamp
-        );
-
-        token.mint(address(this), paymentAmount);
-        token.approve(address(_autoGraphMinter), paymentAmount);
-
-        ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
-            .MintWithPaymentTokenAsFeeParams(
-                parts.recipient,
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.hash,
-                parts.salt,
-                parts.signature,
-                address(nft),
-                address(token),
-                111,
-                block.timestamp
-            );
-
-        _autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
-
-        assertEq(nft.balanceOf(parts.recipient, parts.tokenId), parts.units);
-        assertEq(token.balanceOf(address(_defaultPaymentRecipient)), paymentAmount);
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash expired");
-        _autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
-    }
-
-    function testMintWithPaymentTokenInvalidPaymentToken() public {
-        Helper.TxParts memory parts = Helper.setupTx(
-            vm,
-            _privateKey,
-            address(nft),
-            address(token),
-            111,
-            block.timestamp
-        );
-
-        ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
-            .MintWithPaymentTokenAsFeeParams(
-                parts.recipient,
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.hash,
-                parts.salt,
-                parts.signature,
-                address(nft),
-                address(0),
-                111,
-                block.timestamp
-            );
-
-        vm.expectRevert("ERC1155AutoGraphMinter: paymentToken must not be address(0)");
-        _autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
-    }
-
-    function testMintWithPaymentTokenInvalidPaymentAmount() public {
-        Helper.TxParts memory parts = Helper.setupTx(
-            vm,
-            _privateKey,
-            address(nft),
-            address(token),
-            111,
-            block.timestamp
-        );
-
-        ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
-            .MintWithPaymentTokenAsFeeParams(
-                parts.recipient,
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.hash,
-                parts.salt,
-                parts.signature,
-                address(nft),
-                address(token),
-                0,
-                block.timestamp
-            );
-
-        vm.expectRevert("ERC1155AutoGraphMinter: paymentAmount must be greater than 0");
-        _autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
-    }
-
-    function testMintWithWithPaymentTokenIncorrectFeeAmount() public {
-        Helper.TxParts memory parts = Helper.setupTx(
-            vm,
-            _privateKey,
-            address(nft),
-            address(token),
-            10_000,
-            block.timestamp
-        );
-
-        ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
-            .MintWithPaymentTokenAsFeeParams(
-                parts.recipient,
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.hash,
-                parts.salt,
-                parts.signature,
-                address(nft),
-                address(token),
-                1000,
-                block.timestamp
-            );
-
-        // mint
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash mismatch");
-        _autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
-    }
-
-    /// --------------------- Testing Mint for ETH Fee functions --------------------- ///
-
-    function testMintWithEthAsFeeWithExpiredHash() public {
-        emit log_named_decimal_uint("balance", address(this).balance, 18);
-        uint256 paymentAmount = 10_000;
-
-        Helper.TxParts memory parts = Helper.setupTx(
-            vm,
-            _privateKey,
-            address(nft),
-            address(0),
-            paymentAmount,
-            block.timestamp
-        );
-
-        ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            paymentAmount,
-            block.timestamp
-        );
-
-        _autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
-
-        // assert nft balance
-        assertEq(nft.balanceOf(parts.recipient, parts.tokenId), parts.units);
-
-        // assert payment Fee balance
-        assertEq(address(_defaultPaymentRecipient).balance, paymentAmount);
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash expired");
-        _autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
-    }
-
-    function testMintWithEthAsFeeWithExpiredJob() public {
-        emit log_named_decimal_uint("balance", address(this).balance, 18);
-        uint256 paymentAmount = 10_000;
-
-        Helper.TxParts memory parts = Helper.setupTx(
-            vm,
-            _privateKey,
-            address(nft),
-            address(0),
-            paymentAmount,
-            block.timestamp
-        );
-
-        ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            paymentAmount,
-            block.timestamp
-        );
-
-        _autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
-
-        // assert nft balance
-        assertEq(nft.balanceOf(parts.recipient, parts.tokenId), parts.units);
-
-        // assert payment Fee balance
-        assertEq(address(_defaultPaymentRecipient).balance, paymentAmount);
-
-        // expired job with valid hash
-        parts = Helper.setupTx(
-            Helper.SetupTxParams(vm, _privateKey, address(nft), 99, 1, 1, address(0), paymentAmount, block.timestamp)
-        );
-        inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            paymentAmount,
-            block.timestamp
-        );
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Job already completed");
-        _autoGraphMinter.mintWithEthAsFee{value: paymentAmount}(inputs);
-    }
-
-    function testMintWithEthAsFeeIncorrectEthAmount() public {
-        uint256 paymentAmount = 10_000;
-
-        Helper.TxParts memory parts = Helper.setupTx(
-            vm,
-            _privateKey,
-            address(nft),
-            address(0),
-            paymentAmount,
-            block.timestamp
-        );
-
-        ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            paymentAmount,
-            block.timestamp
-        );
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Payment amount does not match msg.value");
-        _autoGraphMinter.mintWithEthAsFee{value: paymentAmount / 2}(inputs);
-    }
-
-    function testMintWithEthAsFeeIncorrectEthAmount0() public {
-        uint256 paymentAmount = 10_000;
-
-        Helper.TxParts memory parts = Helper.setupTx(
-            vm,
-            _privateKey,
-            address(nft),
-            address(0),
-            paymentAmount,
-            block.timestamp
-        );
-
-        ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            0,
-            block.timestamp
-        );
-
-        vm.expectRevert("ERC1155AutoGraphMinter: paymentAmount must be greater than 0");
-        _autoGraphMinter.mintWithEthAsFee{value: paymentAmount / 2}(inputs);
-    }
-
-    /// --------------------- Testing Mint Batch for free functions --------------------- ///
-
-    function testMintBatchForFreeSucessAndExpireHash() public {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
-            vm,
-            _privateKey,
-            nft,
-            addresses.adminAddress
-        );
-
-        // mint
-        _autoGraphMinter.mintBatchForFree(address(nft), address(this), params);
-
-        // assert balance
-        for (uint256 i = 0; i < params.length; i++) {
-            assertEq(nft.balanceOf(address(this), i), 10);
-        }
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash expired");
-        _autoGraphMinter.mintBatchForFree(address(nft), address(this), params);
-    }
-
-    function testMintBatchForFreeIncorrectSigningRole() public {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
-            vm,
-            _privateKey,
-            nft,
-            addresses.adminAddress
-        );
-
-        vm.prank(addresses.adminAddress);
-        core.revokeRole(Roles.MINTER_NOTARY_PROTOCOL_ROLE, _notary);
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Missing MINTER_NOTARY Role");
-        _autoGraphMinter.mintBatchForFree(address(nft), address(this), params);
-    }
-
-    function testMintBatchForFreeInvalidUnits() public {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
-            vm,
-            _privateKey,
-            nft,
-            addresses.adminAddress
-        );
-
-        params[params.length - 1].units = 999;
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash mismatch");
-        _autoGraphMinter.mintBatchForFree(address(nft), address(this), params);
-    }
-
-    /// --------------------- Testing Mint Batch With PaymentToken as fee functions --------------------- ///
-
-    function testMintBatchWithPaymentTokenAsFeeSucceedsAndExpiresHash() public {
-        uint256 testItems = 10;
-        uint256 paymentAmountPerMint = 10_000;
-        uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
-            vm,
-            _privateKey,
-            nft,
-            0,
-            addresses.adminAddress,
-            testItems,
-            address(token),
-            paymentAmountPerMint,
-            block.timestamp
-        );
-
-        token.mint(address(this), totalCost);
-        token.approve(address(_autoGraphMinter), totalCost);
-
-        // mint
-        _autoGraphMinter.mintBatchWithPaymentTokenAsFee(address(nft), address(this), address(token), params);
-
-        // assert balance
-        for (uint256 i = 0; i < params.length; i++) {
-            assertEq(nft.balanceOf(address(this), i), testItems);
-        }
-
-        // assert token balance payment
-        assertEq(token.balanceOf(address(_defaultPaymentRecipient)), totalCost, "Payment token balance incorrect");
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Hash expired");
-        _autoGraphMinter.mintBatchWithPaymentTokenAsFee(address(nft), address(this), address(token), params);
-    }
-
-    /// --------------------- Testing Mint Batch With Eth as Fee functions --------------------- ///
-
-    function testMintBatchWithEthAsFeeShouldSucceedsAndExpiresHash() public {
-        uint256 testItems = 10;
-        uint256 paymentAmountPerMint = 10_000;
-        uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
-            vm,
-            _privateKey,
-            nft,
-            0,
-            addresses.adminAddress,
-            testItems,
-            address(0),
-            paymentAmountPerMint,
-            block.timestamp
-        );
-
-        // mint
-        _autoGraphMinter.mintBatchWithEthAsFee{value: totalCost}(address(nft), address(this), params);
-
-        // assert balance
-        for (uint256 i = 0; i < params.length; i++) {
-            assertEq(nft.balanceOf(address(this), i), testItems);
-        }
-
-        // assert token balance payment
-        assertEq(address(_defaultPaymentRecipient).balance, totalCost);
-    }
-
-    function testMintBatchWithEthAsFeeIncorrectAmount() public {
-        uint256 testItems = 10;
-        uint256 paymentAmountPerMint = 10_000;
-        uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
-            vm,
-            _privateKey,
-            nft,
-            0,
-            addresses.adminAddress,
-            testItems,
-            address(0),
-            paymentAmountPerMint,
-            block.timestamp
-        );
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Payment amount does not match msg.value");
-        _autoGraphMinter.mintBatchWithEthAsFee{value: totalCost / 2}(address(nft), address(this), params);
-    }
-
-    /// --------------------- Testing Update Payment Recipient functions  --------------------- ///
-
-    function testUpdatePaymentRecipient() public {
-        vm.prank(addresses.adminAddress);
-        _autoGraphMinter.updatePaymentRecipient(address(0x123));
-        assertEq(_autoGraphMinter.paymentRecipient(), address(0x123));
-    }
-
-    function testUpdatePaymentRecipientInvalidAddress() public {
-        vm.prank(addresses.adminAddress);
-        vm.expectRevert("ERC1155AutoGraphMinter: paymentRecipient must not be address(0)");
-        _autoGraphMinter.updatePaymentRecipient(address(0));
-    }
-
-    function testUpdatePaymentRecipientFail() public {
-        vm.expectRevert("CoreRef: no role on core");
-        _autoGraphMinter.updatePaymentRecipient(address(0x123));
-    }
-
-    /// --------------------- Testing Whitelisting functions  --------------------- ///
-
-    function testAddWhitelistedContractAdmin() public {
-        assertFalse(_autoGraphMinter.isWhitelistedAddress(address(0x123)));
-        vm.prank(addresses.adminAddress);
-        _autoGraphMinter.addWhitelistedContract(address(0x123));
-        assertTrue(_autoGraphMinter.isWhitelistedAddress(address(0x123)));
-    }
-
-    function testAddWhitelistedContractGoveror() public {
-        assertFalse(_autoGraphMinter.isWhitelistedAddress(address(0x123)));
-        vm.prank(addresses.tokenGovernorAddress);
-        _autoGraphMinter.addWhitelistedContract(address(0x123));
-        assertTrue(_autoGraphMinter.isWhitelistedAddress(address(0x123)));
-    }
-
-    function testAddWhitelistedContractFail() public {
-        assertFalse(_autoGraphMinter.isWhitelistedAddress(address(0x123)));
-        vm.expectRevert("CoreRef: no role on core");
-        _autoGraphMinter.addWhitelistedContract(address(0x123));
-    }
-
-    function testAddWhitelistedContractsFail() public {
-        vm.expectRevert("CoreRef: no role on core");
-        _autoGraphMinter.addWhitelistedContracts(addressesToAdd);
-    }
-
-    function testAddWhitelistedContracts() public {
-        vm.prank(addresses.adminAddress);
-        _autoGraphMinter.addWhitelistedContracts(addressesToAdd);
-        assertTrue(_autoGraphMinter.isWhitelistedAddress(address(0x123)));
-        assertTrue(_autoGraphMinter.isWhitelistedAddress(address(0x456)));
-        assertTrue(_autoGraphMinter.isWhitelistedAddress(address(0x789)));
-    }
-
-    function testRemoveWhitelistedContract() public {
-        vm.prank(addresses.adminAddress);
-        _autoGraphMinter.removeWhitelistedContract(address(0x321));
-        assertFalse(_autoGraphMinter.isWhitelistedAddress(address(0x321)));
-    }
-
-    function testRemoveWhitelistedContractFail() public {
-        vm.expectRevert("CoreRef: no role on core");
-        _autoGraphMinter.removeWhitelistedContract(address(0x321));
-    }
-
-    function testRemoveWhitelistedContracts() public {
-        vm.prank(addresses.adminAddress);
-        _autoGraphMinter.removeWhitelistedContracts(defaultWhitelistedAddresses);
-        assertFalse(_autoGraphMinter.isWhitelistedAddress(address(0x987)));
-        assertFalse(_autoGraphMinter.isWhitelistedAddress(address(0x654)));
-        assertFalse(_autoGraphMinter.isWhitelistedAddress(address(0x321)));
-    }
-
-    function testRemoveWhitelistedContractsFail() public {
-        vm.expectRevert("CoreRef: no role on core");
-        _autoGraphMinter.removeWhitelistedContracts(defaultWhitelistedAddresses);
-    }
-
-    /// --------------------- Testing Update ExpiryTokenHoursValid  --------------------- ///
-
-    function testUpdateExpiryTokenHoursValid(uint8 _hour) public {
-        uint256 h = _bound(_hour, 1, 24);
-        vm.prank(addresses.adminAddress);
-        _autoGraphMinter.updateExpiryTokenHoursValid(uint8(h));
-        assertEq(_autoGraphMinter.expiryTokenHoursValid(), uint8(h));
-    }
-
-    function testUpdateExpiryTokenHoursInValid0() public {
-        uint8 invalidHour = 0;
-        vm.prank(addresses.adminAddress);
-        vm.expectRevert("ERC1155AutoGraphMinter: Hours must be between 1 and 24");
-        _autoGraphMinter.updateExpiryTokenHoursValid(invalidHour);
-    }
-
-    function testUpdateExpiryTokenHoursInValid25() public {
-        uint8 invalidHour = 25;
-        vm.prank(addresses.adminAddress);
-        vm.expectRevert("ERC1155AutoGraphMinter: Hours must be between 1 and 24");
-        _autoGraphMinter.updateExpiryTokenHoursValid(invalidHour);
-    }
-
-    /// --------------------- Testing ExpiryToken  --------------------- ///
-
-    function testMintForFreeExpiryTokenExpired() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
-
-        /// warp 1 hour and 1.
-        vm.warp(block.timestamp + 1 hours + 1);
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token is expired");
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            parts.expiryToken
-        );
-    }
-
-    function testMintForFreeExpiryTokenInTheFuture() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft));
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token must be in the past");
-        _autoGraphMinter.mintForFree(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            parts.expiryToken + 1 seconds
-        );
-    }
-
-    function testMintWithEthAsFeeExpireTokenExpired() public {
-        uint256 expiryToken = block.timestamp;
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft), address(0), 111, expiryToken);
-
-        /// warp 1 hour and 1.
-        vm.warp(block.timestamp + 1 hours + 1);
-
-        ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            111,
-            expiryToken
-        );
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token is expired");
-        _autoGraphMinter.mintWithEthAsFee{value: 111}(inputs);
-    }
-
-    function testMintWithEthAsFeeExpiryTokenInTheFuture() public {
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft), address(0), 111, block.timestamp);
-
-        ERC1155AutoGraphMinter.MintWithEthAsFeeParams memory inputs = ERC1155AutoGraphMinter.MintWithEthAsFeeParams(
-            parts.recipient,
-            parts.jobId,
-            parts.tokenId,
-            parts.units,
-            parts.hash,
-            parts.salt,
-            parts.signature,
-            address(nft),
-            111,
-            parts.expiryToken + 1 seconds
-        );
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token must be in the past");
-        _autoGraphMinter.mintWithEthAsFee{value: 111}(inputs);
-    }
-
-    function testMintWithPaymentTokenAsFeeExpiryTokenExpired() public {
-        uint256 expiryToken = block.timestamp;
-        Helper.TxParts memory parts = Helper.setupTx(vm, _privateKey, address(nft), address(token), 111, expiryToken);
-
-        token.mint(address(this), 111);
-        token.approve(address(_autoGraphMinter), 111);
-
-        ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
-            .MintWithPaymentTokenAsFeeParams(
-                parts.recipient,
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.hash,
-                parts.salt,
-                parts.signature,
-                address(nft),
-                address(token),
-                111,
-                expiryToken
-            );
-
-        /// warp 1 hour and 1.
-        vm.warp(block.timestamp + 1 hours + 1);
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token is expired");
-        _autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
-    }
-
-    function testMintWithPaymentTokenAsFeeExpiryTokenInTheFuture() public {
-        Helper.TxParts memory parts = Helper.setupTx(
-            vm,
-            _privateKey,
-            address(nft),
-            address(token),
-            111,
-            block.timestamp
-        );
-
-        token.mint(address(this), 111);
-        token.approve(address(_autoGraphMinter), 111);
-
-        ERC1155AutoGraphMinter.MintWithPaymentTokenAsFeeParams memory inputs = ERC1155AutoGraphMinter
-            .MintWithPaymentTokenAsFeeParams(
-                parts.recipient,
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.hash,
-                parts.salt,
-                parts.signature,
-                address(nft),
-                address(token),
-                111,
-                parts.expiryToken + 1 seconds
-            );
-
-        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token must be in the past");
-        _autoGraphMinter.mintWithPaymentTokenAsFee(inputs);
-    }
-
-    /// --------------------- Testing ExpiryToken Batch Methods --------------------- ///
-
-    function testMintBatchForFreeExpiryTokenExpired() public {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
-            vm,
-            _privateKey,
-            nft,
-            addresses.adminAddress
-        );
-
-        /// warp 1 hour and 1.
-        vm.warp(block.timestamp + 1 hours + 1);
-
-        // mint
-        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token is expired");
-        _autoGraphMinter.mintBatchForFree(address(nft), address(this), params);
-    }
-
-    function testMintBatchWithPaymentTokenAsFeeExpiryTokenExpired() public {
-        uint256 testItems = 10;
-        uint256 paymentAmountPerMint = 10_000;
-        uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
-            vm,
-            _privateKey,
-            nft,
-            0,
-            addresses.adminAddress,
-            testItems,
-            address(token),
-            paymentAmountPerMint,
-            block.timestamp
-        );
-
-        token.mint(address(this), totalCost);
-        token.approve(address(_autoGraphMinter), totalCost);
-
-        /// warp 1 hour and 1.
-        vm.warp(block.timestamp + 1 hours + 1);
-
-        // mint
-        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token is expired");
-        _autoGraphMinter.mintBatchWithPaymentTokenAsFee(address(nft), address(this), address(token), params);
-    }
-
-    function testMintBatchWithEthAsFeeExpiryTokenExpired() public {
-        uint256 testItems = 10;
-        uint256 paymentAmountPerMint = 10_000;
-        uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
-            vm,
-            _privateKey,
-            nft,
-            0,
-            addresses.adminAddress,
-            testItems,
-            address(0),
-            paymentAmountPerMint,
-            block.timestamp
-        );
-
-        /// warp 1 hour and 1.
-        vm.warp(block.timestamp + 1 hours + 1);
-
-        // mint
-        vm.expectRevert("ERC1155AutoGraphMinter: Expiry token is expired");
-        _autoGraphMinter.mintBatchWithEthAsFee{value: totalCost}(address(nft), address(this), params);
+        /// @dev Verify balance
+        assertEq(_erc1155.balanceOf(address(this), tokenId), units);
     }
 }

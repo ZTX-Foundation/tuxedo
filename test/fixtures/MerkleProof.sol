@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity 0.8.18;
+pragma solidity 0.8.28;
 
 // Value: [ '0x0000000000000000000000000000000000000001', 100 ]
 contract MerkleProof {
