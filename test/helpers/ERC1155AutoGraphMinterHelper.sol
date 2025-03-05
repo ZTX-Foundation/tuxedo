@@ -1,7 +1,10 @@
-pragma solidity 0.8.18;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.28;
 
 import "@forge-std/Test.sol";
 import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
+import {BatchProcessor} from "@protocol/nfts/BatchProcessor.sol";
+import {HashValidator} from "@protocol/nfts/HashValidator.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
@@ -32,21 +35,29 @@ library ERC1155AutoGraphMinterHelperLib {
         uint256 expiryToken;
     }
 
-    function getHash(ERC1155AutoGraphMinter.HashInputsParams memory input) public pure returns (bytes32) {
-        bytes32 hash = keccak256(
-            abi.encode(
-                input.recipient,
-                input.jobId,
-                input.tokenId,
-                input.units,
-                input.salt,
-                input.nftContract,
-                input.paymentToken,
-                input.paymentAmount,
-                input.expiryToken
-            )
+    /// @dev Generate hash using the HashValidator library
+    function getHash(
+        address recipient,
+        uint256 jobId,
+        uint256 tokenId,
+        uint256 units,
+        uint256 salt,
+        address nftContract,
+        address paymentToken,
+        uint256 paymentAmount,
+        uint256 expiryToken
+    ) public pure returns (bytes32) {
+        return HashValidator.generateHash(
+            recipient,
+            jobId,
+            tokenId,
+            units,
+            salt,
+            nftContract,
+            paymentToken,
+            paymentAmount,
+            expiryToken
         );
-        return hash.toEthSignedMessageHash();
     }
 
     function setupTx(Vm vm, uint256 privateKey, address nftContract) public view returns (TxParts memory parts) {
@@ -102,7 +113,16 @@ library ERC1155AutoGraphMinterHelperLib {
         address recipient = address(this);
         uint256 salt = block.timestamp;
 
-        ERC1155AutoGraphMinter.HashInputsParams memory inputs = ERC1155AutoGraphMinter.HashInputsParams(
+        parts.recipient = recipient;
+        parts.jobId = txx.jobId;
+        parts.tokenId = txx.tokenId;
+        parts.units = txx.units;
+        parts.salt = salt;
+        parts.paymentAmount = txx.paymentAmount;
+        parts.expiryToken = txx.expiryToken;
+
+        // Generate hash
+        bytes32 hash = getHash(
             recipient,
             txx.jobId,
             txx.tokenId,
@@ -114,79 +134,62 @@ library ERC1155AutoGraphMinterHelperLib {
             txx.expiryToken
         );
 
-        // hash message
-        bytes32 hash = getHash(inputs);
-
-        // sign hash
+        // Sign hash
         (uint8 v, bytes32 r, bytes32 s) = txx.vm.sign(txx.privateKey, hash);
-
-        // encode signature
         bytes memory signature = abi.encodePacked(r, s, v);
 
-        parts.recipient = recipient;
-        parts.jobId = txx.jobId;
-        parts.tokenId = txx.tokenId;
-        parts.units = txx.units;
-        parts.salt = salt;
         parts.hash = hash;
         parts.signature = signature;
-        parts.paymentAmount = txx.paymentAmount;
-        parts.expiryToken = txx.expiryToken;
-
-        return parts;
     }
 
     function setupTxs(
         Vm vm,
         uint256 privateKey,
-        ERC1155MaxSupplyMintable nftContract,
-        address adminAddress
-    ) public returns (ERC1155AutoGraphMinter.MintBatchParams[] memory) {
-        return setupTxs(vm, privateKey, nftContract, 0, adminAddress, 10, address(0), 0, block.timestamp);
+        ERC1155MaxSupplyMintable nft
+    ) public view returns (BatchProcessor.MintBatchParams[] memory params) {
+        return setupTxs(vm, privateKey, nft, 0, address(this), 10, address(0), 0, block.timestamp);
     }
 
     function setupTxs(
         Vm vm,
         uint256 privateKey,
         ERC1155MaxSupplyMintable nft,
-        uint256 offset,
-        address adminAddress,
-        uint256 testItems,
+        address recipient
+    ) public view returns (BatchProcessor.MintBatchParams[] memory params) {
+        return setupTxs(vm, privateKey, nft, 0, recipient, 10, address(0), 0, block.timestamp);
+    }
+
+    function setupTxs(
+        Vm vm,
+        uint256 privateKey,
+        ERC1155MaxSupplyMintable nft,
+        uint256 tokenId,
+        address recipient,
+        uint256 items,
         address paymentToken,
         uint256 paymentAmount,
         uint256 expiryToken
-    ) public returns (ERC1155AutoGraphMinter.MintBatchParams[] memory) {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = new ERC1155AutoGraphMinter.MintBatchParams[](
-            testItems
-        );
+    ) public view returns (BatchProcessor.MintBatchParams[] memory params) {
+        params = new BatchProcessor.MintBatchParams[](items);
 
-        for (uint256 i = 0; i < params.length; i++) {
-            vm.prank(adminAddress);
-            nft.setSupplyCap(i, type(uint256).max);
-
-            SetupTxParams memory txx = SetupTxParams(
+        for (uint256 i = 0; i < items; i++) {
+            TxParts memory parts = setupTx(
                 vm,
                 privateKey,
                 address(nft),
-                i + offset,
-                i,
-                testItems,
                 paymentToken,
                 paymentAmount,
                 expiryToken
             );
 
-            TxParts memory parts = setupTx(txx);
-            params[i] = ERC1155AutoGraphMinter.MintBatchParams(
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.hash,
-                parts.salt,
-                parts.signature,
-                parts.paymentAmount,
-                expiryToken
-            );
+            params[i].jobId = parts.jobId + i;
+            params[i].tokenId = tokenId + i;
+            params[i].units = parts.units;
+            params[i].hash = parts.hash;
+            params[i].salt = parts.salt;
+            params[i].signature = parts.signature;
+            params[i].paymentAmount = parts.paymentAmount;
+            params[i].expiryToken = parts.expiryToken;
         }
 
         return params;

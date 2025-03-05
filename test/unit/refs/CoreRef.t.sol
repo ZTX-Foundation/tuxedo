@@ -1,4 +1,4 @@
-pragma solidity 0.8.18;
+pragma solidity 0.8.28;
 
 import {Core} from "@protocol/core/Core.sol";
 import {getCore, getRevertMessage} from "test/fixtures/Fixtures.sol";

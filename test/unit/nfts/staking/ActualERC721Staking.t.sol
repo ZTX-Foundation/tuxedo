@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.28;
 
 import {TestAddresses as addresses} from "test/fixtures/TestAddresses.sol";
 import {ActualERC721Staking} from "@protocol/nfts/staking/ActualERC721Staking.sol";

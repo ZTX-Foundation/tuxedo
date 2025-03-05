@@ -1,4 +1,4 @@
-pragma solidity 0.8.18;
+pragma solidity 0.8.28;
 
 import "test/BaseTest.sol";
 import {SingleFunctionReentrancy} from "test/mock/SingleFunctionReentrancy.sol";

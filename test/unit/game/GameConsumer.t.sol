@@ -1,4 +1,4 @@
-pragma solidity 0.8.18;
+pragma solidity 0.8.28;
 
 import {TestAddresses as addresses} from "test/fixtures/TestAddresses.sol";
 import {Roles} from "@protocol/core/Roles.sol";
