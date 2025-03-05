@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity 0.8.18;
+pragma solidity 0.8.28;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20Splitter} from "@protocol/finance/ERC20Splitter.sol";
@@ -272,17 +272,17 @@ contract zip003 is TimelockProposal {
             assertEq(minter.expiryTokenHoursValid(), 1, "Verify minter expiry timeout");
 
             assertEq(
-                minter.isWhitelistedAddress(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
+                minter.isWhitelistedContract(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES")),
                 true,
                 "Verify ERC1155_MAX_SUPPLY_MINTABLE_WEARABLES is whitelisted"
             );
             assertEq(
-                minter.isWhitelistedAddress(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
+                minter.isWhitelistedContract(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES")),
                 true,
                 "Verify ERC1155_MAX_SUPPLY_MINTABLE_CONSUMABLES is whitelisted"
             );
             assertEq(
-                minter.isWhitelistedAddress(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")),
+                minter.isWhitelistedContract(addresses.getAddress("ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES")),
                 true,
                 "Verify ERC1155_MAX_SUPPLY_MINTABLE_PLACEABLES is whitelisted"
             );

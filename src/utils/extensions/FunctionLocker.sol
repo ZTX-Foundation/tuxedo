@@ -1,4 +1,4 @@
-pragma solidity 0.8.18;
+pragma solidity 0.8.28;
 
 /// @title abstract contract for locking functions after being called once
 abstract contract FunctionLocker {

@@ -1,8 +1,9 @@
-pragma solidity 0.8.18;
+pragma solidity 0.8.28;
 
 import {ERC1155AutoGraphMinterHelperLib as Helper} from "test/helpers/ERC1155AutoGraphMinterHelper.sol";
 
 import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
+import {BatchProcessor} from "@protocol/nfts/BatchProcessor.sol";
 import {Core} from "@protocol/core/Core.sol";
 import {Roles} from "@protocol/core/Roles.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
@@ -932,7 +933,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
     /// --------------------- test batch minting functions ---------------------
 
     function testMintBatchForFreeWithExpiredHash() public {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        BatchProcessor.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),
@@ -1002,7 +1003,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
     }
 
     function testMintBatchForFreeWithExpiredJob() public {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        BatchProcessor.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),
@@ -1109,7 +1110,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         uint256 testItems = 10;
         uint256 paymentAmountPerMint = 10_000;
         uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        BatchProcessor.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),
@@ -1217,7 +1218,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         uint256 testItems = 10;
         uint256 paymentAmountPerMint = 10_000;
         uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        BatchProcessor.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),
@@ -1358,7 +1359,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         uint256 testItems = 10;
         uint256 paymentAmountPerMint = 10_000;
         uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        BatchProcessor.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),
@@ -1455,7 +1456,7 @@ contract IntegrationTestERC1155AutoGraphMinter is BaseTest {
         uint256 testItems = 10;
         uint256 paymentAmountPerMint = 10_000;
         uint256 totalCost = testItems * paymentAmountPerMint;
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = Helper.setupTxs(
+        BatchProcessor.MintBatchParams[] memory params = Helper.setupTxs(
             vm,
             _privateKey,
             ERC1155MaxSupplyMintable(erc1155Consumables),

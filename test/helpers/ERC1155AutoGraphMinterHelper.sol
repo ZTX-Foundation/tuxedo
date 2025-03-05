@@ -1,8 +1,9 @@
-pragma solidity 0.8.18;
+pragma solidity 0.8.28;
 
 import "@forge-std/Test.sol";
 import {ERC1155AutoGraphMinter} from "@protocol/nfts/ERC1155AutoGraphMinter.sol";
 import {ERC1155MaxSupplyMintable} from "@protocol/nfts/ERC1155MaxSupplyMintable.sol";
+import {BatchProcessor} from "@protocol/nfts/BatchProcessor.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 library ERC1155AutoGraphMinterHelperLib {
@@ -141,7 +142,7 @@ library ERC1155AutoGraphMinterHelperLib {
         uint256 privateKey,
         ERC1155MaxSupplyMintable nftContract,
         address adminAddress
-    ) public returns (ERC1155AutoGraphMinter.MintBatchParams[] memory) {
+    ) public returns (BatchProcessor.MintBatchParams[] memory) {
         return setupTxs(vm, privateKey, nftContract, 0, adminAddress, 10, address(0), 0, block.timestamp);
     }
 
@@ -155,8 +156,8 @@ library ERC1155AutoGraphMinterHelperLib {
         address paymentToken,
         uint256 paymentAmount,
         uint256 expiryToken
-    ) public returns (ERC1155AutoGraphMinter.MintBatchParams[] memory) {
-        ERC1155AutoGraphMinter.MintBatchParams[] memory params = new ERC1155AutoGraphMinter.MintBatchParams[](
+    ) public returns (BatchProcessor.MintBatchParams[] memory) {
+        BatchProcessor.MintBatchParams[] memory params = new BatchProcessor.MintBatchParams[](
             testItems
         );
 
@@ -177,16 +178,16 @@ library ERC1155AutoGraphMinterHelperLib {
             );
 
             TxParts memory parts = setupTx(txx);
-            params[i] = ERC1155AutoGraphMinter.MintBatchParams(
-                parts.jobId,
-                parts.tokenId,
-                parts.units,
-                parts.hash,
-                parts.salt,
-                parts.signature,
-                parts.paymentAmount,
-                expiryToken
-            );
+            params[i] = BatchProcessor.MintBatchParams({
+                jobId: parts.jobId,
+                tokenId: parts.tokenId,
+                units: parts.units,
+                hash: parts.hash,
+                salt: parts.salt,
+                signature: parts.signature,
+                paymentAmount: parts.paymentAmount,
+                expiryToken: parts.expiryToken
+            });
         }
 
         return params;
