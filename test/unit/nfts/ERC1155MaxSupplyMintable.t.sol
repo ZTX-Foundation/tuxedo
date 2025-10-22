@@ -66,6 +66,24 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
         nft.setSupplyCap(tokenId, supplyCap - 1);
     }
 
+    function testSetSupplyCapAndTransferableWithoutRoleFails() public {
+        vm.expectRevert("CoreRef: no role on core");
+        nft.setSupplyCapAndTransferable(tokenId, supplyCap, true);
+    }
+
+    function testSetSupplyCapAndTransferableWithRoleSucceeds() public {
+        uint256 newTokenId = tokenId + 1;
+        uint256 newSupplyCap = 5000;
+        bool isNonTransferable = true;
+
+        vm.prank(addresses.adminAddress);
+        nft.setSupplyCapAndTransferable(newTokenId, newSupplyCap, isNonTransferable);
+
+        assertEq(nft.maxTokenSupply(newTokenId), newSupplyCap);
+        assertEq(nft.getMintAmountLeft(newTokenId), newSupplyCap);
+        assertEq(nft.nonTransferableTokens(newTokenId), isNonTransferable);
+    }
+
     function testPauseWithoutRoleFails() public {
         vm.expectRevert("CoreRef: no role on core");
         nft.pause();
@@ -172,21 +190,22 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
         nft.mint(address(this), tokenId, amount);
     }
 
-    function testBurnDecreasesSupply() public {
+    function testBurnUnchangedSupply() public {
         testMintBatchSucceedsMinter();
+        uint256 amount = 100;
 
         nft.burn(address(this), tokenId, nft.balanceOf(address(this), tokenId));
         nft.burn(address(this), tokenId + 1, nft.balanceOf(address(this), tokenId + 1));
 
         assertEq(nft.balanceOf(address(this), tokenId), 0);
         assertEq(nft.balanceOf(address(this), tokenId + 1), 0);
-        assertEq(nft.totalSupply(tokenId), 0);
-        assertEq(nft.totalSupply(tokenId + 1), 0);
-        assertEq(nft.getMintAmountLeft(tokenId), supplyCap);
-        assertEq(nft.getMintAmountLeft(tokenId + 1), supplyCap);
+        assertEq(nft.totalSupply(tokenId), amount);
+        assertEq(nft.totalSupply(tokenId + 1), amount);
+        assertEq(nft.getMintAmountLeft(tokenId), supplyCap - amount);
+        assertEq(nft.getMintAmountLeft(tokenId + 1), supplyCap - amount);
     }
 
-    function testBurnBatchDecreasesSupply() public {
+    function testBurnBatchUnchangedSupply() public {
         testMintBatchSucceedsMinter();
         uint256 amount = 100;
 
@@ -202,10 +221,10 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
 
         assertEq(nft.balanceOf(address(this), tokenId), 0);
         assertEq(nft.balanceOf(address(this), tokenId + 1), 0);
-        assertEq(nft.totalSupply(tokenId), 0);
-        assertEq(nft.totalSupply(tokenId + 1), 0);
-        assertEq(nft.getMintAmountLeft(tokenId), supplyCap);
-        assertEq(nft.getMintAmountLeft(tokenId + 1), supplyCap);
+        assertEq(nft.totalSupply(tokenId), amount);
+        assertEq(nft.totalSupply(tokenId + 1), amount);
+        assertEq(nft.getMintAmountLeft(tokenId), supplyCap - amount);
+        assertEq(nft.getMintAmountLeft(tokenId + 1), supplyCap - amount);
     }
 
     function testSendTokensToContractFails() public {
