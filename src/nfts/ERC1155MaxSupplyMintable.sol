@@ -182,17 +182,25 @@ contract ERC1155MaxSupplyMintable is ERC1155Burnable, CoreRef {
 
     /// ----------- INTERNAL OVERRIDES ------------
 
-    /// @dev override of ERC1155 _beforeTokenTransfer hook to track total supply
+    /// @dev override of ERC1155 _beforeTokenTransfer hook to track total supply and enforce non-transferability
     /// @notice only increases total supply on mints, does not decrease on burns
     /// this ensures that burned tokens still count towards the max supply cap
+    /// @notice also blocks transfers of non-transferable tokens (mints and burns are still allowed)
     function _beforeTokenTransfer(
         address,
         address from,
-        address,
+        address to,
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory
     ) internal override {
+        // Block transfers of non-transferable tokens (but allow mints and burns)
+        if (from != address(0) && to != address(0)) {
+            for (uint256 i = 0; i < ids.length; ++i) {
+                require(!nonTransferableTokens[ids[i]], "BaseERC1155NFT: token is non-transferable");
+            }
+        }
+
         // Only increase the total supply on mints
         if (from == address(0)) {
             for (uint256 i = 0; i < ids.length; ++i) {

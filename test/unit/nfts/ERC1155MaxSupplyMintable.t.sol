@@ -126,6 +126,86 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
         assertEq(nft.nonTransferableTokens(newTokenId), false);
     }
 
+    function testTransferNonTransferableTokenFails() public {
+        uint256 newTokenId = tokenId + 1;
+        uint256 newSupplyCap = 5000;
+        uint256 mintAmount = 100;
+        address recipient = address(0x123);
+
+        // Set up a non-transferable token
+        vm.prank(addresses.adminAddress);
+        nft.setSupplyCapAndNonTransferable(newTokenId, newSupplyCap, true);
+
+        // Mint some tokens
+        vm.prank(address(sale));
+        lock.lock(1);
+
+        vm.prank(addresses.minterAddress);
+        nft.mint(address(this), newTokenId, mintAmount);
+
+        // Try to transfer and expect revert
+        vm.expectRevert("BaseERC1155NFT: token is non-transferable");
+        nft.safeTransferFrom(address(this), recipient, newTokenId, 1, "");
+    }
+
+    function testTransferableTokenCanBeTransferredUntilDisabled() public {
+        uint256 newTokenId = tokenId + 1;
+        uint256 newSupplyCap = 5000;
+        uint256 mintAmount = 100;
+        address recipient = address(0x123);
+
+        // Set up a transferable token (isNonTransferable = false)
+        vm.prank(addresses.adminAddress);
+        nft.setSupplyCapAndNonTransferable(newTokenId, newSupplyCap, false);
+
+        // Mint some tokens
+        vm.prank(address(sale));
+        lock.lock(1);
+
+        vm.prank(addresses.minterAddress);
+        nft.mint(address(this), newTokenId, mintAmount);
+
+        // Transfer should succeed
+        nft.safeTransferFrom(address(this), recipient, newTokenId, 1, "");
+        assertEq(nft.balanceOf(recipient, newTokenId), 1);
+        assertEq(nft.balanceOf(address(this), newTokenId), mintAmount - 1);
+
+        // Now disable transferability
+        vm.prank(addresses.adminAddress);
+        nft.setNonTransferable(newTokenId, true);
+
+        // Transfer should now fail
+        vm.expectRevert("BaseERC1155NFT: token is non-transferable");
+        nft.safeTransferFrom(address(this), recipient, newTokenId, 1, "");
+    }
+
+    function testNonTransferableTokenCanBeBurned() public {
+        uint256 newTokenId = tokenId + 1;
+        uint256 newSupplyCap = 5000;
+        uint256 mintAmount = 100;
+        uint256 burnAmount = 50;
+
+        // Set up a non-transferable token
+        vm.prank(addresses.adminAddress);
+        nft.setSupplyCapAndNonTransferable(newTokenId, newSupplyCap, true);
+
+        // Mint some tokens
+        vm.prank(address(sale));
+        lock.lock(1);
+
+        vm.prank(addresses.minterAddress);
+        nft.mint(address(this), newTokenId, mintAmount);
+
+        assertEq(nft.balanceOf(address(this), newTokenId), mintAmount);
+
+        // Burn should succeed even though token is non-transferable
+        nft.burn(address(this), newTokenId, burnAmount);
+
+        assertEq(nft.balanceOf(address(this), newTokenId), mintAmount - burnAmount);
+        // Total supply should remain unchanged (burns don't decrease total supply)
+        assertEq(nft.totalSupply(newTokenId), mintAmount);
+    }
+
     function testPauseWithoutRoleFails() public {
         vm.expectRevert("CoreRef: no role on core");
         nft.pause();
