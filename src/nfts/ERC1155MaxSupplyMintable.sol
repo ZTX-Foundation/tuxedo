@@ -52,17 +52,36 @@ contract ERC1155MaxSupplyMintable is ERC1155Burnable, CoreRef {
         _symbol = symbol_;
     }
 
-    /// @notice set the supply cap and transferability for a given token, cannot be less than current supply
+    /// @notice set the supply cap and non-transferability for a given token, cannot be less than current supply
     /// @param tokenId the id of the token to update
     /// @param maxSupply the new max supply of the token
     /// @param isNonTransferable whether the token should be non-transferable
     /// callable by admin
-    function setSupplyCapAndTransferable(
+    function setSupplyCapAndNonTransferable(
         uint256 tokenId,
         uint256 maxSupply,
         bool isNonTransferable
     ) external onlyRole(Roles.ADMIN) {
         _setSupplyCap(tokenId, maxSupply);
+        _setNonTransferable(tokenId, isNonTransferable);
+    }
+
+    /// @notice set the non-transferability for a given token
+    /// @param tokenId the id of the token to update
+    /// @param isNonTransferable whether the token should be non-transferable
+    /// callable by admin
+    function setNonTransferable(uint256 tokenId, bool isNonTransferable) external onlyRole(Roles.ADMIN) {
+        _setNonTransferable(tokenId, isNonTransferable);
+    }
+
+    /// @dev internal function to set the non-transferability for a given token
+    /// @param tokenId the id of the token to update
+    /// @param isNonTransferable whether the token should be non-transferable
+    function _setNonTransferable(uint256 tokenId, bool isNonTransferable) internal {
+        require(
+            maxTokenSupply[tokenId] > 0,
+            "BaseERC1155NFT: token must have a max supply greater than 0 to set the transferability"
+        );
 
         nonTransferableTokens[tokenId] = isNonTransferable;
     }

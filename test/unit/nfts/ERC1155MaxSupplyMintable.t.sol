@@ -66,22 +66,64 @@ contract UnitTestERC1155MaxSupplyMintable is BaseTest {
         nft.setSupplyCap(tokenId, supplyCap - 1);
     }
 
-    function testSetSupplyCapAndTransferableWithoutRoleFails() public {
+    function testSetSupplyCapAndNonTransferableWithoutRoleFails() public {
         vm.expectRevert("CoreRef: no role on core");
-        nft.setSupplyCapAndTransferable(tokenId, supplyCap, true);
+        nft.setSupplyCapAndNonTransferable(tokenId, supplyCap, true);
     }
 
-    function testSetSupplyCapAndTransferableWithRoleSucceeds() public {
+    function testSetSupplyCapAndNonTransferableWithRoleSucceeds() public {
         uint256 newTokenId = tokenId + 1;
         uint256 newSupplyCap = 5000;
         bool isNonTransferable = true;
 
         vm.prank(addresses.adminAddress);
-        nft.setSupplyCapAndTransferable(newTokenId, newSupplyCap, isNonTransferable);
+        nft.setSupplyCapAndNonTransferable(newTokenId, newSupplyCap, isNonTransferable);
 
         assertEq(nft.maxTokenSupply(newTokenId), newSupplyCap);
         assertEq(nft.getMintAmountLeft(newTokenId), newSupplyCap);
         assertEq(nft.nonTransferableTokens(newTokenId), isNonTransferable);
+    }
+
+    function testSetSupplyCapAndNonTransferableWithZeroMaxSupplyFails() public {
+        uint256 newTokenId = tokenId + 1;
+
+        vm.expectRevert("BaseERC1155NFT: token must have a max supply greater than 0 to set the transferability");
+        vm.prank(addresses.adminAddress);
+        nft.setSupplyCapAndNonTransferable(newTokenId, 0, true);
+    }
+
+    function testSetNonTransferableWithoutRoleFails() public {
+        vm.expectRevert("CoreRef: no role on core");
+        nft.setNonTransferable(tokenId, true);
+    }
+
+    function testSetNonTransferableForUninitializedTokenFails() public {
+        uint256 uninitializedTokenId = tokenId + 100;
+
+        vm.expectRevert("BaseERC1155NFT: token must have a max supply greater than 0 to set the transferability");
+        vm.prank(addresses.adminAddress);
+        nft.setNonTransferable(uninitializedTokenId, true);
+    }
+
+    function testSetNonTransferableWithRoleSucceeds() public {
+        uint256 newTokenId = tokenId + 1;
+        uint256 newSupplyCap = 5000;
+
+        // First set the supply cap to initialize the token
+        vm.prank(addresses.adminAddress);
+        nft.setSupplyCap(newTokenId, newSupplyCap);
+
+        // Now set non-transferability
+        vm.prank(addresses.adminAddress);
+        nft.setNonTransferable(newTokenId, true);
+
+        assertEq(nft.nonTransferableTokens(newTokenId), true);
+
+        // Test setting it back to false
+        vm.prank(addresses.adminAddress);
+        nft.setNonTransferable(newTokenId, false);
+
+        assertEq(nft.nonTransferableTokens(newTokenId), false);
     }
 
     function testPauseWithoutRoleFails() public {
